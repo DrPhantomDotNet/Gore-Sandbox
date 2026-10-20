@@ -751,6 +751,7 @@ namespace SolarEclipse
             w.String(gm.CurrentMap.Id); w.Int(gm.CurrentSeed);
             w.Byte((byte)o.Time); w.Byte((byte)o.Loadout); w.Bool(o.Nextbots); w.Bool(o.AiIgnore);
             w.Bool(p.Creative); w.Bool(Server.PvP); w.Byte((byte)Server.Loadout);
+            w.Byte((byte)o.Weather); // appended last (older clients ignore it)
             ToPlayer(p, Msg.Welcome);
         }
 

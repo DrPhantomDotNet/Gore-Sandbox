@@ -88,7 +88,7 @@ namespace SolarEclipse
             if (!networkClient && !map.IsUnlocked()) { AudioManager.Ui("ui_error"); return; }
             if (!networkClient && !NetState.IsHost && NetState.Active) NetManager.I.Shutdown("left");
             // Maps may adjust their options (Arena turns off starting NPCs): give them a copy, not the menu's object.
-            options = options == null ? new MapOptions() : new MapOptions { Time = options.Time, StartingNpcs = options.StartingNpcs, Loadout = options.Loadout, Nextbots = options.Nextbots, AiIgnore = options.AiIgnore };
+            options = options == null ? new MapOptions() : new MapOptions { Time = options.Time, StartingNpcs = options.StartingNpcs, Loadout = options.Loadout, Nextbots = options.Nextbots, AiIgnore = options.AiIgnore, Weather = options.Weather };
             loading = StartCoroutine(LoadMap(map, options, seed == 0 ? Random.Range(1, int.MaxValue) : seed, networkClient));
         }
 
@@ -181,6 +181,7 @@ namespace SolarEclipse
                         Nextbots.Spawn(Nextbots.Defs[Random.Range(0, Nextbots.Defs.Count)].Id, p);
             }
             AudioManager.PlayAmbience(def.Ambience, 0.7f);
+            Weather.Begin(def, opt, world.transform); // World/Weather.cs (rain, snow, fog, thunder)
             ls.Progress = 1f;
             yield return new WaitForSecondsRealtime(0.25f);
 

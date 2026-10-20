@@ -277,6 +277,7 @@ namespace SolarEclipse
             string mapId = rd.String(); int seed = rd.Int();
             var options = new MapOptions { Time = (TimeOfDay)rd.Byte(), Loadout = rd.Byte(), Nextbots = rd.Bool(), AiIgnore = rd.Bool(), StartingNpcs = 0 };
             LocalCreative = rd.Bool(); Server.PvP = rd.Bool(); clientLoadout = rd.Byte();
+            if (rd.Remaining > 0) options.Weather = (WeatherKind)rd.Byte(); // appended last in SendWelcome
             Players[LocalId] = new NetPlayer { Id = LocalId, Name = LocalName, Guid = LocalGuid, Creative = LocalCreative };
             Status = "Joined " + ServerName;
             Debug.Log($"[Net] Welcome to '{ServerName}' (host {hostName}) as player {LocalId}; map {mapId}");

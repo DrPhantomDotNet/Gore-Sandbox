@@ -88,6 +88,11 @@ namespace SolarEclipse
             y += 66;
             if (Stats.HasEasterEgg("Nextbots"))
                 UI.Toggle(new Rect(d.x + 28, y, colW, 56), "Nextbots roam", ref options.Nextbots, "Unlocked secret: nextbots hunt you on this map.");
+            if (Weather.Supported(map))
+            {
+                int wi = (int)options.Weather;
+                if (UI.Selector(new Rect(d.x + 44 + colW, y, colW, 56), "Weather", ref wi, MapOptions.Weathers, "Rain, thunderstorms, fog or snow.")) options.Weather = (WeatherKind)wi;
+            }
 
             if (UI.Button(new Rect(70, H - 100, 240, 64), "BACK", ButtonKind.Normal, IconFactory.Get("arrow_left"))) OnBack();
             if (UI.Button(new Rect(W - 410, H - 104, 340, 72), "PLAY " + map.Name.ToUpperInvariant(), ButtonKind.Primary, IconFactory.Get("play"), 26, map.IsUnlocked()))

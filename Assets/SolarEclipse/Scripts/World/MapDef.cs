@@ -4,6 +4,7 @@ using UnityEngine;
 namespace SolarEclipse
 {
     public enum TimeOfDay { Day, Sunset, Night, BloodMoon }
+    public enum WeatherKind { Clear, Rain, Thunderstorm, Fog, Snow }
 
     /// <summary>Options picked on the map select screen.</summary>
     public sealed class MapOptions
@@ -13,6 +14,8 @@ namespace SolarEclipse
         public int Loadout; // 0 = fists + spawn gun, 1 = full arsenal
         public bool Nextbots;
         public bool AiIgnore;
+        public WeatherKind Weather = WeatherKind.Clear;
+        public static readonly string[] Weathers = { "Clear", "Rain", "Thunderstorm", "Fog", "Snow" };
         public static readonly string[] Loadouts = { "Fists + Spawn Gun", "Full Arsenal" };
         public static readonly string[] Times = { "Day", "Sunset", "Night", "Blood Moon" };
     }
