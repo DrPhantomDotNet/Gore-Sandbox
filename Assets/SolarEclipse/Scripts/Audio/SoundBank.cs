@@ -194,6 +194,7 @@ namespace SolarEclipse
             Def("noclip_off", 1, (r, s, v) => W.Whoosh(r, s, 0.4f, 3000, 400, 2f));
             RecipesBoss.Define(Def); // "????" boss realm
             RecipesBackrooms.Define(Def); // Backrooms hum + light flicker
+            RecipesWeather.Define(Def); // rain loop, thunder, kill-streak stingers
             RecipesZombie.Define(Def); // zombie groans, bites, shrieks
         }
 

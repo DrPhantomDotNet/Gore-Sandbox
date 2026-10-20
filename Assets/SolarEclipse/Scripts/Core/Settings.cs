@@ -29,6 +29,7 @@ namespace SolarEclipse
         public int crosshairStyle = 0, crosshairColor = 0;
         public float crosshairSize = 1f, screenShake = 1f;
         public bool headBob = true, hitmarkers = true, damageNumbers = false, subtitles = true, npcNames = true, viewmodel = true, killFeed = true, tutorialHints = true;
+        public bool killStreakAnnouncer = true; // DOUBLE KILL / KILLING SPREE banners + stingers (UI/KillStreaks.cs)
         // Multiplayer + voice chat
         public string playerName = "";
         public string micDevice = "";          // empty = system default microphone

@@ -139,9 +139,39 @@ namespace SolarEclipse.EditorTools
             if (report.summary.result == BuildResult.Succeeded)
             {
                 Debug.Log($"[SolarEclipse] Build succeeded: {path} ({report.summary.totalSize / 1048576f:0.0} MB)");
-                EditorUtility.RevealInFinder(path);
+                if (target == BuildTarget.StandaloneWindows64)
+                {
+                    // The auto-updater downloads exactly this file from the GitHub release named v<version>.
+                    string zip = ZipForRelease(Path.GetDirectoryName(Path.GetFullPath(path)));
+                    EditorUtility.RevealInFinder(zip);
+                    EditorUtility.DisplayDialog("Gore Sandbox v" + GameInfo.Version,
+                        "Build finished.\n\nTo send this update to everyone:\n1. GitHub > your repository > Releases > Draft a new release\n2. Tag: v" + GameInfo.Version +
+                        "\n3. Attach GoreSandbox-Windows.zip (just opened for you)\n4. Publish release\n\nPlayers' games update themselves the next time they start.", "OK");
+                }
+                else EditorUtility.RevealInFinder(path);
             }
             else Debug.LogError("[SolarEclipse] Build " + report.summary.result + " — see the Console for details.");
+        }
+
+        /// <summary>Zips the build folder (exe, _Data, DLLs; not the debug symbols) as Builds/GoreSandbox-Windows.zip.</summary>
+        static string ZipForRelease(string buildDir)
+        {
+            string zip = Path.GetFullPath(Path.Combine(buildDir, "..", "GoreSandbox-Windows.zip"));
+            if (File.Exists(zip)) File.Delete(zip);
+            using (var fs = File.Create(zip))
+            using (var archive = new System.IO.Compression.ZipArchive(fs, System.IO.Compression.ZipArchiveMode.Create))
+            {
+                foreach (var file in Directory.GetFiles(buildDir, "*", SearchOption.AllDirectories))
+                {
+                    string rel = file.Substring(buildDir.Length).TrimStart('\\', '/').Replace('\\', '/');
+                    if (rel.Contains("_BurstDebugInformation_DoNotShip") || rel.Contains("_BackUpThisFolder_ButDontShipItWithYourGame")) continue;
+                    var entry = archive.CreateEntry(rel, System.IO.Compression.CompressionLevel.Optimal);
+                    using (var src = File.OpenRead(file))
+                    using (var dst = entry.Open()) src.CopyTo(dst);
+                }
+            }
+            Debug.Log("[SolarEclipse] Release zip: " + zip);
+            return zip;
         }
 
         [MenuItem("SolarEclipse/Open Save Data Folder", priority = 40)]

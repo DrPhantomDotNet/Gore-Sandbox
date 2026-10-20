@@ -99,6 +99,7 @@ namespace SolarEclipse
                     changed |= UI.Toggle(Next(), "Goredoll speech subtitles", ref d.subtitles);
                     changed |= UI.Toggle(Next(), "Goredoll name tags", ref d.npcNames);
                     changed |= UI.Toggle(Next(), "Tutorial hints", ref d.tutorialHints);
+                    changed |= UI.Toggle(Next(), "Kill streak announcer", ref d.killStreakAnnouncer, "DOUBLE KILL, KILLING SPREE, GODLIKE... banners and stingers.");
                     int maxR = d.maxRagdolls; float fr = maxR;
                     if (UI.Slider(Next(), "Max ragdolls", ref fr, 5, 100, "0")) { d.maxRagdolls = Mathf.RoundToInt(fr); changed = true; }
                     float fc = d.maxCasings;
@@ -158,7 +159,7 @@ namespace SolarEclipse
                 case 0: return 14;
                 case 1: return 7;
                 case 2: return 12;
-                case 3: return 8;
+                case 3: return 9;
                 case 4: return 8;
                 case 6: return 12;
                 default: return 10;
