@@ -1,6 +1,11 @@
-# Builds Gore Sandbox for Windows in the cloud (no Unity install needed on your PC).
-# Run it from the "Actions" tab → "Build Gore Sandbox" → "Run workflow", or just push to main.
-# Needs 3 repository secrets: UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD  (see BUILD_ON_GITHUB.md).
+# Builds Gore Sandbox for Windows in the cloud and publishes it as a GitHub release, which players' games download
+# and install by themselves (auto-update). Nobody needs Unity installed.
+#
+# Needs only 2 repository secrets (Settings > Secrets and variables > Actions):
+#   UNITY_EMAIL     your Unity account email
+#   UNITY_PASSWORD  your Unity account password (2-step verification must be off for this account)
+# A free (Personal) Unity account works: GameCI signs in with it, borrows a license seat for the build and gives it
+# back afterwards. No license file is needed.
 name: Build Gore Sandbox
 
 on:
@@ -12,13 +17,31 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-windows:
     name: Windows (x64) build
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
+      - name: Check secrets are set
+        id: secrets
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          if [ -z "$UNITY_EMAIL" ] || [ -z "$UNITY_PASSWORD" ]; then
+            echo "::notice::Cloud build skipped: add the UNITY_EMAIL and UNITY_PASSWORD secrets (Settings > Secrets and variables > Actions)."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Free disk space (Unity images are large)
+        if: steps.secrets.outputs.ok == 'true'
         uses: jlumbroso/free-disk-space@v1.3.1
         with:
           tool-cache: false
@@ -30,27 +53,8 @@ jobs:
           swap-storage: false
 
       - name: Check out project
+        if: steps.secrets.outputs.ok == 'true'
         uses: actions/checkout@v4
-
-      - name: Check secrets are set
-        id: secrets
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        run: |
-          missing=""
-          [ -z "$UNITY_LICENSE" ] && missing="$missing UNITY_LICENSE"
-          [ -z "$UNITY_EMAIL" ] && missing="$missing UNITY_EMAIL"
-          [ -z "$UNITY_PASSWORD" ] && missing="$missing UNITY_PASSWORD"
-          if [ -n "$missing" ]; then
-            # No Unity license here: skip the cloud build. Build in Unity yourself and upload the zip to a GitHub
-            # release instead (see BUILD_ON_GITHUB.md) - players' games still auto-update from it.
-            echo "::notice::Cloud build skipped (missing secrets:$missing). Build in Unity and upload GoreSandbox-Windows.zip to a release named v<version>."
-            echo "ok=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "ok=true" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Cache Unity Library folder
         if: steps.secrets.outputs.ok == 'true'
@@ -67,18 +71,36 @@ jobs:
           mkdir -p Assets/Resources
           echo "${{ github.repository }}" > Assets/Resources/update_repo.txt
 
-      - name: Build with Unity
+      - name: Install GameCI
         if: steps.secrets.outputs.ok == 'true'
-        uses: game-ci/unity-builder@v4
+        uses: game-ci/cli@v0.1.72
+
+      - name: Build with Unity (signs in with your Unity account)
+        if: steps.secrets.outputs.ok == 'true'
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: StandaloneWindows64
-          buildName: GoreSandbox
-          buildMethod: SolarEclipse.EditorTools.CIBuild.Build
-          versioning: None
+        run: |
+          set +e
+          game-ci build \
+            --targetPlatform StandaloneWindows64 \
+            --buildName GoreSandbox \
+            --buildsPath build \
+            --buildMethod SolarEclipse.EditorTools.CIBuild.Build \
+            --unityLicensingMethod personal \
+            --versioningStrategy None \
+            --allowDirtyBuild true 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ ! -f build/StandaloneWindows64/GoreSandbox.exe ]; then
+            [ "$status" -eq 0 ] && status=1
+          fi
+          if [ "$status" -ne 0 ]; then
+            # Show the important lines as an error summary on the run page (secrets are masked by GitHub).
+            summary=$(grep -iE "licens|activat|seat|entitlement|sign.?in|login|password|two.?factor|2fa|verification|error|exception|failed|fatal" build.log \
+              | grep -viE "warning CS|^\s*$" | tail -n 25 | cut -c1-300 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+            echo "::error title=Unity build failed::${summary:-see the build log}"
+          fi
+          exit $status
 
       - name: Upload the game
         if: steps.secrets.outputs.ok == 'true'
@@ -89,13 +111,13 @@ jobs:
           retention-days: 30
 
       - name: Zip the game
-        if: steps.secrets.outputs.ok == 'true'
         id: pack
+        if: steps.secrets.outputs.ok == 'true'
         run: |
           version=$(grep -oP 'Version = "\K[^"]+' Assets/SolarEclipse/Scripts/Core/GameInfo.cs)
           echo "version=$version" >> "$GITHUB_OUTPUT"
           sudo chown -R "$(id -u)" build || true
-          (cd build/StandaloneWindows64 && zip -qr "$GITHUB_WORKSPACE/GoreSandbox-Windows.zip" .)
+          (cd build/StandaloneWindows64 && zip -qr "$GITHUB_WORKSPACE/GoreSandbox-Windows.zip" . -x "*_DoNotShip*" -x "*_ButDontShipItWithYourGame*")
           # Release notes = the newest entry of the in-game changelog, without the formatting tags.
           python3 - <<'PY'
           import re
@@ -107,8 +129,9 @@ jobs:
           open("release_notes.txt", "w", encoding="utf-8").write(newest + "\n")
           PY
 
+      # Only builds of main become updates; test builds of other branches stop after uploading the artifact.
       - name: Publish the update (players get it automatically)
-        if: steps.secrets.outputs.ok == 'true'
+        if: steps.secrets.outputs.ok == 'true' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
