@@ -96,3 +96,15 @@ by themselves.
   case the game says so and offers the download page instead.
 - **Only from 0.3.1:** auto-update is built into 0.3.1 and later. Anyone on an older copy needs to download 0.3.1 once by hand.
 
+## No Unity license for GitHub? Release by hand (auto-update still works)
+
+The cloud build needs the Unity license secrets. Without them it skips itself, and you publish each update from Unity:
+
+1. Get the latest project (GitHub → **Code → Download ZIP**, or pull it) and open it in Unity 6.
+2. Menu **SolarEclipse → Build → Windows (x64)**. When it finishes it opens `Builds/GoreSandbox-Windows.zip`.
+3. On GitHub: **Releases → Draft a new release**. Tag: `v` + the version shown in the dialog (for example `v0.5.0`).
+   Attach `GoreSandbox-Windows.zip` and click **Publish release**.
+
+Players' games (0.3.1 or newer) find that release on startup, then download, install and restart by themselves. The
+game already knows the repository (`GameInfo.UpdateRepo = "DrPhantomDotNet/Gore-Sandbox"`).
+

@@ -33,6 +33,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check secrets are set
+        id: secrets
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -43,11 +44,16 @@ jobs:
           [ -z "$UNITY_EMAIL" ] && missing="$missing UNITY_EMAIL"
           [ -z "$UNITY_PASSWORD" ] && missing="$missing UNITY_PASSWORD"
           if [ -n "$missing" ]; then
-            echo "::error::Missing repository secrets:$missing. See BUILD_ON_GITHUB.md (Settings → Secrets and variables → Actions)."
-            exit 1
+            # No Unity license here: skip the cloud build. Build in Unity yourself and upload the zip to a GitHub
+            # release instead (see BUILD_ON_GITHUB.md) - players' games still auto-update from it.
+            echo "::notice::Cloud build skipped (missing secrets:$missing). Build in Unity and upload GoreSandbox-Windows.zip to a release named v<version>."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Cache Unity Library folder
+        if: steps.secrets.outputs.ok == 'true'
         uses: actions/cache@v4
         with:
           path: Library
@@ -56,11 +62,13 @@ jobs:
             Library-Windows-
 
       - name: Tell the auto-updater where updates come from
+        if: steps.secrets.outputs.ok == 'true'
         run: |
           mkdir -p Assets/Resources
           echo "${{ github.repository }}" > Assets/Resources/update_repo.txt
 
       - name: Build with Unity
+        if: steps.secrets.outputs.ok == 'true'
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -73,6 +81,7 @@ jobs:
           versioning: None
 
       - name: Upload the game
+        if: steps.secrets.outputs.ok == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: GoreSandbox-Windows
@@ -80,6 +89,7 @@ jobs:
           retention-days: 30
 
       - name: Zip the game
+        if: steps.secrets.outputs.ok == 'true'
         id: pack
         run: |
           version=$(grep -oP 'Version = "\K[^"]+' Assets/SolarEclipse/Scripts/Core/GameInfo.cs)
@@ -98,6 +108,7 @@ jobs:
           PY
 
       - name: Publish the update (players get it automatically)
+        if: steps.secrets.outputs.ok == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

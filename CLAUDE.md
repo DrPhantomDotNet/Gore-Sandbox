@@ -20,6 +20,9 @@ Whenever a change is made, release it — don't leave it unpushed:
 4. **Push to `main`.** `.github/workflows/build.yml` builds the Windows player with GameCI, then publishes the GitHub
    release `v<Version>` with `GoreSandbox-Windows.zip`. Players' copies (v0.3.1+) download and install it on startup.
    The repository must stay public. Secrets `UNITY_LICENSE`, `UNITY_EMAIL` and `UNITY_PASSWORD` are set by the owner.
+   **Currently the owner has no Unity license secret**, so the cloud build skips itself. After pushing, tell the owner
+   to build it in Unity (menu SolarEclipse → Build → Windows, which creates `Builds/GoreSandbox-Windows.zip`) and
+   publish a GitHub release tagged `v<Version>` with that zip attached. See BUILD_ON_GITHUB.md.
 5. After pushing, watch the Actions run (`gh run list -R DrPhantomDotNet/Gore-Sandbox`) and report the result.
 
 ## Conventions
