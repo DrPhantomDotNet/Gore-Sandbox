@@ -1,11 +1,15 @@
-# Builds Gore Sandbox for Windows in the cloud and publishes it as a GitHub release, which players' games download
-# and install by themselves (auto-update). Nobody needs Unity installed.
+# Builds Gore Sandbox for Windows (zip) and Android (APK) in the cloud and publishes them as a GitHub release.
+# Windows copies of the game download and install releases by themselves (auto-update); Android copies show the
+# update and download the new APK. Nobody needs Unity installed.
 #
 # Needs only 2 repository secrets (Settings > Secrets and variables > Actions):
 #   UNITY_EMAIL     your Unity account email
 #   UNITY_PASSWORD  your Unity account password (2-step verification must be off for this account)
 # A free (Personal) Unity account works: GameCI signs in with it, borrows a license seat for the build and gives it
 # back afterwards. No license file is needed.
+#
+# Optional Android signing (so each APK installs over the previous one): secrets ANDROID_KEYSTORE_BASE64 (the keystore
+# file as base64) and ANDROID_KEYSTORE_PASS. Without them the APK is debug-signed: uninstall the old one first.
 name: Build Gore Sandbox
 
 on:
@@ -13,7 +17,6 @@ on:
   push:
     branches: [ main, master ]
 
-# Needed to publish releases (that's what the in-game auto-updater downloads).
 permissions:
   contents: write
 
@@ -22,10 +25,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-windows:
-    name: Windows (x64) build
+  build:
+    name: Build ${{ matrix.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 1   # one Unity license seat at a time
+      matrix:
+        include:
+          - name: Windows
+            platform: StandaloneWindows64
+            output: build/StandaloneWindows64
+            check: build/StandaloneWindows64/GoreSandbox.exe
+          - name: Android
+            platform: Android
+            output: build/Android
+            check: build/Android/GoreSandbox.apk
     steps:
       - name: Check secrets are set
         id: secrets
@@ -61,9 +77,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-Windows-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ matrix.platform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
-            Library-Windows-
+            Library-${{ matrix.platform }}-
 
       - name: Tell the auto-updater where updates come from
         if: steps.secrets.outputs.ok == 'true'
@@ -73,17 +89,30 @@ jobs:
 
       - name: Install GameCI
         if: steps.secrets.outputs.ok == 'true'
-        uses: game-ci/cli@v0.1.72
+        run: |
+          export GAME_CI_VERSION=v0.1.72 GAME_CI_INSTALL="$RUNNER_TEMP/game-ci/bin"
+          curl -fsSL "https://raw.githubusercontent.com/game-ci/cli/$GAME_CI_VERSION/install.sh" -o "$RUNNER_TEMP/install-game-ci.sh"
+          sh "$RUNNER_TEMP/install-game-ci.sh"
+          chmod +x "$GAME_CI_INSTALL/game-ci"
+          echo "$GAME_CI_INSTALL" >> "$GITHUB_PATH"
+          "$GAME_CI_INSTALL/game-ci" --version || true
 
-      - name: Build with Unity (signs in with your Unity account)
+      - name: Build ${{ matrix.name }} with Unity (signs in with your Unity account)
         if: steps.secrets.outputs.ok == 'true'
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
         run: |
           set +e
-          game-ci build \
-            --targetPlatform StandaloneWindows64 \
+          signing=()
+          if [ "${{ matrix.platform }}" = "Android" ] && [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            # Passed into the build container as environment variables (never written to the repository).
+            signing=(--dockerEnv "ANDROID_KEYSTORE_BASE64=$ANDROID_KEYSTORE_BASE64" --dockerEnv "ANDROID_KEYSTORE_PASS=$ANDROID_KEYSTORE_PASS")
+          fi
+          game-ci build "${signing[@]}" \
+            --targetPlatform ${{ matrix.platform }} \
             --buildName GoreSandbox \
             --buildsPath build \
             --buildMethod SolarEclipse.EditorTools.CIBuild.Build \
@@ -91,33 +120,55 @@ jobs:
             --versioningStrategy None \
             --allowDirtyBuild true 2>&1 | tee build.log
           status=${PIPESTATUS[0]}
-          if [ ! -f build/StandaloneWindows64/GoreSandbox.exe ]; then
+          sudo chown -R "$(id -u)" build 2>/dev/null || true
+          if [ ! -f "${{ matrix.check }}" ]; then
             [ "$status" -eq 0 ] && status=1
           fi
           if [ "$status" -ne 0 ]; then
-            # Show the important lines as an error summary on the run page (secrets are masked by GitHub).
+            # Put the important lines on the run page as an error summary (secrets are masked by GitHub).
             summary=$(grep -iE "licens|activat|seat|entitlement|sign.?in|login|password|two.?factor|2fa|verification|error|exception|failed|fatal" build.log \
               | grep -viE "warning CS|^\s*$" | tail -n 25 | cut -c1-300 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
-            echo "::error title=Unity build failed::${summary:-see the build log}"
+            echo "::error title=${{ matrix.name }} build failed::${summary:-see the build log}"
           fi
           exit $status
 
-      - name: Upload the game
+      - name: Upload the ${{ matrix.name }} build
         if: steps.secrets.outputs.ok == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: GoreSandbox-Windows
-          path: build/StandaloneWindows64
+          name: GoreSandbox-${{ matrix.name }}
+          path: ${{ matrix.output }}
           retention-days: 30
 
-      - name: Zip the game
-        id: pack
-        if: steps.secrets.outputs.ok == 'true'
+  publish:
+    name: Publish the update
+    needs: build
+    # Publish whatever built (e.g. Windows even if Android failed). Only main becomes an update; test branches stop here.
+    if: always() && needs.build.result != 'cancelled' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Download the builds
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Package and publish (players get it automatically)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           version=$(grep -oP 'Version = "\K[^"]+' Assets/SolarEclipse/Scripts/Core/GameInfo.cs)
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          sudo chown -R "$(id -u)" build || true
-          (cd build/StandaloneWindows64 && zip -qr "$GITHUB_WORKSPACE/GoreSandbox-Windows.zip" . -x "*_DoNotShip*" -x "*_ButDontShipItWithYourGame*")
+          tag="v$version"
+          files=""
+          if [ -f artifacts/GoreSandbox-Windows/GoreSandbox.exe ]; then
+            (cd artifacts/GoreSandbox-Windows && zip -qr "$GITHUB_WORKSPACE/GoreSandbox-Windows.zip" . -x "*_DoNotShip*" -x "*_ButDontShipItWithYourGame*")
+            files="$files GoreSandbox-Windows.zip"
+          fi
+          apk=$(ls artifacts/GoreSandbox-Android/*.apk 2>/dev/null | head -n 1)
+          if [ -n "$apk" ]; then cp "$apk" GoreSandbox-Android.apk; files="$files GoreSandbox-Android.apk"; fi
+          if [ -z "$files" ]; then echo "::error::No build succeeded, nothing to publish."; exit 1; fi
           # Release notes = the newest entry of the in-game changelog, without the formatting tags.
           python3 - <<'PY'
           import re
@@ -126,20 +177,11 @@ jobs:
           parts = text.split("<b><size=30>")
           newest = parts[1] if len(parts) > 1 else text
           newest = re.sub(r"<[^>]+>", "", newest).strip()
-          open("release_notes.txt", "w", encoding="utf-8").write(newest + "\n")
+          open("release_notes.txt", "w", encoding="utf-8").write(newest + "\n\nWindows: download GoreSandbox-Windows.zip (or let the game update itself).\nAndroid: download GoreSandbox-Android.apk on your phone and open it to install.\n")
           PY
-
-      # Only builds of main become updates; test builds of other branches stop after uploading the artifact.
-      - name: Publish the update (players get it automatically)
-        if: steps.secrets.outputs.ok == 'true' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          tag="v${{ steps.pack.outputs.version }}"
           if gh release view "$tag" > /dev/null 2>&1; then
-            echo "Release $tag already exists: replacing its download with this build."
-            echo "Players only auto-update when GameInfo.Version goes up, so bump it for every new update."
-            gh release upload "$tag" GoreSandbox-Windows.zip --clobber
+            echo "Release $tag already exists: replacing its downloads with this build."
+            gh release upload "$tag" $files --clobber
           else
-            gh release create "$tag" GoreSandbox-Windows.zip --title "Gore Sandbox $tag" --notes-file release_notes.txt --latest
+            gh release create "$tag" $files --title "Gore Sandbox $tag" --notes-file release_notes.txt --latest
           fi
