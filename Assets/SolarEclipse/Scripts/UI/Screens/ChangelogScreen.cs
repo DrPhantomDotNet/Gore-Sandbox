@@ -5,7 +5,26 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.5.0 — THE ARSENAL UPDATE</size></b>
+@"<b><size=30>v0.6.0 — THE PLAYER UPDATE</size></b>
+<color=#ff9a40>Smoother, steadier phone controls. Access: Player.</color>
+<b>MOBILE CONTROLS</b>
+• Fixed: walking with the move stick no longer turns the camera (and no longer shoots by itself)
+• Fixed: you can now aim while walking (pushing the stick all the way no longer cancels aiming)
+• AIM is now tap to toggle on phones, so your thumb is free to shoot (hold mode in Settings > Controls)
+• The FIRE button gets bigger while aiming, and there's a second FIRE button on the left for your other thumb
+• Drag on a FIRE button to adjust your aim while shooting
+• Slower, steadier look while aiming, smoothed finger jumps and a small dead zone on the move stick
+• The move stick follows your thumb if you drag past its edge
+• Buttons stay clear of notches and camera holes
+<b>PERFORMANCE</b>
+• Fixed: phones were stuck at 30 FPS. They now aim for 60
+• Lighter default graphics on phones (first launch) so the game stays smooth
+• The screen no longer dims or locks while you play
+<b>OTHER</b>
+• Access is now Player
+• Reset Defaults in Settings keeps your name and setup answers
+
+<b><size=30>v0.5.0 — THE ARSENAL UPDATE</size></b>
 <color=#ff9a40>20 new things to play with, and a proper phone version.</color>
 <b>NEW GUNS</b>
 • Pump Shotgun: 10 pellets, pump action, shell-by-shell reload, huge knockback up close

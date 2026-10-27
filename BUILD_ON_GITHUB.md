@@ -1,3 +1,8 @@
+> **Current setup (v0.6.0):** the cloud build signs in with just `UNITY_EMAIL` + `UNITY_PASSWORD` (a free Unity
+> account works, no license file needed; 2-step verification must be off). Every push to `main` builds the
+> **Android APK** and publishes it as a GitHub release. Windows builds run when you start the workflow by hand
+> (Actions → Build Gore Sandbox → Run workflow → platforms: windows or both). The sections below are older notes.
+
 # Build the game .exe on GitHub (no Unity on your PC)
 
 GitHub builds the game in the cloud and gives you a zip with `GoreSandbox.exe`.

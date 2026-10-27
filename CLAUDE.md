@@ -18,12 +18,15 @@ Whenever a change is made, release it — don't leave it unpushed:
    CoreModule, SharedInternalsModule, TextRenderingModule, InputLegacyModule). A module missing there is a compile
    error in Unity. If new code needs another module, add it to `Packages/manifest.json`. Also compile once with
    `UNITY_ANDROID` defined instead of `UNITY_STANDALONE`: `#if UNITY_ANDROID` code only exists in phone builds.
-4. **Push to `main`.** `.github/workflows/build.yml` builds the Windows player with GameCI, then publishes the GitHub
-   release `v<Version>` with `GoreSandbox-Windows.zip`. Players' copies (v0.3.1+) download and install it on startup.
-   The repository must stay public. Secrets `UNITY_LICENSE`, `UNITY_EMAIL` and `UNITY_PASSWORD` are set by the owner.
-   **Currently the owner has no Unity license secret**, so the cloud build skips itself. After pushing, tell the owner
-   to build it in Unity (menu SolarEclipse → Build → Windows, which creates `Builds/GoreSandbox-Windows.zip`) and
-   publish a GitHub release tagged `v<Version>` with that zip attached. See BUILD_ON_GITHUB.md.
+4. **Push to `main`.** `.github/workflows/build.yml` builds with the GameCI CLI, signing in with the owner's Unity
+   account (secrets `UNITY_EMAIL` + `UNITY_PASSWORD`; free Personal license, no license file). Pushes build the
+   **Android APK only** (the owner plays on a phone); run the workflow by hand with `platforms: windows|both` for
+   Windows. The `publish` job then creates the GitHub release `v<Version>` with `GoreSandbox-Android.apk` (and
+   `GoreSandbox-Windows.zip` when built). Android copies show the update with a download button; Windows copies
+   (v0.3.1+) install it themselves. The repository must stay public. Never commit signing keys or passwords: optional
+   Android signing comes from secrets `ANDROID_KEYSTORE_BASE64` + `ANDROID_KEYSTORE_PASS` (not set yet, so APKs are
+   debug-signed and updating means uninstalling first). Test risky build changes on another branch with
+   `gh workflow run build.yml --ref <branch> -f platforms=android` (only `main` publishes).
 5. After pushing, watch the Actions run (`gh run list -R DrPhantomDotNet/Gore-Sandbox`) and report the result.
 
 ## Conventions

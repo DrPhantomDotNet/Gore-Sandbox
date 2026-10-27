@@ -19,6 +19,8 @@ namespace SolarEclipse
         public float mouseSensitivity = 2f, adsSensitivity = 0.65f, touchSensitivity = 1f, touchButtonScale = 1f, touchOpacity = 0.55f;
         public bool invertY = false, aimToggle = false, sprintToggle = false, crouchToggle = false, autoReload = true;
         public int touchMode = 0; // 0 auto, 1 always, 2 never
+        public bool touchAimHold = false;   // touch AIM button: false = tap to toggle (default), true = hold
+        public bool touchLeftFire = true;   // second FIRE button on the left, above the move stick
         // Mobile dev toys (Dev/MobileDev.cs)
         public bool gyroAim = false, gyroInvertX = false, gyroInvertY = false, shakeToRagdoll = false;
         public float gyroSensitivity = 1f;
@@ -104,10 +106,25 @@ namespace SolarEclipse
         public static bool TouchControlsActive
             => Data.touchMode == 1 || (Data.touchMode == 0 && (Application.isMobilePlatform || Input.touchSupported && Input.touchCount > 0 && !Input.mousePresent));
 
+        /// <summary>First launch on a phone/tablet: lighter graphics and fewer bodies so it stays smooth.</summary>
+        static void MobileDefaults(SettingsData d)
+        {
+            d.targetFps = 60;
+            d.antiAliasing = 1;      // 2x MSAA
+            d.shadowQuality = 1;     // hard shadows only
+            d.shadowDistance = 35f;
+            d.maxRagdolls = 20;
+            d.maxDecals = 200;
+            d.maxGibs = 60;
+            d.maxCasings = 30;
+            d.renderDistance = 250f;
+        }
+
         public static void Load()
         {
             try
             {
+                if (!PlayerPrefs.HasKey(Key) && Application.isMobilePlatform) MobileDefaults(Data);
                 if (PlayerPrefs.HasKey(Key))
                 {
                     string json = PlayerPrefs.GetString(Key);
@@ -133,7 +150,13 @@ namespace SolarEclipse
 
         public static void ResetToDefaults()
         {
+            var old = Data;
             Data = new SettingsData();
+            if (Application.isMobilePlatform) MobileDefaults(Data);
+            // Keep who you are: the first-launch setup answers and your multiplayer name aren't "settings to reset".
+            Data.setupDone = old.setupDone;
+            Data.ageGroup = old.ageGroup;
+            Data.playerName = old.playerName;
             Save();
         }
 
@@ -144,6 +167,13 @@ namespace SolarEclipse
                 QualitySettings.SetQualityLevel(d.qualityLevel, true);
             QualitySettings.vSyncCount = d.vsync ? 1 : 0;
             Application.targetFrameRate = d.vsync ? -1 : d.targetFps;
+            if (Application.isMobilePlatform)
+            {
+                // Phones ignore vSyncCount, and targetFrameRate -1 means 30 FPS there. Ask for a real frame rate.
+                QualitySettings.vSyncCount = 0;
+                Application.targetFrameRate = Mathf.Clamp(d.targetFps, 30, 120);
+                Screen.sleepTimeout = SleepTimeout.NeverSleep; // don't dim/lock the screen mid-game
+            }
             QualitySettings.shadows = d.shadowQuality == 0 ? ShadowQuality.Disable : d.shadowQuality == 1 ? ShadowQuality.HardOnly : ShadowQuality.All;
             QualitySettings.shadowDistance = d.shadowDistance;
             QualitySettings.antiAliasing = d.antiAliasing == 0 ? 0 : d.antiAliasing == 1 ? 2 : d.antiAliasing == 2 ? 4 : 8;

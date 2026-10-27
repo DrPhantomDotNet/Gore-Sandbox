@@ -11,7 +11,7 @@ namespace SolarEclipse
     [DefaultExecutionOrder(-500)]
     public sealed class MobileControls : MonoBehaviour
     {
-        enum Kind { Fire, Aim, Jump, Crouch, Sprint, Reload, Use, Kick, Spawn, Rotate, Mode, Inspect, Menu, Noclip, Closer, Further, Weapon, Chat, SlowMo, Photo }
+        enum Kind { Fire, Fire2, Aim, Jump, Crouch, Sprint, Reload, Use, Kick, Spawn, Rotate, Mode, Inspect, Menu, Noclip, Closer, Further, Weapon, Chat, SlowMo, Photo }
 
         sealed class Button
         {
@@ -29,7 +29,10 @@ namespace SolarEclipse
         Vector2 stickOrigin, stickPos;
         int stickFinger = int.MinValue, lookFinger = int.MinValue;
         Vector2 lastLook;
+        readonly Dictionary<int, Vector2> fireDrag = new Dictionary<int, Vector2>(); // fire fingers also aim when dragged
+        Weapon lastWeapon;
         static MobileControls I;
+        const float MaxFingerStep = 140f; // virtual units per frame; bigger jumps are glitches (finger lifted/re-landed)
 
         public static void Create(Transform parent)
         {
@@ -44,7 +47,7 @@ namespace SolarEclipse
 
         void Awake()
         {
-            Add(Kind.Fire, "FIRE", "crosshair"); Add(Kind.Aim, "AIM", "eye"); Add(Kind.Jump, "JUMP", "arrow_up"); Add(Kind.Crouch, "CROUCH", "arrow_down", true);
+            Add(Kind.Fire, "FIRE", "crosshair"); Add(Kind.Fire2, "FIRE", "crosshair"); Add(Kind.Aim, "AIM", "eye", true); Add(Kind.Jump, "JUMP", "arrow_up"); Add(Kind.Crouch, "CROUCH", "arrow_down", true);
             Add(Kind.Sprint, "SPRINT", "run", true); Add(Kind.Reload, "RELOAD", "refresh"); Add(Kind.Use, "USE", "hand"); Add(Kind.Kick, "KICK", "boot");
             Add(Kind.Spawn, "SPAWN", "plus"); Add(Kind.Rotate, "ROTATE", "refresh"); Add(Kind.Mode, "MODE", "list"); Add(Kind.Inspect, "INSPECT", "search");
             Add(Kind.Menu, "MENU", "menu"); Add(Kind.Noclip, "NOCLIP", "ghost"); Add(Kind.Closer, "PULL", "minus"); Add(Kind.Further, "PUSH", "plus"); Add(Kind.Weapon, "NEXT", "arrow_right"); Add(Kind.Chat, "CHAT", "list"); Add(Kind.SlowMo, "SLOW-MO", "clock"); Add(Kind.Photo, "PHOTO", "camera");
@@ -58,13 +61,23 @@ namespace SolarEclipse
             var cur = PlayerController.Instance != null && PlayerController.Instance.Inventory != null ? PlayerController.Instance.Inventory.Current : null;
             bool spawnGun = cur is SpawnGun;
             bool holding = spawnGun && ((SpawnGun)cur).Holding;
+            bool aiming = Get(Kind.Aim).On || Get(Kind.Aim).Held;
+            float fireSize = s * (aiming ? 1.95f : 1.6f); // bigger while aiming so it's easy to hit
             foreach (var b in buttons)
             {
                 b.Visible = true;
                 switch (b.Kind)
                 {
-                    case Kind.Fire: b.Rect = new Rect(W - s * 1.6f - 40, H - s * 1.6f - 60, s * 1.6f, s * 1.6f); break;
-                    case Kind.Aim: b.Rect = new Rect(W - s * 1.6f - 40 - s - g, H - s - 60, s, s); break;
+                    case Kind.Fire: b.Rect = new Rect(W - fireSize - 40, H - fireSize - 60, fireSize, fireSize); break;
+                    case Kind.Fire2:
+                        b.Rect = new Rect(40, H - 340 - s - g - s * 1.25f, s * 1.25f, s * 1.25f);
+                        b.Visible = Settings.Data.touchLeftFire && cur is Firearm;
+                        break;
+                    case Kind.Aim:
+                        b.Rect = new Rect(W - s * 1.6f - 40 - s - g, H - s - 60, s, s);
+                        b.Toggle = !Settings.Data.touchAimHold;
+                        b.Label = aiming ? "AIMING" : "AIM";
+                        break;
                     case Kind.Jump: b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - s - g, s, s); break;
                     case Kind.Reload: b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : "RELOAD"; break;
                     case Kind.Crouch: b.Rect = new Rect(W - s * 1.6f - 40 - (s + g) * 2, H - s - 60, s, s); break;
@@ -85,6 +98,23 @@ namespace SolarEclipse
                     case Kind.Photo: b.Rect = new Rect(70 + (s * 0.9f + g) * 4, 120, s * 0.9f, s * 0.6f); break;
                 }
             }
+            ApplySafeArea(buttons);
+        }
+
+        /// <summary>Keep buttons out of notches / camera holes / rounded corners (Screen.safeArea).</summary>
+        static void ApplySafeArea(List<Button> list)
+        {
+            var sa = Screen.safeArea;
+            if (sa.width <= 0 || sa.height <= 0) return;
+            float l = sa.xMin / UI.Scale, r = (Screen.width - sa.xMax) / UI.Scale, t = (Screen.height - sa.yMax) / UI.Scale, b = sa.yMin / UI.Scale;
+            if (l + r + t + b < 1f) return;
+            foreach (var btn in list)
+            {
+                var rc = btn.Rect;
+                rc.x += rc.center.x < UI.VW * 0.5f ? l : -r;
+                rc.y += rc.center.y < UI.VH * 0.5f ? t : -b;
+                btn.Rect = rc;
+            }
         }
 
         static Vector2 ToVirtual(Vector2 screen) => new Vector2(screen.x / UI.Scale, (Screen.height - screen.y) / UI.Scale);
@@ -92,6 +122,8 @@ namespace SolarEclipse
         void Update()
         {
             if (!Active) { ReleaseAll(); return; }
+            var curWeapon = PlayerController.Instance.Inventory != null ? PlayerController.Instance.Inventory.Current : null;
+            if (curWeapon != lastWeapon) { lastWeapon = curWeapon; var ab = Get(Kind.Aim); ab.On = false; ab.Held = false; } // new weapon starts un-aimed
             Layout();
             foreach (var b in buttons) b.Pressed = false;
 
@@ -116,6 +148,7 @@ namespace SolarEclipse
                     if (hit != null)
                     {
                         owners[id] = hit;
+                        if (hit.Kind == Kind.Fire || hit.Kind == Kind.Fire2) fireDrag[id] = v;
                         hit.Pressed = true;
                         if (hit.Toggle) hit.On = !hit.On; else hit.Held = true;
                         AudioManager.Ui("ui_click", 0.25f);
@@ -128,29 +161,44 @@ namespace SolarEclipse
                 if (phase == TouchPhase.Ended || phase == TouchPhase.Canceled)
                 {
                     if (owner is Button b) b.Held = false;
+                    fireDrag.Remove(id);
                     if (id == stickFinger) stickFinger = int.MinValue;
                     if (id == lookFinger) lookFinger = int.MinValue;
                     owners.Remove(id);
                     continue;
                 }
-                if (id == stickFinger) stickPos = v;
-                if (id == lookFinger) { look += (v - lastLook); lastLook = v; }
-                // Fire button doubles as a look pad (drag while shooting).
-                if (owner is Button fb && fb.Kind == Kind.Fire && phase == TouchPhase.Moved)
+                if (id == stickFinger)
                 {
-                    if (fb.Rect.Contains(v)) { } // stays held
+                    stickPos = v;
+                    // Floating stick: if the thumb drifts past the edge, the stick follows it instead of getting stuck.
+                    var off = stickPos - stickOrigin;
+                    if (off.magnitude > 110f) stickOrigin = stickPos - off.normalized * 110f;
+                }
+                if (id == lookFinger) { look += Vector2.ClampMagnitude(v - lastLook, MaxFingerStep); lastLook = v; }
+                // Fire buttons double as a look pad: drag while shooting to adjust your aim.
+                if (fireDrag.TryGetValue(id, out var fl))
+                {
+                    look += Vector2.ClampMagnitude(v - fl, MaxFingerStep);
+                    fireDrag[id] = v;
                 }
             }
 
             // Write into PlayerInput.
             var stick = stickFinger != int.MinValue ? Vector2.ClampMagnitude((stickPos - stickOrigin) / 90f, 1f) : Vector2.zero;
+            // Small dead zone so a resting thumb doesn't creep, rescaled so full tilt is still full speed.
+            float mag = stick.magnitude;
+            stick = mag < 0.12f ? Vector2.zero : stick * ((mag - 0.12f) / 0.88f / mag);
+            bool aim = Get(Kind.Aim).On || Get(Kind.Aim).Held;
+            bool firing = Get(Kind.Fire).Held || Get(Kind.Fire2).Held;
             PlayerInput.TouchMove = new Vector2(stick.x, -stick.y);
-            PlayerInput.TouchLook = new Vector2(look.x, -look.y) * 0.12f;
-            PlayerInput.TouchFire = Get(Kind.Fire).Held;
-            PlayerInput.TouchAim = Get(Kind.Aim).Held;
+            // Slower, steadier look while aiming down sights.
+            PlayerInput.TouchLook = new Vector2(look.x, -look.y) * 0.12f * (aim ? 0.55f : 1f);
+            PlayerInput.TouchFire = firing;
+            PlayerInput.TouchAim = aim;
             PlayerInput.TouchJump = Get(Kind.Jump).Held;
             PlayerInput.TouchCrouch = Get(Kind.Crouch).On;
-            PlayerInput.TouchSprint = Get(Kind.Sprint).On || stick.magnitude > 0.95f && stick.y < -0.7f;
+            // Auto-sprint (stick pushed all the way forward) never while aiming or shooting.
+            PlayerInput.TouchSprint = !aim && !firing && (Get(Kind.Sprint).On || stick.magnitude > 0.95f && stick.y < -0.7f);
             PlayerInput.TouchRotate = Get(Kind.Rotate).Held;
             var cur = PlayerController.Instance.Inventory.Current;
             if (Get(Kind.Reload).Pressed)
@@ -179,8 +227,10 @@ namespace SolarEclipse
         {
             if (owners.Count == 0 && stickFinger == int.MinValue) return;
             owners.Clear();
+            fireDrag.Clear();
             stickFinger = lookFinger = int.MinValue;
             foreach (var b in buttons) { b.Held = false; b.Pressed = false; }
+            Get(Kind.Aim).On = false;
             PlayerInput.TouchMove = Vector2.zero;
             PlayerInput.TouchFire = PlayerInput.TouchAim = PlayerInput.TouchJump = PlayerInput.TouchRotate = false;
         }

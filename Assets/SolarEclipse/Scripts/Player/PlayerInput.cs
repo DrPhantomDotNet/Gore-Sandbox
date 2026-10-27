@@ -44,7 +44,11 @@ namespace SolarEclipse
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) x -= 1;
             f.Move = Vector2.ClampMagnitude(new Vector2(x, y) + TouchMove, 1f);
 
-            float mx = Input.GetAxisRaw("Mouse X"), my = Input.GetAxisRaw("Mouse Y");
+            // Phones/tablets: Unity turns the first finger into a pretend mouse, so the finger on the move stick
+            // would also turn the camera (and "hold the fire button"). With touch controls, the mouse is ignored
+            // here; MobileControls turns fingers into input instead.
+            bool useMouse = !Settings.TouchControlsActive;
+            float mx = useMouse ? Input.GetAxisRaw("Mouse X") : 0f, my = useMouse ? Input.GetAxisRaw("Mouse Y") : 0f;
             f.Look = new Vector2(mx, my * (d.invertY ? -1f : 1f)) * d.mouseSensitivity + TouchLook * d.touchSensitivity;
 
             f.Jump = Input.GetKeyDown(KeyCode.Space) || (TouchJump && !prevTouchJump);
@@ -56,13 +60,16 @@ namespace SolarEclipse
             if (d.crouchToggle && (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.C))) crouchToggled = !crouchToggled;
             f.Crouch = (d.crouchToggle ? crouchToggled : crouchKey) || TouchCrouch;
 
-            f.Fire = Input.GetMouseButtonDown(0) || (TouchFire && !prevTouchFire);
-            f.FireHeld = Input.GetMouseButton(0) || TouchFire;
-            f.FireUp = Input.GetMouseButtonUp(0) || (!TouchFire && prevTouchFire);
-            f.AimPressed = Input.GetMouseButtonDown(1) || (TouchAim && !prevTouchAim);
-            if (d.aimToggle && f.AimPressed) aimToggled = !aimToggled;
-            f.Aim = d.aimToggle ? aimToggled : (Input.GetMouseButton(1) || TouchAim);
-            f.Middle = Input.GetMouseButtonDown(2) || TouchMiddle;
+            f.Fire = (useMouse && Input.GetMouseButtonDown(0)) || (TouchFire && !prevTouchFire);
+            f.FireHeld = (useMouse && Input.GetMouseButton(0)) || TouchFire;
+            f.FireUp = (useMouse && Input.GetMouseButtonUp(0)) || (!TouchFire && prevTouchFire);
+            bool mouseAimDown = useMouse && Input.GetMouseButtonDown(1);
+            if (d.aimToggle && mouseAimDown) aimToggled = !aimToggled;
+            bool mouseAim = useMouse && (d.aimToggle ? aimToggled : Input.GetMouseButton(1));
+            f.AimPressed = mouseAimDown || (TouchAim && !prevTouchAim);
+            f.Aim = mouseAim || TouchAim; // touch: MobileControls already handles hold/toggle
+            if (TouchAim) f.Sprint = false; // aiming always wins over (auto-)sprint, so you can aim while walking
+            f.Middle = (useMouse && Input.GetMouseButtonDown(2)) || TouchMiddle;
             f.Reload = Input.GetKeyDown(KeyCode.R) || TouchReload;
             f.ReloadHeld = Input.GetKey(KeyCode.R) || TouchRotate;
             f.Inspect = Input.GetKeyDown(KeyCode.Q) || TouchInspect;
@@ -76,7 +83,7 @@ namespace SolarEclipse
             f.ScaleDown = Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus);
             for (int i = 0; i < 9; i++) if (Input.GetKeyDown(KeyCode.Alpha1 + i)) f.Slot = i;
             if (TouchSlot >= 0) f.Slot = TouchSlot;
-            f.Scroll = Input.mouseScrollDelta.y + TouchScroll;
+            f.Scroll = (useMouse ? Input.mouseScrollDelta.y : 0f) + TouchScroll;
             Frame = f;
             ResetTouchEdges();
         }
