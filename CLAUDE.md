@@ -16,7 +16,8 @@ Whenever a change is made, release it — don't leave it unpushed:
 3. **Compile-check** before pushing. There is no Unity here: compile the scripts against Unity reference DLLs with
    `dotnet build` (netstandard2.1). Reference only the Unity modules enabled in `Packages/manifest.json` (plus
    CoreModule, SharedInternalsModule, TextRenderingModule, InputLegacyModule). A module missing there is a compile
-   error in Unity. If new code needs another module, add it to `Packages/manifest.json`.
+   error in Unity. If new code needs another module, add it to `Packages/manifest.json`. Also compile once with
+   `UNITY_ANDROID` defined instead of `UNITY_STANDALONE`: `#if UNITY_ANDROID` code only exists in phone builds.
 4. **Push to `main`.** `.github/workflows/build.yml` builds the Windows player with GameCI, then publishes the GitHub
    release `v<Version>` with `GoreSandbox-Windows.zip`. Players' copies (v0.3.1+) download and install it on startup.
    The repository must stay public. Secrets `UNITY_LICENSE`, `UNITY_EMAIL` and `UNITY_PASSWORD` are set by the owner.
