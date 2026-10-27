@@ -27,6 +27,8 @@ Whenever a change is made, release it — don't leave it unpushed:
    Android signing comes from secrets `ANDROID_KEYSTORE_BASE64` + `ANDROID_KEYSTORE_PASS` (not set yet, so APKs are
    debug-signed and updating means uninstalling first). Test risky build changes on another branch with
    `gh workflow run build.yml --ref <branch> -f platforms=android` (only `main` publishes).
+   The publish job also uploads to itch.io with butler when secret `BUTLER_API_KEY` and `ITCH_GAME`
+   ("user/game", variable or secret) exist. Community links live in `GameInfo` (`DiscordUrl`, `ItchUrl`, `EarlyAccess`).
 5. After pushing, watch the Actions run (`gh run list -R DrPhantomDotNet/Gore-Sandbox`) and report the result.
 
 ## Conventions

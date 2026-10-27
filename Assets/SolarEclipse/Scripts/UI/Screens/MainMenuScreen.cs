@@ -96,8 +96,15 @@ namespace SolarEclipse
             tx -= 300; if (UI.Button(new Rect(tx, 26, 290, 54), "STATS & ACHIEVEMENTS", ButtonKind.Ghost, IconFactory.Get("trophy"), 20)) UIRoot.Push(new StatsScreen());
             tx -= 210; if (UI.Button(new Rect(tx, 26, 200, 54), "CHANGELOG", ButtonKind.Ghost, IconFactory.Get("book"), 20)) UIRoot.Push(new ChangelogScreen());
             tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "HOW TO", ButtonKind.Ghost, IconFactory.Get("hint"), 20)) UIRoot.Push(new HelpScreen());
+            if (!string.IsNullOrEmpty(GameInfo.DiscordUrl)) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "DISCORD", ButtonKind.Ghost, IconFactory.Get("chat"), 20, true, "Join the community: feedback, bug reports, updates")) Application.OpenURL(GameInfo.DiscordUrl); }
+            if (!string.IsNullOrEmpty(GameInfo.ItchUrl)) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "ITCH.IO", ButtonKind.Ghost, IconFactory.Get("globe"), 20, true, "The game's itch.io page")) Application.OpenURL(GameInfo.ItchUrl); }
 
             // Bottom-left: version + access, exactly as specified
+            if (GameInfo.EarlyAccess)
+            {
+                UI.Rounded(new Rect(24, H - 146, 220, 36), UI.Accent.WithAlpha(0.85f), true);
+                UI.Label(new Rect(24, H - 146, 220, 36), "EARLY ACCESS", 18, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+            }
             UI.Rounded(new Rect(24, H - 104, 270, 80), new Color(0, 0, 0, 0.45f));
             UI.Label(new Rect(42, H - 100, 260, 36), "Version: " + GameInfo.Version, 24, UI.TextColor, TextAnchor.MiddleLeft, FontStyle.Bold);
             UI.Label(new Rect(42, H - 64, 260, 36), "Access: " + GameInfo.Access, 24, UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Bold);

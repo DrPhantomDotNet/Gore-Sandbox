@@ -191,3 +191,23 @@ jobs:
           else
             gh release create "$tag" $files --title "Gore Sandbox $tag" --notes-file release_notes.txt --latest
           fi
+
+      # itch.io: uploads the same files to your itch page with butler (itch's official upload tool).
+      # Needs secret BUTLER_API_KEY (itch.io > Settings > API keys) and ITCH_GAME = "your-itch-name/your-game"
+      # (as a repository variable or secret). Skipped quietly until both are set.
+      - name: Upload to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+          ITCH_GAME: ${{ vars.ITCH_GAME || secrets.ITCH_GAME }}
+        run: |
+          if [ -z "$BUTLER_API_KEY" ] || [ -z "$ITCH_GAME" ]; then
+            echo "::notice::itch.io upload skipped: add the BUTLER_API_KEY secret and ITCH_GAME (e.g. yourname/gore-sandbox)."
+            exit 0
+          fi
+          version=$(grep -oP 'Version = "\K[^"]+' Assets/SolarEclipse/Scripts/Core/GameInfo.cs)
+          curl -fsSL -o "$RUNNER_TEMP/butler.zip" https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -qo "$RUNNER_TEMP/butler.zip" -d "$RUNNER_TEMP/butler" && chmod +x "$RUNNER_TEMP/butler/butler"
+          B="$RUNNER_TEMP/butler/butler"
+          if [ -f GoreSandbox-Android.apk ]; then "$B" push GoreSandbox-Android.apk "$ITCH_GAME:android" --userversion "$version"; fi
+          if [ -d artifacts/GoreSandbox-Windows ]; then "$B" push artifacts/GoreSandbox-Windows "$ITCH_GAME:windows" --userversion "$version"; fi
+

@@ -5,7 +5,13 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.6.0 — THE PLAYER UPDATE</size></b>
+@"<b><size=30>v0.6.1 — EARLY ACCESS</size></b>
+<color=#ff9a40>Gore Sandbox is now in Early Access!</color>
+• Join the community: new DISCORD button on the main menu (feedback, bug reports, update news)
+• EARLY ACCESS badge on the main menu: expect bugs and frequent updates, and please report anything weird
+• Updates are now also published to the game's itch.io page
+
+<b><size=30>v0.6.0 — THE PLAYER UPDATE</size></b>
 <color=#ff9a40>Smoother, steadier phone controls. Access: Player.</color>
 <b>MOBILE CONTROLS</b>
 • Fixed: walking with the move stick no longer turns the camera (and no longer shoots by itself)
