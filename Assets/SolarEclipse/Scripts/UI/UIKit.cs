@@ -36,6 +36,7 @@ namespace SolarEclipse
         static Vector2 dragStart;
         static float dragStartScroll;
         static bool dragging;
+        static bool releasedFromDrag; // the finger that just lifted was scrolling, so it is not a tap
         static float lastScale = -1;
 
         public static Font Font => font ??= LoadFont(new[] { "Segoe UI", "Roboto", "Helvetica Neue", "Arial" });
@@ -150,7 +151,8 @@ namespace SolarEclipse
             GUI.matrix = Matrix4x4.identity;
             if (Event.current.type == EventType.Repaint) { prevHoverId = hoverId; hoverId = -1; tooltip = null; }
             var e = Event.current;
-            if (e.type == EventType.MouseUp || e.rawType == EventType.MouseUp) { dragId = null; dragging = false; }
+            if (e.type == EventType.MouseDown || e.rawType == EventType.MouseDown) releasedFromDrag = false;
+            if (e.type == EventType.MouseUp || e.rawType == EventType.MouseUp) { releasedFromDrag = dragging; dragId = null; dragging = false; }
             EnsureStyles();
         }
 
@@ -364,13 +366,13 @@ namespace SolarEclipse
             Label(textRect, text, size, fg, align, FontStyle.Bold);
 
             if (!enabled) return false;
-            bool clicked = GUI.Button(R(v), GUIContent.none, invisible) && !dragging;
+            bool clicked = GUI.Button(R(v), GUIContent.none, invisible) && !dragging && !releasedFromDrag;
             if (clicked) AudioManager.Ui(kind == ButtonKind.Danger ? "ui_back" : "ui_click", 0.8f);
             return clicked;
         }
 
         /// <summary>Invisible click area (for custom-drawn widgets).</summary>
-        public static bool Hit(Rect v) => GUI.Button(R(v), GUIContent.none, invisible) && !dragging;
+        public static bool Hit(Rect v) => GUI.Button(R(v), GUIContent.none, invisible) && !dragging && !releasedFromDrag;
 
         /// <summary>On/off switch row. Returns true when the value changed.</summary>
         public static bool Toggle(Rect v, string label, ref bool value, string tip = null)
@@ -387,7 +389,7 @@ namespace SolarEclipse
             if (Repaint) { k = Mathf.MoveTowards(k, value ? 1 : 0, Time.unscaledDeltaTime * 8f); anim[kid] = k; }
             Rounded(sw, Color.Lerp(new Color(0.25f, 0.25f, 0.3f), Accent, k), true);
             Tex(new Rect(sw.x + 3 + k * 34, sw.y + 3, 24, 24), TextureFactory.Circle, Color.white);
-            if (GUI.Button(R(v), GUIContent.none, invisible) && !dragging)
+            if (GUI.Button(R(v), GUIContent.none, invisible) && !dragging && !releasedFromDrag)
             {
                 value = !value;
                 AudioManager.Ui(value ? "ui_toggle_on" : "ui_toggle_off", 0.8f);
