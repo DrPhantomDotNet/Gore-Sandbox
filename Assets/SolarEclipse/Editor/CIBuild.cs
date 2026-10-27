@@ -21,7 +21,13 @@ namespace SolarEclipse.EditorTools
                 var target = EditorUserBuildSettings.activeBuildTarget;
                 var targetArg = Arg("-buildTarget");
                 if (!string.IsNullOrEmpty(targetArg) && Enum.TryParse(targetArg, true, out BuildTarget parsed)) target = parsed;
+                if (Arg("-customBuildPath") == null && target == BuildTarget.Android) path = "build/Android/GoreSandbox.apk";
                 if (target == BuildTarget.StandaloneWindows64 && !path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) path += ".exe";
+                if (target == BuildTarget.Android)
+                {
+                    if (!path.EndsWith(".apk", StringComparison.OrdinalIgnoreCase)) path += ".apk";
+                    ConfigureAndroid();
+                }
                 Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
 
                 Debug.Log($"[CIBuild] Building {target} → {path}");
@@ -40,6 +46,55 @@ namespace SolarEclipse.EditorTools
             {
                 Debug.LogException(e);
                 EditorApplication.Exit(1);
+            }
+        }
+
+        /// <summary>
+        /// Android: a plain APK (installable by tapping it), OpenGL ES 3 first, IL2CPP + ARM64, signed with the project's
+        /// sideload key so every build can install over the previous one, and a version code that grows with the version.
+        /// </summary>
+        static void ConfigureAndroid()
+        {
+            EditorUserBuildSettings.buildAppBundle = false;
+            PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.Android, false);
+            PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3, UnityEngine.Rendering.GraphicsDeviceType.Vulkan });
+#if UNITY_6000_0_OR_NEWER
+            var android = UnityEditor.Build.NamedBuildTarget.Android;
+            PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetManagedStrippingLevel(android, ManagedStrippingLevel.Low);
+#else
+            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.SetManagedStrippingLevel(BuildTargetGroup.Android, ManagedStrippingLevel.Low);
+#endif
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+
+            // 0.5.2 -> 502, 1.2.3 -> 10203: Android only installs an update when this number is higher.
+            var parts = GameInfo.Version.Split('.');
+            int code = 0;
+            for (int i = 0; i < 3; i++) code = code * 100 + (i < parts.Length && int.TryParse(parts[i], out var n) ? n : 0);
+            PlayerSettings.Android.bundleVersionCode = Math.Max(1, code);
+
+            // Optional signing key from the private repository secrets ANDROID_KEYSTORE_BASE64 + ANDROID_KEYSTORE_PASS
+            // (never stored in the repo). With it, each new APK installs over the previous one.
+            string b64 = Environment.GetEnvironmentVariable("ANDROID_KEYSTORE_BASE64");
+            string pass = Environment.GetEnvironmentVariable("ANDROID_KEYSTORE_PASS");
+            string alias = Environment.GetEnvironmentVariable("ANDROID_KEYALIAS_NAME");
+            if (!string.IsNullOrEmpty(b64) && !string.IsNullOrEmpty(pass))
+            {
+                string keystore = Path.Combine(Path.GetTempPath(), "goresandbox-release.keystore");
+                File.WriteAllBytes(keystore, Convert.FromBase64String(b64.Trim()));
+                PlayerSettings.Android.useCustomKeystore = true;
+                PlayerSettings.Android.keystoreName = keystore;
+                PlayerSettings.Android.keystorePass = pass;
+                PlayerSettings.Android.keyaliasName = string.IsNullOrEmpty(alias) ? "goresandbox" : alias;
+                PlayerSettings.Android.keyaliasPass = pass;
+                Debug.Log("[CIBuild] Signing the APK with the release key from the repository secrets.");
+            }
+            else
+            {
+                PlayerSettings.Android.useCustomKeystore = false;
+                Debug.LogWarning("[CIBuild] No signing key secret: the APK is debug-signed (uninstall the old one before installing a new build).");
             }
         }
 
