@@ -123,6 +123,10 @@ jobs:
           sudo chown -R "$(id -u)" build 2>/dev/null || true
           if [ ! -f "${{ matrix.check }}" ]; then
             [ "$status" -eq 0 ] && status=1
+          elif [ "$status" -ne 0 ] && grep -q "Build Finished, Result: Success" build.log; then
+            # Unity built the game; GameCI only complained afterwards (e.g. while handing the license seat back).
+            echo "::warning title=${{ matrix.name }}::Unity built the game successfully; ignoring GameCI's exit code $status after the build."
+            status=0
           fi
           if [ "$status" -ne 0 ]; then
             # Error summaries on the run page (GitHub masks secrets). The full log is in the build step.
