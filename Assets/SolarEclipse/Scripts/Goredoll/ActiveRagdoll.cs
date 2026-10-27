@@ -23,6 +23,9 @@ namespace SolarEclipse
         public bool WantsToCrawl;
         /// <summary>Zombie posture: arms reaching forward, head lolling, hunched torso.</summary>
         public bool ZombieArms;
+        /// <summary>Armed Goredolls (ArmedBrain): 0..1 blend into a gun-aiming arm pose, pitch in degrees (+ = up).</summary>
+        public float AimWeight, AimPitch;
+        public bool AimRifle;
 
         Goredoll doll;
         float stagger, balance = 1f, downUntil, getUp, phase, airborne, deathTime = -1f, spasmSeed;
@@ -518,6 +521,9 @@ namespace SolarEclipse
                 targets[(int)PartType.Abdomen] += new Vector3(7f + lunge * 10f, 0, 0);
             }
 
+            if (AimWeight > 0.01f && (mode == PoseMode.Idle || mode == PoseMode.Walk || mode == PoseMode.Run || mode == PoseMode.LookAround || mode == PoseMode.Guard))
+                AimPose(Mathf.Clamp01(AimWeight), Mathf.Clamp(AimPitch, -50f, 50f));
+
             // Head and neck look at the target while upright and conscious.
             if (LookTarget.HasValue && doll.Vitals.Conscious && (State == RagdollState.Standing || mode == PoseMode.Writhe))
             {
@@ -527,6 +533,28 @@ namespace SolarEclipse
                 float pitch = Mathf.Clamp(-Mathf.Atan2(local.y - 0.4f, new Vector2(local.x, local.z).magnitude) * Mathf.Rad2Deg, -30f, 35f);
                 targets[(int)PartType.Neck] += new Vector3(pitch * 0.4f, yaw * 0.4f, 0);
                 targets[(int)PartType.Head] += new Vector3(pitch * 0.6f, yaw * 0.6f, 0);
+            }
+        }
+
+        /// <summary>Gun held by the right hand along the hand's -Y axis: pistol = arms out straight, rifle = hip/chest hold.</summary>
+        void AimPose(float w, float pitch)
+        {
+            void Blend(PartType t, float x, float y, float z) => targets[(int)t] = Vector3.Lerp(targets[(int)t], new Vector3(x, y, z), w);
+            if (AimRifle)
+            {
+                Blend(PartType.UpperArmR, -18f - pitch * 0.3f, 0, -6f);
+                Blend(PartType.ForearmR, -72f - pitch * 0.7f, 0, 0);
+                Blend(PartType.HandR, 0f, 0, 0);
+                Blend(PartType.UpperArmL, -55f - pitch * 0.5f, 0, 22f);
+                Blend(PartType.ForearmL, -55f, 0, 0);
+            }
+            else
+            {
+                Blend(PartType.UpperArmR, -88f - pitch, 0, -8f);
+                Blend(PartType.ForearmR, -4f, 0, 0);
+                Blend(PartType.HandR, 0f, 0, 0);
+                Blend(PartType.UpperArmL, -78f - pitch, 0, 20f);
+                Blend(PartType.ForearmL, -14f, 0, 0);
             }
         }
 

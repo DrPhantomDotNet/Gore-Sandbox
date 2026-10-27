@@ -35,6 +35,7 @@ namespace SolarEclipse
                 if (Slots[i] != null && Slots[i].Def.Id == id)
                 {
                     if (Slots[i] is Firearm fa) fa.Refill();
+                    else if (Slots[i] is IRefillable rf) rf.Refill();
                     if (equip) Select(i);
                     return i;
                 }
@@ -90,9 +91,12 @@ namespace SolarEclipse
             if (CurrentIndex < 0) Select(0, true);
         }
 
+        /// <summary>The 9-slot "Full Arsenal". There are more weapons than slots: the rest come from the spawn menu.</summary>
+        public static readonly string[] Arsenal = { "fists", "spawngun", "glock", "shotgun", "ar15", "sniper", "rpg", "frag", "katana" };
+
         public void GiveAll()
         {
-            foreach (var d in WeaponCatalog.All) if (!Has(d.Id)) Give(d.Id, -1, false);
+            foreach (var id in Arsenal) if (WeaponCatalog.Get(id) != null && !Has(id)) Give(id, -1, false);
         }
 
         public void Select(int index, bool instant = false)
@@ -114,7 +118,7 @@ namespace SolarEclipse
             }
             LastSwitchTime = Time.time;
             AudioManager.Ui("ui_tab", 0.25f);
-            string clip = Slots[index].Def.Kind == WeaponKind.Knife ? "equip_knife" : Slots[index].Def.Kind == WeaponKind.Fists ? "cloth" : "equip_gun";
+            string clip = Slots[index].Def.Kind == WeaponKind.Knife || Slots[index].Def.Kind == WeaponKind.Melee ? "equip_knife" : Slots[index].Def.Kind == WeaponKind.Fists ? "cloth" : "equip_gun";
             AudioManager.Play(clip, player.EyePosition, 0.5f, Random.Range(0.95f, 1.05f), 0f);
         }
 

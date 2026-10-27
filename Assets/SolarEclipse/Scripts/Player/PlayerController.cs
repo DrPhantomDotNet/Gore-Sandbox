@@ -145,7 +145,7 @@ namespace SolarEclipse
         {
             PlayerInput.Update();
             var f = PlayerInput.Frame;
-            float dt = Time.deltaTime;
+            float dt = Time.deltaTime * BulletTime.PlayerDtScale; // bullet time: the player stays full speed
             CameraFX.ListenerPosition = EyePosition;
 
             if (Health.Dead)
@@ -197,7 +197,8 @@ namespace SolarEclipse
             var wish = (fwd * f.Move.y + right * f.Move.x);
             bool aiming = Inventory.Current != null && Inventory.Current.IsAiming;
             bool sprint = f.Sprint && f.Move.y > 0.1f && !crouching && !aiming;
-            float speed = (crouching ? 2.2f : sprint ? 7.2f : aiming ? 3f : 4.4f) * Rules.PlayerSpeedMultiplier;
+            float speed = (crouching ? 2.2f : sprint ? 7.2f : aiming ? 3f : 4.4f) * Rules.PlayerSpeedMultiplier
+                          * (Inventory.Current != null ? Inventory.Current.MoveSpeedMul : 1f);
             var target = wish * speed;
             float accel = Grounded ? 55f : 9f;
             var horiz = new Vector3(velocity.x, 0, velocity.z);

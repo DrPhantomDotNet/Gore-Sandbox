@@ -19,6 +19,9 @@ namespace SolarEclipse
         public float mouseSensitivity = 2f, adsSensitivity = 0.65f, touchSensitivity = 1f, touchButtonScale = 1f, touchOpacity = 0.55f;
         public bool invertY = false, aimToggle = false, sprintToggle = false, crouchToggle = false, autoReload = true;
         public int touchMode = 0; // 0 auto, 1 always, 2 never
+        // Mobile dev toys (Dev/MobileDev.cs)
+        public bool gyroAim = false, gyroInvertX = false, gyroInvertY = false, shakeToRagdoll = false;
+        public float gyroSensitivity = 1f;
         // Gameplay / gore
         public int goreLevel = 4; // 0 none, 1 minimum, 2 low, 3 medium, 4 high, 5 unreal
         public int goreScale = 2;  // 1 = old 4-step scale (migrated on load), 2 = current 6-step scale
@@ -75,10 +78,14 @@ namespace SolarEclipse
         public static readonly string[] CrosshairColors = { "White", "Green", "Yellow", "Cyan", "Red", "Magenta" };
         static readonly Color[] CrosshairColorValues = { Color.white, new Color(0.3f, 1f, 0.3f), new Color(1f, 0.9f, 0.2f), new Color(0.2f, 1f, 1f), new Color(1f, 0.25f, 0.25f), new Color(1f, 0.3f, 1f) };
 
+        /// <summary>Session-only blood colour override (dev panel "neon blood"); null = use the setting.</summary>
+        public static Func<Color> BloodColorOverride;
+
         public static Color BloodColor
         {
             get
             {
+                if (BloodColorOverride != null) return BloodColorOverride();
                 int i = Mathf.Clamp(Data.bloodColor, 0, BloodColors.Length - 1);
                 if (i == BloodColors.Length - 1) return Color.HSVToRGB(Mathf.Repeat(Time.time * 0.15f, 1f), 0.9f, 0.7f);
                 return BloodColors[i];

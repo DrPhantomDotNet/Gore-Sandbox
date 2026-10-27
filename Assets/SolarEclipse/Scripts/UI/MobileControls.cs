@@ -11,7 +11,7 @@ namespace SolarEclipse
     [DefaultExecutionOrder(-500)]
     public sealed class MobileControls : MonoBehaviour
     {
-        enum Kind { Fire, Aim, Jump, Crouch, Sprint, Reload, Use, Kick, Spawn, Rotate, Mode, Inspect, Menu, Noclip, Closer, Further, Weapon, Chat }
+        enum Kind { Fire, Aim, Jump, Crouch, Sprint, Reload, Use, Kick, Spawn, Rotate, Mode, Inspect, Menu, Noclip, Closer, Further, Weapon, Chat, SlowMo, Photo }
 
         sealed class Button
         {
@@ -47,7 +47,7 @@ namespace SolarEclipse
             Add(Kind.Fire, "FIRE", "crosshair"); Add(Kind.Aim, "AIM", "eye"); Add(Kind.Jump, "JUMP", "arrow_up"); Add(Kind.Crouch, "CROUCH", "arrow_down", true);
             Add(Kind.Sprint, "SPRINT", "run", true); Add(Kind.Reload, "RELOAD", "refresh"); Add(Kind.Use, "USE", "hand"); Add(Kind.Kick, "KICK", "boot");
             Add(Kind.Spawn, "SPAWN", "plus"); Add(Kind.Rotate, "ROTATE", "refresh"); Add(Kind.Mode, "MODE", "list"); Add(Kind.Inspect, "INSPECT", "search");
-            Add(Kind.Menu, "MENU", "menu"); Add(Kind.Noclip, "NOCLIP", "ghost"); Add(Kind.Closer, "PULL", "minus"); Add(Kind.Further, "PUSH", "plus"); Add(Kind.Weapon, "NEXT", "arrow_right"); Add(Kind.Chat, "CHAT", "list");
+            Add(Kind.Menu, "MENU", "menu"); Add(Kind.Noclip, "NOCLIP", "ghost"); Add(Kind.Closer, "PULL", "minus"); Add(Kind.Further, "PUSH", "plus"); Add(Kind.Weapon, "NEXT", "arrow_right"); Add(Kind.Chat, "CHAT", "list"); Add(Kind.SlowMo, "SLOW-MO", "clock"); Add(Kind.Photo, "PHOTO", "camera");
         }
 
         bool Active => Settings.TouchControlsActive && GameManager.I != null && GameManager.I.State == GameState.Playing && PlayerController.Instance != null && !UIRoot.AnyBlocking && !DevPanel.Open;
@@ -81,6 +81,8 @@ namespace SolarEclipse
                     case Kind.Menu: b.Rect = new Rect(30, 120, s * 0.9f, s * 0.6f); break;
                     case Kind.Noclip: b.Rect = new Rect(40 + s * 0.9f + g, 120, s * 0.9f, s * 0.6f); break;
                     case Kind.Chat: b.Rect = new Rect(50 + (s * 0.9f + g) * 2, 120, s * 0.9f, s * 0.6f); break;
+                    case Kind.SlowMo: b.Rect = new Rect(60 + (s * 0.9f + g) * 3, 120, s * 0.9f, s * 0.6f); b.Visible = !NetState.Active; break;
+                    case Kind.Photo: b.Rect = new Rect(70 + (s * 0.9f + g) * 4, 120, s * 0.9f, s * 0.6f); break;
                 }
             }
         }
@@ -166,6 +168,8 @@ namespace SolarEclipse
             if (Get(Kind.Noclip).Pressed) PlayerController.Instance.SetNoclip(!PlayerController.Instance.Noclip);
             if (Get(Kind.Menu).Pressed) GameManager.I.Back();
             if (Get(Kind.Chat).Pressed && !UIRoot.Contains<ChatScreen>()) UIRoot.Push(new ChatScreen());
+            if (Get(Kind.SlowMo).Pressed) BulletTime.Toggle();
+            if (Get(Kind.Photo).Pressed) PhotoMode.Toggle();
         }
 
         Button Get(Kind k) { foreach (var b in buttons) if (b.Kind == k) return b; return null; }

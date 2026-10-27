@@ -91,6 +91,7 @@ namespace SolarEclipse
             DrawDamageVignette(p, W, H);
             if (gm.HudHidden) { DrawDeath(p, W, H); return; }
 
+            p.Inventory?.Current?.DrawOverlay(W, H); // e.g. sniper scope
             DrawNameTags(p);
             if (NetState.Active) { DrawPlayerTags(p); DrawVoice(W); }
             if (Settings.Data.showChat || UIRoot.Contains<ChatScreen>()) DrawChat(H);

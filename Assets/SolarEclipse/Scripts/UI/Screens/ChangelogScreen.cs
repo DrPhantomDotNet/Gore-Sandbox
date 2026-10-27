@@ -5,7 +5,40 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.4.0 — THE HORDE UPDATE</size></b>
+@"<b><size=30>v0.5.0 — THE ARSENAL UPDATE</size></b>
+<color=#ff9a40>20 new things to play with, and a proper phone version.</color>
+<b>NEW GUNS</b>
+• Pump Shotgun: 10 pellets, pump action, shell-by-shell reload, huge knockback up close
+• Sniper Rifle: bolt action, real scope with 5x zoom and sway (hold breath with Sprint)
+• .357 Revolver: 6 heavy shots, cylinder and speedloader reload
+• Minigun: spins up, 300-round box, slows you down
+• Harpoon Gun: impales Goredolls and pins them to walls
+<b>EXPLOSIVES & MELEE</b>
+• Rocket Launcher with smoke trail and backblast
+• Frag Grenades: throw or toss underhand, hold to cook the fuse
+• C4: stick it to anything (even Goredolls) and detonate it all at once
+• Katana: fast slashing combos and an overhead cleave that cuts clean through
+• Sledgehammer: wind it up, then send Goredolls flying
+<b>SANDBOX TOOLS</b>
+• Rope Tool: tie anything together or hang Goredolls from the ceiling
+• Gravity Gun: pull, hold and launch props and Goredolls
+• Bullet Time (B or K): slow everything down to a quarter speed
+• Photo Mode (P): free camera, filters, FOV and tilt, saves photos
+<b>WORLD</b>
+• Weather: rain, thunderstorms with lightning, fog and snow (pick it in map select)
+• New map: Rooftops, skyscraper tops connected by planks and bridges, high above the city
+• Kill streaks: DOUBLE KILL, RAMPAGE, GODLIKE and more, with a banner and sound
+<b>GOREDOLLS</b>
+• Armed Goredolls: Gunman and Soldier carry guns and shoot back
+• Helmets and body armor that stop bullets with sparks, and break off
+• Goredoll Customizer: design your own Goredoll (skin, hair, clothes, height, glasses, armor, weapon) and spawn it
+<b>MOBILE</b>
+• Fixed broken and invisible text on phones, and bigger, readable UI on small screens
+• Android APK downloads with every update, and the game offers new versions on your phone
+• Mobile dev tools: open the dev panel without a keyboard, plus fun toys (gyro aim, shake to ragdoll, gravity, giant mode, neon blood and more)
+• Touch buttons for chat, bullet time and photo mode
+
+<b><size=30>v0.4.0 — THE HORDE UPDATE</size></b>
 <color=#ff9a40>Zombies, an endless arena and your own maps.</color>
 <b>ZOMBIES</b>
 • 5 zombie types in the spawn menu: Walker, Runner, Crawler, Brute and Screamer

@@ -180,7 +180,7 @@ namespace SolarEclipse
             R("strip", "Player", "Removes all weapons except fists and the Spawn Gun.", a => { for (int i = 2; i < Inventory.SlotCount; i++) P.Inventory.Remove(i); }, "");
             R("ammo", "Player", "Infinite ammo.", a => Flip(ref Rules.InfiniteAmmo, "Infinite ammo", a), "[on|off]");
             R("fast_reload", "Player", "Instant reloads.", a => Flip(ref Rules.NoReload, "Instant reload", a), "[on|off]");
-            R("refill", "Player", "Refills every gun.", a => { foreach (var w in P.Inventory.Slots) if (w is Firearm f) f.Refill(); }, "");
+            R("refill", "Player", "Refills every gun.", a => { foreach (var w in P.Inventory.Slots) if (w is Firearm f) f.Refill(); else if (w is IRefillable rf) rf.Refill(); }, "");
             R("weapons", "Player", "Lists weapons.", a => Log(string.Join("\n", WeaponCatalog.All.Select(w => w.Id + " — " + w.Name + ": " + w.Description))), "");
             foreach (var w in WeaponCatalog.All) { var id = w.Id; R("give_" + id, "Player", "Gives the " + w.Name + ".", a => P.Inventory.Give(id), ""); }
 

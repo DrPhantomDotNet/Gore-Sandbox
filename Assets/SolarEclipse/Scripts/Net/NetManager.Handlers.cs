@@ -33,6 +33,7 @@ namespace SolarEclipse
             {
                 case Msg.Welcome: OnWelcome(rd); break;
                 case Msg.CustomMap: OnCustomMap(rd); break;
+                case Msg.ThrowableFx: case Msg.C4Detonated: ClientExplosivesMsg(type, rd); break;
                 case Msg.PlayerList:
                 {
                     int n = rd.Byte();
@@ -299,6 +300,7 @@ namespace SolarEclipse
             var muzzle = p != null && p.Avatar != null ? p.Avatar.MuzzlePosition : origin;
             if (p != null && p.Avatar != null) p.Avatar.OnFire(def);
             AudioManager.Play(def.FireSound ?? "gun_glock", muzzle, 1f, Random.Range(0.96f, 1.04f), 1f, 3f, 150f);
+            if (Guns2.IsHarpoon(def)) { foreach (var d in dirs) Harpoon.Launch(origin + d * 0.35f, d, def, null, false); return; } // visual-only harpoon
             for (int i = 0; i < dirs.Count; i++) Ballistics.Fire(origin, dirs[i], def, null, muzzle, def.Kind == WeaponKind.Admin ? DamageType.Admin : DamageType.Bullet, def.Pellets == 1 || i % 3 == 0, false);
         }
 
@@ -405,6 +407,8 @@ namespace SolarEclipse
                     AudioManager.Play(def.FireSound ?? "gun_glock", muzzle, 1f, Random.Range(0.96f, 1.04f), 1f, 3f, 150f);
                     GameEvents.EmitNoise(origin, def.NoiseRadius, 1f, src);
                     Ballistics.BeginShot();
+                    if (Guns2.IsHarpoon(def)) foreach (var d in dirs) Harpoon.Launch(origin + d * 0.35f, d, def, src, true); // host-side pinning
+                    else
                     for (int i = 0; i < dirs.Count; i++) Ballistics.Fire(origin, dirs[i], def, src, muzzle, DamageType.Bullet, def.Pellets == 1 || i % 3 == 0, true, Layers.RemoteShootMask);
                     Ballistics.EndShot(dirs.Count > 0 ? dirs[0] : Vector3.forward);
                     BroadcastFire(p.Id, widx, origin, dirs);
@@ -419,6 +423,7 @@ namespace SolarEclipse
                     else HurtRemotePlayer(Get(target), info, src);
                     break;
                 }
+                case Msg.ReqThrowable: case Msg.ReqDetonate: HostExplosivesMsg(p, type, rd); break;
                 case Msg.ReqExplosion:
                 {
                     var pos = rd.Vec3(); float radius = Mathf.Min(rd.Float(), 20f), dmg = Mathf.Min(rd.Float(), 1000f), push = Mathf.Min(rd.Float(), 4f);
@@ -652,7 +657,7 @@ namespace SolarEclipse
 
         public void RequestSpawn(SpawnableDef def, Vector3 pos, Quaternion rot)
         {
-            w.Reset(); w.String(def.Id); w.Vec3(pos); w.Quat(rot); w.String(SpawnCatalog.GoredollPreset); w.Int(SpawnCatalog.GoredollVariant); w.Bool(SpawnCatalog.SpawnFrozen);
+            w.Reset(); w.String(def.Id); w.Vec3(pos); w.Quat(rot); w.String(Armor.WithSpawnArmor(SpawnCatalog.GoredollPreset)); w.Int(SpawnCatalog.GoredollVariant); w.Bool(SpawnCatalog.SpawnFrozen);
             ToHost(Msg.ReqSpawn);
         }
 

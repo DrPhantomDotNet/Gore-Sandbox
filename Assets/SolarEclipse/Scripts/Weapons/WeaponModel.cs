@@ -49,7 +49,7 @@ namespace SolarEclipse
         static readonly Color TritiumGreen = new Color(0.45f, 1f, 0.35f);
 
         /// <summary>A tiny glowing sight dot.</summary>
-        static void SightDot(WeaponModel m, Vector3 pos, Color c, float radius = 0.00095f, float intensity = 3f, Transform parent = null)
+        internal static void SightDot(WeaponModel m, Vector3 pos, Color c, float radius = 0.00095f, float intensity = 3f, Transform parent = null)
         {
             var d = new MeshBuilder { Color = Color.white };
             d.Sphere(Vector3.zero, Vector3.one * radius, 4, 6);
@@ -61,7 +61,7 @@ namespace SolarEclipse
         /// a front post whose tip is <paramref name="front"/>, a glowing dot on the post, and the SightRear/SightFront anchors.
         /// rearBase/frontBase are the heights of the surfaces the sights stand on.
         /// </summary>
-        static void IronSights(WeaponModel m, Vector3 rear, float rearBase, Vector3 front, float frontBase, Color metal, Color dot,
+        internal static void IronSights(WeaponModel m, Vector3 rear, float rearBase, Vector3 front, float frontBase, Color metal, Color dot,
             bool aperture = false, bool frontWings = false)
         {
             var s = new MeshBuilder { Color = metal, Gloss = 0.35f };
@@ -96,7 +96,7 @@ namespace SolarEclipse
             m.SightFront = m.Anchor("SightFront", front, Quaternion.identity);
         }
 
-        static WeaponModel Root(string name, int layer)
+        internal static WeaponModel Root(string name, int layer)
         {
             var go = new GameObject(name);
             go.layer = layer;
@@ -114,6 +114,10 @@ namespace SolarEclipse
                 case "admin": return AdminGun(layer);
                 case "knife": return Knife(layer);
                 case "spawngun": return SpawnGun(layer);
+                case "ropetool": return ToolModels.RopeTool(layer);
+                case "gravitygun": return ToolModels.GravityGun(layer);
+                case "shotgun": case "sniper": case "revolver": case "minigun": case "harpoon": return WeaponModels2.Build(id, layer);
+                case "rpg": case "frag": case "c4": case "katana": case "sledgehammer": return WeaponModels3.Build(id, layer);
                 default: return Root("Fists", layer);
             }
         }

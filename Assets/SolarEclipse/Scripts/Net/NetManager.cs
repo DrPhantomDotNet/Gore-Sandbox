@@ -29,6 +29,8 @@ namespace SolarEclipse
         ReqFire = 84, ReqAdmin = 85, ReqHurtPlayer = 86, ReqDollCommand = 87,
         // map editor: host -> joining client, custom map JSON (gzip) sent right before Welcome
         CustomMap = 121,
+        // explosives (Net/NetManager.Explosives.cs): client -> host requests, host -> client effects
+        ReqThrowable = 140, ThrowableFx = 141, ReqDetonate = 142, C4Detonated = 143,
     }
 
     public sealed class NetPlayer
@@ -879,12 +881,13 @@ namespace SolarEclipse
             if (!creative)
             {
                 for (int i = 0; i < Inventory.SlotCount; i++)
-                    if (inv.Slots[i] != null && (inv.Slots[i].Def.Kind == WeaponKind.SpawnGun || inv.Slots[i].Def.Kind == WeaponKind.Admin)) inv.Remove(i);
+                    if (inv.Slots[i] != null && (inv.Slots[i].Def.Kind == WeaponKind.SpawnGun || inv.Slots[i].Def.Kind == WeaponKind.Admin
+                        || inv.Slots[i].Def.Kind == WeaponKind.RopeTool || inv.Slots[i].Def.Kind == WeaponKind.GravityGun)) inv.Remove(i);
                 if (pc.Noclip) pc.SetNoclip(false);
             }
             else if (!inv.Has("spawngun")) inv.Give("spawngun", inv.Slots[1] == null ? 1 : -1, false);
             if (NetState.IsClient && clientLoadout == 1 && !inv.Has("glock"))
-                foreach (var id in new[] { "knife", "glock", "uzi", "ar15", "ar17" }) inv.Give(id, -1, false);
+                foreach (var id in new[] { "knife", "glock", "uzi", "ar15", "ar17", "shotgun", "sniper" }) inv.Give(id, -1, false);
         }
 
         int clientLoadout;

@@ -63,6 +63,7 @@ namespace SolarEclipse
             if (Body != null && info.Force.sqrMagnitude > 0)
                 Body.AddForceAtPosition(info.Force * Rules.BulletForceMultiplier, info.Point, ForceMode.Impulse);
             if (info.Amount <= 0f) return;
+            if (!Armor.Process(this, ref info)) return; // helmets/vests stop or weaken hits (Goredoll/Armor.cs)
 
             float dmg = info.Amount * Rules.DamageMultiplier * Spec.DamageMultiplier / Mathf.Max(0.05f, Rules.NpcHealthMultiplier);
             var wound = CreateWound(info, dmg);

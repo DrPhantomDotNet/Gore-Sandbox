@@ -93,11 +93,57 @@ namespace SolarEclipse
         /// <summary>Re-picks fonts (after the font setting changes).</summary>
         public static void ReloadFonts() { font = null; heavyFont = null; styles.Clear(); rounded = null; }
 
+        /// <summary>
+        /// Phones: the layout is designed for a 1080-unit-tall monitor, which makes text tiny on a ~7 cm tall phone
+        /// screen. Small screens get a modest boost (layouts already clamp to the visible height).
+        /// </summary>
+        static float phoneBoost = -1;
+        static float PhoneBoost
+        {
+            get
+            {
+                if (phoneBoost > 0) return phoneBoost;
+                phoneBoost = 1f;
+                if (Application.isMobilePlatform)
+                {
+                    float dpi = Screen.dpi > 0 ? Screen.dpi : 300f;
+                    float inchesTall = Mathf.Min(Screen.width, Screen.height) / dpi;
+                    phoneBoost = inchesTall < 3.2f ? 1.15f : 1.05f; // phone vs tablet
+                }
+                return phoneBoost;
+            }
+        }
+
+        // Dynamic fonts keep one glyph atlas per font. Every distinct pixel size adds glyphs, and when the atlas has to
+        // grow mid-frame IMGUI can draw garbled or invisible text, which mobile GPUs show most. On phones/tablets text
+        // sizes snap to a small fixed set, and each set is pre-rendered once with all ASCII characters.
+        static readonly int[] SizeSteps = { 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 54, 60, 68, 76, 84, 96, 112, 128 };
+        static readonly HashSet<long> warmed = new HashSet<long>();
+        const string Ascii = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u00b7\u2022\u2014\u00d7\u00b0\u00a9";
+
+        /// <summary>Pixel font size for a virtual size (snapped to <see cref="SizeSteps"/> on mobile).</summary>
+        public static int FontPx(float size)
+        {
+            int px = Mathf.Clamp(Px(size), 6, 160);
+            if (!Application.isMobilePlatform) return px;
+            int best = SizeSteps[0];
+            foreach (var st in SizeSteps) if (Mathf.Abs(st - px) < Mathf.Abs(best - px)) best = st;
+            return best;
+        }
+
+        static void Warm(Font f, int px, FontStyle fs)
+        {
+            if (f == null || !f.dynamic || !Application.isMobilePlatform) return;
+            long key = ((long)f.GetInstanceID() << 32) ^ ((long)px << 4) ^ (long)fs;
+            if (!warmed.Add(key)) return;
+            try { f.RequestCharactersInTexture(Ascii, px, fs); } catch { }
+        }
+
         /// <summary>Call first in OnGUI.</summary>
         public static void BeginFrame()
         {
             float uiScale = Mathf.Clamp(Settings.Data.uiScale, 0.6f, 1.6f);
-            Scale = Mathf.Max(0.35f, Screen.height / 1080f * uiScale);
+            Scale = Mathf.Max(0.35f, Screen.height / 1080f * uiScale * PhoneBoost);
             VW = Screen.width / Scale;
             VH = Screen.height / Scale;
             if (!Mathf.Approximately(lastScale, Scale)) { styles.Clear(); lastScale = Scale; rounded = null; }
@@ -116,7 +162,7 @@ namespace SolarEclipse
             invisible = new GUIStyle();
             textField = new GUIStyle
             {
-                font = Font, fontSize = Px(24), alignment = TextAnchor.MiddleLeft, padding = new RectOffset(Px(14), Px(14), 0, 0),
+                font = Font, fontSize = FontPx(24), alignment = TextAnchor.MiddleLeft, padding = new RectOffset(Px(14), Px(14), 0, 0),
                 normal = { textColor = TextColor }, focused = { textColor = Color.white }, hover = { textColor = Color.white }, clipping = TextClipping.Clip,
             };
             sliderTrack = new GUIStyle { fixedHeight = 0 };
@@ -227,10 +273,11 @@ namespace SolarEclipse
             {
                 s = new GUIStyle
                 {
-                    font = f ?? Font, fontSize = Px(size), alignment = align, fontStyle = fs, wordWrap = wrap, richText = true,
+                    font = f ?? Font, fontSize = FontPx(size), alignment = align, fontStyle = fs, wordWrap = wrap, richText = true,
                     clipping = TextClipping.Overflow, normal = { textColor = Color.white },
                 };
                 styles[key] = s;
+                Warm(s.font, s.fontSize, fs);
             }
             return s;
         }
@@ -394,7 +441,7 @@ namespace SolarEclipse
         public static string TextField(Rect v, string value, string controlName, bool password = false, string placeholder = null)
         {
             EnsureStyles();
-            textField.fontSize = Px(24);
+            textField.fontSize = FontPx(24);
             textField.padding = new RectOffset(Px(14), Px(14), 0, 0);
             bool focused = GUI.GetNameOfFocusedControl() == controlName;
             Rounded(v, focused ? new Color(0.2f, 0.2f, 0.25f, 1f) : new Color(0.12f, 0.12f, 0.15f, 1f));

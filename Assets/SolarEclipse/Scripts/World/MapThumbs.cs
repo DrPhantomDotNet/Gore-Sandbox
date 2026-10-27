@@ -52,6 +52,9 @@ namespace SolarEclipse
                 case BackroomsMap.MapId:
                     BackroomsArt.PaintThumb(c, W, H);
                     break;
+                case RooftopsMap.MapId:
+                    RooftopsMap.PaintThumb(c, W, H);
+                    break;
             }
             for (int y = 0; y < H; y++)
                 for (int x = 0; x < W; x++)

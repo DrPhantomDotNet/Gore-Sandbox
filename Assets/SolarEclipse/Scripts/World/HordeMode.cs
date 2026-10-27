@@ -19,7 +19,7 @@ namespace SolarEclipse
         public readonly List<Vector3> Spawns = new List<Vector3>();
         public const string BestKey = "horde_best_round";
         const string Tag = "[HORDE] ";
-        static readonly string[] Loadout = { "knife", "glock", "uzi", "ar15", "ar17" };
+        static readonly string[] Loadout = { "knife", "glock", "uzi", "ar15", "ar17", "shotgun", "sniper" };
 
         public int Round;
         public bool ZombieRound;

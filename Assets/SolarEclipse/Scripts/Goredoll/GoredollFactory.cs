@@ -19,9 +19,12 @@ namespace SolarEclipse
         {
             // The look is seeded so a multiplayer host and its clients build the exact same person.
             if (seed == 0) seed = Random.Range(1, int.MaxValue);
+            var netPreset = preset; // full preset incl. "~a3~c<code>" tokens (armour / custom look), see NpcMods
+            var mods = NpcMods.Parse(ref preset);
             var randomState = Random.state;
             Random.InitState(seed);
-            var look = Appearance.Random(variant);
+            var look = mods.Custom != null ? mods.Custom.ToAppearance() : Appearance.Random(variant);
+            if (mods.Custom == null) ArmedDolls.Dress(look, preset);
             var zombieKind = Zombies.KindOf(preset);
             if (zombieKind.HasValue) Zombies.Zombify(look, zombieKind.Value);
             Random.state = randomState;
@@ -34,7 +37,7 @@ namespace SolarEclipse
             doll.Look = look;
             doll.DisplayName = look.Name;
             doll.SpawnTime = Time.time;
-            doll.Seed = seed; doll.Variant = variant; doll.Preset = preset;
+            doll.Seed = seed; doll.Variant = variant; doll.Preset = netPreset;
 
             foreach (var type in Order) BuildPart(doll, root.transform, type, look);
             IgnoreSelfCollisions(doll);
@@ -54,10 +57,11 @@ namespace SolarEclipse
             if (Rules.BigHeads) doll.Parts[PartType.Head].transform.localScale = Vector3.one * 1.8f;
             root.AddComponent<Spawned>().DisplayName = "Goredoll " + look.Name;
             if (zombieKind.HasValue) Zombies.Attach(doll, zombieKind.Value, seed);
+            NpcMods.Attach(doll, preset, mods);
 
             Stats.Add(Stats.Spawned);
             if (!NetState.IsClient) EnforceLimit();
-            if (NetState.IsHost) NetManager.I.OnDollSpawned(doll, seed, preset, variant);
+            if (NetState.IsHost) NetManager.I.OnDollSpawned(doll, seed, netPreset, variant);
             return doll;
         }
 

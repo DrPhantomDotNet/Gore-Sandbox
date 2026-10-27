@@ -77,6 +77,7 @@ namespace SolarEclipse.EditorTools
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.solareclipse.goresandbox");
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.solareclipse.goresandbox");
 #endif
+            SetAndroid();
             SetInputHandling();
             SetLayers();
 
@@ -84,6 +85,30 @@ namespace SolarEclipse.EditorTools
             SessionState.SetBool(DoneKey, true);
             EditorPrefs.SetBool(DoneKey + Application.dataPath, true);
             if (verbose) EditorUtility.DisplayDialog("Gore Sandbox", "Project set up.\n\nPress Play in Assets/Scenes/Main.unity.", "OK");
+        }
+
+        /// <summary>
+        /// Android: OpenGL ES 3 first (the game's IMGUI text and icons misrender on some Vulkan drivers), IL2CPP + ARM64
+        /// (many new phones can't run 32-bit apps at all), low code stripping (nothing the game needs gets removed).
+        /// </summary>
+        static void SetAndroid()
+        {
+            try
+            {
+                PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.Android, false);
+                PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3, UnityEngine.Rendering.GraphicsDeviceType.Vulkan });
+#if UNITY_6000_0_OR_NEWER
+                var android = UnityEditor.Build.NamedBuildTarget.Android;
+                PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
+                PlayerSettings.SetManagedStrippingLevel(android, ManagedStrippingLevel.Low);
+#else
+                PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+                PlayerSettings.SetManagedStrippingLevel(BuildTargetGroup.Android, ManagedStrippingLevel.Low);
+#endif
+                PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+                PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+            }
+            catch (System.Exception e) { Debug.LogWarning("[SolarEclipse] Android settings: " + e.Message); }
         }
 
         /// <summary>The game uses the classic Input Manager (Input.GetKey / mouse axes). Make sure it isn't set to "new only".</summary>

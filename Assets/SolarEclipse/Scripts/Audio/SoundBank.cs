@@ -139,6 +139,22 @@ namespace SolarEclipse
             Def("body_thud_soft", 4, (r, s, v) => W.Thud(r, s, 0.3f, 0.2f));
             Def("explosion", 3, (r, s, v) => Wo.Explosion(r, s, false));
             Def("explosion_far", 2, (r, s, v) => Wo.Explosion(r, s, true), 32000);
+            // Explosives & heavy melee (RecipesExplosives)
+            Def("rocket_fire", 2, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.RocketFire(r, s));
+            Def("rocket_loop", 1, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.RocketLoop(r, s), 32000);
+            Def("rocket_reload", 1, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.RocketReload(r, s));
+            Def("grenade_pin", 2, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.GrenadePin(r, s));
+            Def("grenade_spoon", 2, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.GrenadeSpoon(r, s));
+            Def("grenade_bounce", 4, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.GrenadeBounce(r, s));
+            Def("c4_place", 2, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.C4Place(r, s));
+            Def("c4_beep", 1, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.Beep(r, s, 2400f, 0.07f));
+            Def("c4_arm", 1, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.C4Arm(r, s));
+            Def("katana_draw", 1, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.KatanaDraw(r, s));
+            Def("katana_swing", 4, (r, s, v) => W.Whoosh(r, s, 0.32f, 900, 4200, 2f));
+            Def("katana_clang", 3, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.KatanaClang(r, s));
+            Def("sledge_swing", 2, (r, s, v) => W.Whoosh(r, s, 0.55f, 150, 900));
+            Def("sledge_flesh", 3, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.SledgeFlesh(r, s));
+            Def("sledge_world", 3, (r, s, v) => SolarEclipse.Audio.RecipesExplosives.SledgeWorld(r, s));
             Def("wood_impact", 4, (r, s, v) => Wo.WoodImpact(r, s));
             Def("metal_impact", 4, (r, s, v) => Wo.MetalImpact(r, s, false));
             Def("metal_heavy", 3, (r, s, v) => Wo.MetalImpact(r, s, true));
@@ -196,6 +212,8 @@ namespace SolarEclipse
             RecipesBackrooms.Define(Def); // Backrooms hum + light flicker
             RecipesWeather.Define(Def); // rain loop, thunder, kill-streak stingers
             RecipesZombie.Define(Def); // zombie groans, bites, shrieks
+            RecipesTools.Define(Def); // rope tool, gravity gun, bullet time, photo mode
+            RecipesGuns2.Define(Def); // shotgun, sniper, revolver, minigun, harpoon gun
         }
 
         /// <summary>Synthesises everything; yields every frame while turning finished buffers into clips.</summary>

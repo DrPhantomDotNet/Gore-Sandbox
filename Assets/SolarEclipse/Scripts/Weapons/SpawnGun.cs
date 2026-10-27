@@ -26,9 +26,10 @@ namespace SolarEclipse
             {
                 Id = "goredoll", Name = "Goredoll", Category = "AI", Glyph = "person",
                 Description = "Active-ragdoll human with a full anatomy, physiology and an AI brain.",
-                Spawn = (pos, rot) => GoredollFactory.Spawn(pos, rot.eulerAngles.y, GoredollPreset, GoredollVariant).gameObject,
+                Spawn = (pos, rot) => GoredollFactory.Spawn(pos, rot.eulerAngles.y, Armor.WithSpawnArmor(GoredollPreset), GoredollVariant).gameObject,
             });
             Zombies.RegisterSpawnables(AI); // 5 zombie types (Goredoll/Zombies.cs)
+            ArmedDolls.RegisterSpawnables(AI); // Gunman, Soldier (Goredoll/ArmedBrain.cs)
             foreach (var nb in Nextbots.Defs)
             {
                 var id = nb.Id;
@@ -53,7 +54,8 @@ namespace SolarEclipse
         {
             foreach (var l in new[] { AI, Items, Props, Entities })
                 foreach (var d in l) if (d.Id == id) return d;
-            return null;
+            return CustomDolls.DefForId(id); // "custom:<code>" (Goredoll/CustomDolls.cs), also for client requests
+
         }
 
         /// <summary>Spawns a definition and tags it for undo/delete. Returns the root object.</summary>

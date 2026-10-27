@@ -72,6 +72,12 @@ namespace SolarEclipse
             G("shotgun", c => { c.Rect(6, 72, 116, 12, W); c.Rect(30, 60, 70, 12, W); c.Polygon(new[] { P(6, 74), P(28, 74), P(20, 44), P(0, 50) }, W); });
             G("admin", c => { c.Polygon(Star(64, 64, 56, 24, 8), W); c.Circle(64, 64, 18, new Color(0, 0, 0, 0.7f)); });
             G("spawngun", c => { c.Rect(20, 60, 70, 34, W); c.Circle(96, 77, 18, W); Cut(c, 96, 77, 9); c.Rect(36, 22, 18, 40, W); c.Polygon(Star(108, 108, 14, 5, 4), W); });
+            // Explosives & heavy melee
+            G("rocket", c => { c.Rect(4, 60, 96, 16, W); c.Polygon(new[] { P(100, 54), P(100, 82), P(124, 68) }, W); c.Polygon(new[] { P(0, 52), P(14, 60), P(14, 76), P(0, 84) }, W); c.Rect(30, 38, 12, 22, W); c.Rect(60, 38, 12, 22, W); });
+            G("c4", c => { c.Rect(14, 34, 100, 54, W); CutRect(c, 30, 34, 6, 54); CutRect(c, 92, 34, 6, 54); c.Rect(50, 88, 28, 14, W); c.Circle(64, 108, 6, UI.Bad); });
+            G("katana", c => { c.Line(14, 14, 44, 44, 12, W); c.Line(34, 54, 54, 34, 8, W); c.Polygon(new[] { P(46, 40), P(52, 46), P(118, 120), P(108, 116) }, W); });
+            G("rope", c => { c.Ring(40, 88, 22, 8, W); c.Line(40, 66, 56, 46, 8, W); c.Line(56, 46, 76, 58, 8, W); c.Line(76, 58, 96, 36, 8, W); c.Line(96, 36, 104, 14, 8, W); c.Circle(104, 14, 8, W); });
+            G("gravgun", c => { c.Rect(14, 56, 64, 34, W); c.Rect(30, 22, 18, 36, W); c.Circle(88, 73, 14, W); c.Line(84, 60, 112, 44, 8, W); c.Line(84, 86, 112, 102, 8, W); c.Line(96, 73, 122, 73, 8, W); });
             G("crosshair", c => { c.Ring(64, 64, 36, 8, W); c.Line(64, 4, 64, 40, 8, W); c.Line(64, 88, 64, 124, 8, W); c.Line(4, 64, 40, 64, 8, W); c.Line(88, 64, 124, 64, 8, W); });
             G("target", c => { c.Ring(64, 64, 50, 10, W); c.Ring(64, 64, 30, 10, W); c.Circle(64, 64, 10, W); });
             G("lock", c => { c.Rect(28, 16, 72, 56, W); c.Ring(64, 78, 24, 10, W); CutRect(c, 30, 72, 68, 6); c.Rect(30, 72, 10, 10, W); c.Rect(88, 72, 10, 10, W); Cut(c, 64, 46, 8); });

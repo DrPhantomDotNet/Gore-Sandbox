@@ -171,7 +171,7 @@ namespace SolarEclipse
             if (NetState.Active && NetManager.I.LocalId > 1) spawnPos += Quaternion.Euler(0, NetManager.I.LocalId * 47f, 0) * Vector3.forward * 1.6f; // don't stack players
             var player = PlayerController.Create(spawnPos, b.PlayerYaw, world.transform);
             if (opt.Loadout == 1 && !NetState.Active) { player.Inventory.GiveAll(); player.Inventory.Select(0, true); }
-            if (NetState.IsHost && NetManager.I.Server.Loadout == 1) foreach (var id in new[] { "knife", "glock", "uzi", "ar15", "ar17" }) player.Inventory.Give(id, -1, false);
+            if (NetState.IsHost && NetManager.I.Server.Loadout == 1) foreach (var id in new[] { "knife", "glock", "uzi", "ar15", "ar17", "shotgun", "sniper" }) player.Inventory.Give(id, -1, false);
             if (NetState.Active) player.AddLocalHitbox();
             EasterEggs.OnMapStarted();
             if (opt.Nextbots && !networkClient)
@@ -291,12 +291,15 @@ namespace SolarEclipse
                     if (Input.GetKeyDown(KeyCode.T) || Input.GetKeyDown(KeyCode.Return)) UIRoot.Push(new ChatScreen()); // singleplayer too (type /commands)
                     if (Input.GetKeyDown(KeyCode.F1)) UIRoot.Push(new HelpScreen());
                     if (Input.GetKeyDown(KeyCode.Q) && Input.GetKey(KeyCode.LeftControl)) UIRoot.Push(new SpawnMenuScreen());
+                    BulletTime.HandleKeys(); // B / K bullet time
+                    if (Input.GetKeyDown(KeyCode.P)) PhotoMode.Toggle();
                 }
             }
 
             // ----- time scale (pause > slow-mo > rules)
             float scale = Rules.TimeScale;
             if (Time.unscaledTime < slowMoUntil) scale *= Mathf.Lerp(slowMoScale, 1f, Mathf.Pow(1f - (slowMoUntil - Time.unscaledTime) / 1.2f, 3f));
+            scale *= BulletTime.Step(); // 1 unless bullet time (singleplayer only)
             // Multiplayer never pauses: other players keep playing while your menu is open.
             bool paused = !NetState.Active && (UIRoot.AnyPausesTime || State == GameState.Loading);
             Time.timeScale = paused ? 0f : scale;

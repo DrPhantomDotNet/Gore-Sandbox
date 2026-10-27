@@ -30,7 +30,31 @@ namespace SolarEclipse
         int expanded = -1;
         readonly float[] fpsHistory = new float[240];
         int fpsHead;
-        static readonly string[] Tabs = { "CONSOLE", "QUICK", "SPAWN", "AI", "PLAYER", "RULES", "SOUNDS", "PERF", "INFO" };
+        static readonly string[] Tabs = { "CONSOLE", "QUICK", "SPAWN", "AI", "PLAYER", "RULES", "SOUNDS", "PERF", "INFO", "FUN", "MOBILE" };
+        bool showHistory;
+
+        /// <summary>True on phones/tablets: bigger rows, the native keyboard and a full-width panel.</summary>
+        static bool Touch => Settings.TouchControlsActive || Application.isMobilePlatform;
+        static float zoom = -1f;
+        /// <summary>Extra magnification of the whole panel (GUI matrix), default 1.3x on touch devices.</summary>
+        public static float Zoom
+        {
+            get
+            {
+                if (zoom < 0f)
+                {
+                    try { zoom = PlayerPrefs.GetFloat("dev_panel_zoom", Touch ? 1.3f : 1f); } catch { zoom = 1f; }
+                }
+                return zoom;
+            }
+            set
+            {
+                zoom = Mathf.Clamp(value, 0.8f, 2f);
+                try { PlayerPrefs.SetFloat("dev_panel_zoom", zoom); PlayerPrefs.Save(); } catch { }
+            }
+        }
+        float W => UI.VW / Zoom;
+        float H => UI.VH / Zoom;
         int rulesTab;
 
         static readonly (string label, string cmd)[] Quick =
@@ -61,6 +85,7 @@ namespace SolarEclipse
             go.transform.SetParent(parent, false);
             I = go.AddComponent<DevPanel>();
             UIRoot.TopLayer += I.Draw;
+            MobileDev.Create(parent);
         }
 
         public static void Toggle()
@@ -122,7 +147,11 @@ namespace SolarEclipse
             if (!Open) return;
             GUI.enabled = true;
             UI.Dim(0.35f);
-            if (!LoggedIn) DrawLogin(); else DrawPanel();
+            var oldMatrix = GUI.matrix;
+            if (!Mathf.Approximately(Zoom, 1f)) GUI.matrix = oldMatrix * Matrix4x4.Scale(new Vector3(Zoom, Zoom, 1f));
+            MobileDev.TrackPointer();
+            try { if (!LoggedIn) DrawLogin(); else DrawPanel(); }
+            finally { GUI.matrix = oldMatrix; }
         }
 
         // ------------------------------------------------------------------ login
@@ -131,18 +160,20 @@ namespace SolarEclipse
         {
             var e = Event.current;
             float sx = Mathf.Sin(Time.unscaledTime * 60f) * 14f * shake;
-            var r = UI.Centered(560, 480);
+            var r = new Rect((W - 560) / 2f, Mathf.Max(10f, (H - 480) / 2f - (TouchScreenKeyboard.visible ? H * 0.22f : 0f)), 560, 480);
             r.x += sx;
             UI.Panel(r, "Developer Access");
             UI.Tex(new Rect(r.x + 28, r.y + 84, 56, 56), IconFactory.Get("lock"), UI.Accent2);
             UI.Label(new Rect(r.x + 100, r.y + 80, r.width - 130, 64), "This panel is restricted to " + GameInfo.Studio + " staff.\nLog in to continue.", 17, UI.Muted, TextAnchor.MiddleLeft, FontStyle.Normal, true, true);
             UI.Label(new Rect(r.x + 28, r.y + 158, 200, 26), "USERNAME", 14, UI.Muted);
-            user = UI.TextField(new Rect(r.x + 28, r.y + 184, r.width - 56, 52), user, "dev_user", false, "username");
+            user = TouchKeys.Field(new Rect(r.x + 28, r.y + 184, r.width - 56, 52), user, "dev_user", false, "username", out bool userDone);
+            if (userDone) TouchKeys.Open("dev_pass", pass, true, "password");
             UI.Label(new Rect(r.x + 28, r.y + 246, 200, 26), "PASSWORD", 14, UI.Muted);
-            pass = UI.TextField(new Rect(r.x + 28, r.y + 272, r.width - 56, 52), pass, "dev_pass", true, "password");
+            pass = TouchKeys.Field(new Rect(r.x + 28, r.y + 272, r.width - 56, 52), pass, "dev_pass", true, "password", out bool passDone);
+            if (passDone && pass.Length > 0) TryLogin();
             bool locked = Time.unscaledTime < lockedUntil;
             if (!string.IsNullOrEmpty(error)) UI.Label(new Rect(r.x + 28, r.y + 330, r.width - 56, 30), locked ? "Locked — try again in " + Mathf.CeilToInt(lockedUntil - Time.unscaledTime) + "s" : error, 15, UI.Bad);
-            if (focusCommand && e.type == EventType.Repaint) { GUI.FocusControl(string.IsNullOrEmpty(user) ? "dev_user" : "dev_pass"); focusCommand = false; }
+            if (focusCommand && e.type == EventType.Repaint && !TouchKeys.Native) { GUI.FocusControl(string.IsNullOrEmpty(user) ? "dev_user" : "dev_pass"); focusCommand = false; }
             if (e.type == EventType.KeyDown && (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter))
             {
                 if (GUI.GetNameOfFocusedControl() == "dev_user") GUI.FocusControl("dev_pass"); else TryLogin();
@@ -156,13 +187,14 @@ namespace SolarEclipse
 
         void DrawPanel()
         {
-            float W = UI.VW, H = UI.VH;
-            var r = new Rect(Mathf.Max(20, W * 0.32f), 20, W - Mathf.Max(20, W * 0.32f) - 20, H - 40);
+            float left = Touch ? 12f : Mathf.Max(20, W * 0.32f);
+            var r = Touch ? new Rect(left, 8, W - left * 2, H - 16) : new Rect(left, 20, W - left - 20, H - 40);
             UI.Panel(r, "Dev Panel");
-            UI.Label(new Rect(r.x + 260, r.y + 22, r.width - 290, 34), $"{DevConsole.Commands.Count} commands · {Quick.Length} quick actions · {SoundBank.SoundCount} sounds · F5/Esc to close", 15, UI.Muted, TextAnchor.MiddleRight);
-            int nt = UI.Tabs(new Rect(r.x + 20, r.y + 72, r.width - 40, 44), tab, Tabs, 15);
+            UI.Label(new Rect(r.x + 260, r.y + 22, r.width - 290 - (Touch ? 170 : 0), 34), $"{DevConsole.Commands.Count} commands | {Quick.Length} quick actions | {SoundBank.SoundCount} sounds | " + (Touch ? "hold 3 fingers to close" : "F5/Esc to close"), Touch ? 17 : 15, UI.Muted, TextAnchor.MiddleRight);
+            if (Touch && MobileDev.Tap(new Rect(r.xMax - 170, r.y + 14, 150, 50), "CLOSE", ButtonKind.Danger, 20)) { Toggle(); return; }
+            int nt = UI.Tabs(new Rect(r.x + 20, r.y + 72, r.width - 40, Touch ? 56 : 44), tab, Tabs, Touch ? 17 : 15);
             if (nt != tab) { tab = nt; AudioManager.Ui("ui_tab"); }
-            var body = new Rect(r.x + 20, r.y + 128, r.width - 40, r.height - 148);
+            var body = Touch ? new Rect(r.x + 20, r.y + 140, r.width - 40, r.height - 152) : new Rect(r.x + 20, r.y + 128, r.width - 40, r.height - 148);
             switch (tab)
             {
                 case 0: DrawConsole(body); break;
@@ -177,6 +209,8 @@ namespace SolarEclipse
                 case 6: DrawSounds(body); break;
                 case 7: DrawPerf(body); break;
                 case 8: DrawInfo(body); break;
+                case 9: DevFunTab.DrawFun(body); break;
+                case 10: DevFunTab.DrawMobile(body); break;
             }
         }
 
@@ -192,9 +226,17 @@ namespace SolarEclipse
             if (UI.Button(new Rect(body.xMax - 220, body.y, 100, 40), "COPY", ButtonKind.Ghost, null, 15))
                 GUIUtility.systemCopyBuffer = string.Join("\n", DevConsole.Entries.Select(en => "[" + en.Type + "] " + en.Message));
             if (UI.Button(new Rect(body.xMax - 110, body.y, 110, 40), "CLEAR", ButtonKind.Ghost, null, 15)) DevConsole.Clear();
-            logSearch = UI.TextField(new Rect(body.x, body.y + 48, body.width, 40), logSearch, "dev_logsearch", false, "Filter output...");
+            logSearch = TouchKeys.Field(new Rect(body.x, body.y + 48, body.width, Touch ? 48 : 40), logSearch, "dev_logsearch", false, "Filter output...", out _);
 
-            var view = new Rect(body.x, body.y + 96, body.width, body.height - 96 - 60);
+            float bottomH = Touch ? 66f : 52f;
+            float top = Touch ? 104f : 96f;
+            var view = new Rect(body.x, body.y + top, body.width, body.height - top - bottomH - 8);
+            if (showHistory)
+            {
+                var hist = new Rect(view.xMax - Mathf.Min(560, view.width * 0.42f), view.y, Mathf.Min(560, view.width * 0.42f), view.height);
+                view.width -= hist.width + 10;
+                DrawHistory(hist);
+            }
             UI.Rounded(view, new Color(0, 0, 0, 0.5f), false);
             var list = new List<DevConsole.Entry>();
             foreach (var en in DevConsole.Entries)
@@ -205,12 +247,13 @@ namespace SolarEclipse
                 if (collapse) { int idx = list.FindIndex(o => o.Message == en.Message); if (idx >= 0) { var o = list[idx]; o.Count += en.Count; list[idx] = o; continue; } }
                 list.Add(en);
             }
-            const float lineH = 26f;
+            float lineH = Touch ? 36f : 26f;
+            int logSize = Touch ? 18 : 14;
             float content = 0;
             var heights = new float[list.Count];
-            for (int i = 0; i < list.Count; i++) { heights[i] = i == expanded ? lineH + Mathf.Min(300, UI.TextHeight(list[i].Stack ?? "", 13, view.width - 40)) + 10 : lineH; content += heights[i]; }
+            for (int i = 0; i < list.Count; i++) { heights[i] = i == expanded ? lineH + Mathf.Min(300, UI.TextHeight(list[i].Stack ?? "", logSize - 1, view.width - 40)) + 10 : lineH; content += heights[i]; }
             string sid = "devlog";
-            if (e.type == EventType.ScrollWheel && UI.R(view).Contains(e.mousePosition)) autoScroll = false;
+            if ((e.type == EventType.ScrollWheel || e.type == EventType.MouseDrag) && UI.R(view).Contains(e.mousePosition)) autoScroll = false;
             if (autoScroll) UI.SetScroll(sid, Mathf.Max(0, content - view.height));
             float s = UI.BeginScroll(sid, view, content);
             float y = -s;
@@ -226,21 +269,21 @@ namespace SolarEclipse
                     if (i % 2 == 0) UI.Fill(row, new Color(1, 1, 1, 0.03f));
                     string first = en.Message.Split('\n')[0];
                     string time = en.Time >= 0 ? "[" + en.Time.ToString("0.0") + "] " : "";
-                    UI.Label(new Rect(8, y, row.width - 70, lineH), time + first, 14, c, TextAnchor.MiddleLeft, FontStyle.Normal, false);
-                    if (en.Count > 1) UI.Label(new Rect(row.width - 60, y, 56, lineH), "×" + en.Count, 13, UI.Muted, TextAnchor.MiddleRight);
+                    UI.Label(new Rect(8, y, row.width - 70, lineH), time + first, logSize, c, TextAnchor.MiddleLeft, FontStyle.Normal, false);
+                    if (en.Count > 1) UI.Label(new Rect(row.width - 60, y, 56, lineH), "x" + en.Count, logSize - 1, UI.Muted, TextAnchor.MiddleRight);
                     if (i == expanded)
                     {
                         string detail = en.Message.Contains("\n") ? en.Message + "\n" : "";
-                        UI.Label(new Rect(24, y + lineH, row.width - 40, h - lineH), detail + (string.IsNullOrEmpty(en.Stack) ? "(no stack trace)" : en.Stack), 13, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, false, true);
+                        UI.Label(new Rect(24, y + lineH, row.width - 40, h - lineH), detail + (string.IsNullOrEmpty(en.Stack) ? "(no stack trace)" : en.Stack), logSize - 1, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, false, true);
                     }
-                    if (UI.Hit(row)) { expanded = expanded == i ? -1 : i; autoScroll = false; }
+                    if (UI.Hit(row) && !MobileDev.PointerDragged) { expanded = expanded == i ? -1 : i; autoScroll = false; }
                 }
                 y += h;
             }
             UI.EndScroll(sid, view, content);
 
             // Command line
-            var input = new Rect(body.x, body.yMax - 52, body.width - 140, 52);
+            var input = new Rect(body.x, body.yMax - bottomH, body.width - 140 - 170, bottomH);
             if (e.type == EventType.KeyDown && GUI.GetNameOfFocusedControl() == "dev_cmd")
             {
                 if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter) { Run(); e.Use(); }
@@ -257,9 +300,36 @@ namespace SolarEclipse
                 }
                 else if (e.keyCode == KeyCode.Tab || e.character == '\t') { command = DevConsole.Complete(command); e.Use(); MoveCursorToEnd(); }
             }
-            command = UI.TextField(input, command, "dev_cmd", false, "Type a command (try 'help')...");
-            if (focusCommand && e.type == EventType.Repaint) { GUI.FocusControl("dev_cmd"); focusCommand = false; }
-            if (UI.Button(new Rect(input.xMax + 10, input.y, 130, 52), "RUN", ButtonKind.Primary, null, 18)) Run();
+            command = TouchKeys.Field(input, command, "dev_cmd", false, TouchKeys.Native ? "Tap to type a command (try 'help')..." : "Type a command (try 'help')...", out bool submitted);
+            if (submitted) Run();
+            if (focusCommand && e.type == EventType.Repaint) { if (!TouchKeys.Native) GUI.FocusControl("dev_cmd"); focusCommand = false; }
+            if (MobileDev.Tap(new Rect(input.xMax + 10, input.y, 160, bottomH), showHistory ? "HIDE HIST" : "HISTORY", ButtonKind.Normal, 18, showHistory)) showHistory = !showHistory;
+            if (UI.Button(new Rect(input.xMax + 180, input.y, 130, bottomH), "RUN", ButtonKind.Primary, null, 18)) Run();
+        }
+
+        /// <summary>Recent commands, newest first: tap to run again, EDIT to put it in the command line.</summary>
+        void DrawHistory(Rect view)
+        {
+            UI.Rounded(view, new Color(0, 0, 0, 0.5f), false);
+            var hist = DevConsole.History;
+            float rowH = Touch ? 64f : 48f;
+            var head = new Rect(view.x + 10, view.y + 4, view.width - 20, 32);
+            UI.Label(head, hist.Count == 0 ? "No commands yet" : "HISTORY - tap to run", 16, UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Bold);
+            var list = new Rect(view.x, view.y + 40, view.width, view.height - 40);
+            float content = hist.Count * (rowH + 6);
+            float s = UI.BeginScroll("devhistory", list, content);
+            string run = null, edit = null;
+            for (int k = 0; k < hist.Count; k++)
+            {
+                string cmd = hist[hist.Count - 1 - k];
+                var r = new Rect(6, k * (rowH + 6) - s, list.width - 18, rowH);
+                if (r.yMax < 0 || r.y > list.height) continue;
+                if (MobileDev.Tap(new Rect(r.x, r.y, r.width - 96, r.height), cmd, ButtonKind.Normal, Touch ? 18 : 15)) run = cmd;
+                if (MobileDev.Tap(new Rect(r.xMax - 90, r.y, 90, r.height), "EDIT", ButtonKind.Ghost, 15)) edit = cmd;
+            }
+            UI.EndScroll("devhistory", list, content);
+            if (run != null) { DevConsole.Execute(run); autoScroll = true; AudioManager.Ui("ui_click"); }
+            if (edit != null) { command = edit; if (TouchKeys.Native) TouchKeys.Open("dev_cmd", command, false, "command"); }
         }
 
         static void MoveCursorToEnd()
@@ -281,7 +351,7 @@ namespace SolarEclipse
 
         void DrawButtons(Rect body, string id, (string label, string cmd)[] buttons)
         {
-            const float bw = 230, bh = 50, gap = 10;
+            float bw = Touch ? 290 : 230, bh = Touch ? 72 : 50, gap = Touch ? 12 : 10;
             int cols = Mathf.Max(1, Mathf.FloorToInt((body.width - 12 + gap) / (bw + gap)));
             float content = Mathf.CeilToInt(buttons.Length / (float)cols) * (bh + gap);
             float s = UI.BeginScroll(id, body, content);
@@ -289,7 +359,7 @@ namespace SolarEclipse
             {
                 var r = new Rect((i % cols) * (bw + gap), (i / cols) * (bh + gap) - s, bw, bh);
                 if (r.yMax < 0 || r.y > body.height) continue;
-                if (UI.Button(r, buttons[i].label, ButtonKind.Normal, null, 15, true, buttons[i].cmd)) { DevConsole.Execute(buttons[i].cmd); AudioManager.Ui("ui_click"); }
+                if (UI.Button(r, buttons[i].label, ButtonKind.Normal, null, Touch ? 19 : 15, true, buttons[i].cmd) && !MobileDev.PointerDragged) { DevConsole.Execute(buttons[i].cmd); AudioManager.Ui("ui_click"); }
             }
             UI.EndScroll(id, body, content);
         }

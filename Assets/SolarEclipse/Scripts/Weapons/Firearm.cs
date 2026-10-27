@@ -8,7 +8,7 @@ namespace SolarEclipse
     /// tactical (+1 in chamber) vs empty magazine reloads with a dropped physical magazine, one-at-a-time
     /// shell reloads for the AR-17, charging, dry fire and an inspect animation.
     /// </summary>
-    public sealed class Firearm : Weapon
+    public class Firearm : Weapon
     {
         public int Ammo;
         public bool Reloading => reloadT >= 0f;
@@ -24,7 +24,19 @@ namespace SolarEclipse
         public int Capacity => Def.Mag;
         /// <summary>Current cone in degrees (crosshair gap).</summary>
         public float Spread => Mathf.Lerp(Def.HipSpread, Def.AimSpread, aim) + bloom + (Player != null ? Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aim * 0.6f) : 0f);
-        public bool OpenBolt => Def.Id == "uzi";
+        public virtual bool OpenBolt => Def.Id == "uzi";
+        // ---- subclass hooks (Weapons/Guns2: pump shotgun, sniper, revolver, minigun, harpoon gun)
+        /// <summary>False blocks firing (pump/bolt cycling, minigun spin-up).</summary>
+        protected virtual bool CanShoot => true;
+        /// <summary>Whether a casing flies out on every shot (revolvers keep theirs).</summary>
+        protected virtual bool EjectOnFire => true;
+        /// <summary>Reload timeline 0..1, or -1 when not reloading.</summary>
+        protected float ReloadProgress => reloadT;
+        /// <summary>Called after every shot.</summary>
+        protected virtual void OnShot() { }
+        /// <summary>Fires one bullet/pellet (default: hitscan). Override for projectiles.</summary>
+        protected virtual void FireRound(Vector3 origin, Vector3 dir, Vector3 muzzle, int index, bool authority) =>
+            Ballistics.Fire(origin, dir, Def, Player, muzzle, DamageType.Bullet, Def.Pellets == 1 || index % 3 == 0, authority);
         public override bool Busy => Reloading;
         public override bool IsAiming => PlayerInput.Frame.Aim && !Reloading && !Player.Sprinting && inspectT < 0f;
         public override string AmmoText => Rules.InfiniteAmmo ? "INF" : Ammo + " / " + Capacity;
@@ -127,7 +139,7 @@ namespace SolarEclipse
             // ----- Firing
             bool wantsFire = auto ? f.FireHeld : f.Fire;
             if (Reloading && Def.ShellReload && f.Fire && Ammo > 0) { reloadT = -1f; if (handMag != null) handMag.gameObject.SetActive(false); }
-            if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting)
+            if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot)
             {
                 if (Ammo > 0 || Rules.InfiniteAmmo) Shoot();
                 else if (f.Fire)
@@ -191,7 +203,7 @@ namespace SolarEclipse
                 var r = Random.insideUnitCircle * pelletSpread;
                 var dir = CamT.rotation * Quaternion.Euler(r.y, r.x, 0) * Vector3.forward;
                 dirs.Add(dir);
-                Ballistics.Fire(Eye, dir, Def, Player, muzzle, DamageType.Bullet, Def.Pellets == 1 || i % 3 == 0, authority);
+                FireRound(Eye, dir, muzzle, i, authority);
             }
             if (authority) Ballistics.EndShot(Aim);
             if (NetState.IsClient) NetManager.I.RequestFire(Def, Eye, dirs);
@@ -206,7 +218,7 @@ namespace SolarEclipse
             FX.Flash(Eye + Aim * 0.8f, new Color(1f, 0.75f, 0.45f), 9f, 2.2f, 0.05f);
 
             // Casing: the AR-17 ejects its shell, open-bolt UZI throws brass right.
-            Casings.Eject(Model.Eject != null ? Model.Eject.position : muzzle, CamT.right, CamT.up, Player.CC.velocity, Def.CasingType);
+            if (EjectOnFire) Casings.Eject(Model.Eject != null ? Model.Eject.position : muzzle, CamT.right, CamT.up, Player.CC.velocity, Def.CasingType);
 
             slideKick = 1f;
             if (Ammo == 0 && Def.Id == "glock" && !Rules.InfiniteAmmo) slideLocked = true;
@@ -217,6 +229,7 @@ namespace SolarEclipse
             Vm.AddRecoil(new Vector3(Random.Range(-0.15f, 0.15f), 0.25f, -1.6f) * 0.4f * R * a, new Vector3(-28f * R * a, Random.Range(-6f, 6f) * R, Random.Range(-10f, 10f) * R));
             CameraFX.Punch(0.55f * R * a, Random.Range(-0.35f, 0.35f) * R);
             CameraFX.Shake(0.03f * R);
+            OnShot();
         }
 
         // ------------------------------------------------------------------ Reloading

@@ -110,6 +110,15 @@ namespace SolarEclipse
             return null;
         }
 
+        /// <summary>The Android APK of the latest release (phones download it and tap to install).</summary>
+        public static Asset FindApk()
+        {
+            if (Latest?.assets == null) return null;
+            foreach (var a in Latest.assets)
+                if (a != null && a.name != null && a.name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase)) return a;
+            return null;
+        }
+
         // ------------------------------------------------------------------ install (Windows)
 
         static string InstallDir => Path.GetFullPath(Path.Combine(Application.dataPath, ".."));

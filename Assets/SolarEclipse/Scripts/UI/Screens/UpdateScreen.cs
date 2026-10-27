@@ -59,7 +59,11 @@ namespace SolarEclipse
                 case Updater.Phase.Installing: p = 1f; status = "Installing... please wait, don't close the game."; break;
                 case Updater.Phase.Restarting: p = 1f; status = "Installed! Restarting into v" + Updater.LatestVersion + "..."; break;
                 case Updater.Phase.Failed: status = "<color=#ff6060>Update failed.</color> " + Updater.Error; break;
-                case Updater.Phase.ManualOnly: status = "This version can't update itself automatically. Download the new version from the release page."; break;
+                case Updater.Phase.ManualOnly:
+                    status = Application.platform == RuntimePlatform.Android && Updater.FindApk() != null
+                        ? "Tap DOWNLOAD UPDATE, then open the downloaded file to install it. If Android asks, allow installing from your browser."
+                        : "This version can't update itself automatically. Download the new version from the release page.";
+                    break;
                 default: status = ""; break;
             }
             bool busy = Updater.State == Updater.Phase.Downloading || Updater.State == Updater.Phase.Installing || Updater.State == Updater.Phase.Restarting || Updater.State == Updater.Phase.Available;
@@ -74,7 +78,10 @@ namespace SolarEclipse
 
             if (Updater.State == Updater.Phase.Failed || Updater.State == Updater.Phase.ManualOnly)
             {
-                if (rel != null && !string.IsNullOrEmpty(rel.html_url) && UI.Button(new Rect(r.x + 30, r.yMax - 86, 300, 60), "DOWNLOAD PAGE", ButtonKind.Primary, IconFactory.Get("arrow_down"), 20))
+                var apk = Application.platform == RuntimePlatform.Android ? Updater.FindApk() : null;
+                if (apk != null && UI.Button(new Rect(r.x + 30, r.yMax - 86, 300, 60), "DOWNLOAD UPDATE", ButtonKind.Primary, IconFactory.Get("arrow_down"), 20))
+                    Application.OpenURL(apk.browser_download_url);
+                else if (apk == null && rel != null && !string.IsNullOrEmpty(rel.html_url) && UI.Button(new Rect(r.x + 30, r.yMax - 86, 300, 60), "DOWNLOAD PAGE", ButtonKind.Primary, IconFactory.Get("arrow_down"), 20))
                     Application.OpenURL(rel.html_url);
                 if (Updater.State == Updater.Phase.Failed && Updater.CanAutoInstall && UI.Button(new Rect(r.x + 350, r.yMax - 86, 200, 60), "RETRY", ButtonKind.Normal, IconFactory.Get("refresh"), 20))
                     GameManager.I.StartCoroutine(Updater.DownloadAndInstall());

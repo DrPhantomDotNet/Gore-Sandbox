@@ -53,6 +53,7 @@ namespace SolarEclipse
                     part.TakeDamage(new DamageInfo { Amount = d, Force = dir * def.Force, Point = hit.point, Normal = hit.normal, Direction = dir, Type = type, Source = source, Weapon = def.Name, Caliber = def.Caliber, Penetration = pen });
                     shotDamage.TryGetValue(part, out var acc);
                     shotDamage[part] = acc + d;
+                    if (Armor.ConsumeStopped(part)) break; // stopped by a helmet/vest: no exit wound, no over-penetration
                     // Find the exit point on the far side of this body part.
                     var back = new Ray(hit.point + dir * 0.8f, -dir);
                     if (part.Col != null && part.Col.enabled && pen > 0.15f && part.Col.Raycast(back, out var exit, 0.8f))

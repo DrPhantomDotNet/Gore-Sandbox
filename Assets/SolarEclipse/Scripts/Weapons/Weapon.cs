@@ -25,15 +25,25 @@ namespace SolarEclipse
         /// <summary>Text shown on the HUD (ammo etc.).</summary>
         public virtual string AmmoText => "";
         public virtual string ModeText => "";
+        /// <summary>Multiplies the player's walk speed while this weapon is held (e.g. a spinning minigun).</summary>
+        public virtual float MoveSpeedMul => 1f;
+        /// <summary>Full-screen HUD overlay drawn under the HUD (e.g. a sniper scope). Virtual canvas units.</summary>
+        public virtual void DrawOverlay(float W, float H) { }
 
         public static Weapon Create(WeaponDef def)
         {
+            var extra = Guns2.Create(def); // Weapons/Guns2.cs: shotgun, sniper, revolver, minigun, harpoon gun
+            if (extra != null) return extra;
+            var boom = Explosives.CreateWeapon(def); // Weapons/Explosives.cs: rocket launcher, frag, C4, katana, sledgehammer
+            if (boom != null) return boom;
             switch (def.Kind)
             {
                 case WeaponKind.Fists: return new Fists { Def = def };
                 case WeaponKind.Knife: return new Knife { Def = def };
                 case WeaponKind.Admin: return new AdminGun { Def = def };
                 case WeaponKind.SpawnGun: return new SpawnGun { Def = def };
+                case WeaponKind.RopeTool: return new RopeTool { Def = def };
+                case WeaponKind.GravityGun: return new GravityGun { Def = def };
                 default: return new Firearm { Def = def };
             }
         }

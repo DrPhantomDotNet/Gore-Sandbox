@@ -14,6 +14,8 @@ namespace SolarEclipse
             ("1 - 9 / Wheel", "Switch items"), ("Wheel (holding)", "Move held object nearer / further"), ("+ / -", "Scale held object"),
             ("Delete / X", "Delete looked-at object (Spawn Gun)"), ("Z", "Undo last spawn"), ("V", "Noclip (when enabled)"),
             ("Esc", "Game menu · spawn menu while holding the Spawn Gun"), ("F5", "Developer panel"), ("F12", "Screenshot"),
+            ("B / K", "Bullet time (singleplayer; K if your weapon uses B)"), ("P", "Photo mode (free camera, filters, Enter: take photo)"),
+            ("Rope Tool", "LMB end A, LMB end B | RMB cut rope | R length"), ("Gravity Gun", "RMB pull / drop | LMB punt"),
         };
 
         public override bool IsModal => true;

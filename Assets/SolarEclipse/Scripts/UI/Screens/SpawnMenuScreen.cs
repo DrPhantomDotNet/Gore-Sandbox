@@ -59,6 +59,7 @@ namespace SolarEclipse
                     if (!IconFactory.Has(zn)) IconFactory.Register(zn, IconFactory.Get("skull"));
                     break;
                 }
+            if (tab == 0) NpcMods.TickIcons(); // armed + custom Goredoll portraits
         }
 
         public override void Draw()
@@ -122,7 +123,9 @@ namespace SolarEclipse
             if (UI.Selector(new Rect(opts.x, y, opts.width, 56), "Look", ref lookIndex, Looks, "Random clothes/skin/hair, or the classic green shirt and jeans."))
                 SpawnCatalog.GoredollVariant = lookIndex == 1 ? 0 : -1;
             y += 66;
-            UI.Toggle(new Rect(opts.x, y, opts.width, 56), "Big heads", ref Rules.BigHeads, "Applies to Goredolls spawned from now on.");
+            float half = Mathf.Floor(opts.width * 0.5f) - 8;
+            UI.Toggle(new Rect(opts.x, y, half, 56), "Big heads", ref Rules.BigHeads, "Applies to Goredolls spawned from now on.");
+            UI.Selector(new Rect(opts.x + half + 16, y, half, 56), "Armor", ref Armor.SpawnLevel, Armor.Options, "Helmet and/or vest on Goredolls spawned from now on. Soldiers always wear both.");
             y += 76;
             int alive = 0, dead = 0;
             foreach (var g in Goredoll.All) if (g != null) { if (g.IsDead) dead++; else alive++; }
@@ -136,16 +139,21 @@ namespace SolarEclipse
             }
             if (UI.Button(new Rect(opts.x + 316, y, 300, 50), "REMOVE ALL", ButtonKind.Danger, IconFactory.Get("trash"), 18))
                 foreach (var g in Goredoll.All.ToArray()) if (g != null) g.Despawn();
+            if (opts.width >= 632 + 160 && UI.Button(new Rect(opts.x + 632, y, Mathf.Min(300, opts.width - 632), 112), "CUSTOMIZE", ButtonKind.Primary, IconFactory.Get("person"), 20))
+                UIRoot.Push(new CustomizerScreen());
             y += 62;
             if (UI.Button(new Rect(opts.x, y, 300, 50), "REMOVE DEAD", ButtonKind.Ghost, IconFactory.Get("skull"), 18))
                 foreach (var g in Goredoll.All.ToArray()) if (g != null && g.IsDead) g.Despawn();
             if (UI.Button(new Rect(opts.x + 316, y, 300, 50), "MAKE THEM DANCE", ButtonKind.Ghost, IconFactory.Get("music"), 18))
                 foreach (var g in Goredoll.All) if (g != null && g.Brain != null) g.Brain.ForceDance = true;
             y += 66;
-            var zombies = SpawnCatalog.AI.FindAll(d => d.Id.StartsWith("zombie_"));
+            var zombies = SpawnCatalog.AI.FindAll(d => d.Id.StartsWith("zombie_") || d.Id.StartsWith("armed_"));
+            zombies.AddRange(CustomDolls.Defs);
+            if (opts.width < 632 + 160 && UI.Button(new Rect(opts.xMax - 220, y, 220, 44), "CUSTOMIZE", ButtonKind.Primary, IconFactory.Get("person"), 18))
+                UIRoot.Push(new CustomizerScreen());
             if (zombies.Count > 0 && opts.yMax - y > 90)
             {
-                UI.Label(new Rect(opts.x, y, opts.width, 30), "Zombies - they eat Goredolls, the bitten rise again. 3 headshots to kill.", 18, Color.white);
+                UI.Label(new Rect(opts.x, y, opts.width - 240, 30), "Zombies, armed Goredolls and your custom dolls.", 18, Color.white);
                 DrawGrid(new Rect(opts.x, y + 36, opts.width, opts.yMax - y - 36), zombies, "zombies", "");
             }
         }
