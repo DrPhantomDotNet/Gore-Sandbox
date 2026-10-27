@@ -14,6 +14,12 @@ name: Build Gore Sandbox
 
 on:
   workflow_dispatch:
+    inputs:
+      platforms:
+        description: "What to build"
+        type: choice
+        default: android
+        options: [ android, windows, both ]
   push:
     branches: [ main, master ]
 
@@ -32,16 +38,9 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 1   # one Unity license seat at a time
+      # Pushes build Android only (the owner plays on a phone). Run the workflow by hand to pick Windows or both.
       matrix:
-        include:
-          - name: Windows
-            platform: StandaloneWindows64
-            output: build/StandaloneWindows64
-            check: build/StandaloneWindows64/GoreSandbox.exe
-          - name: Android
-            platform: Android
-            output: build/Android
-            check: build/Android/GoreSandbox.apk
+        include: ${{ fromJSON((github.event.inputs.platforms == 'windows' && '[{"name":"Windows","platform":"StandaloneWindows64","output":"build/StandaloneWindows64","check":"build/StandaloneWindows64/GoreSandbox.exe"}]') || (github.event.inputs.platforms == 'both' && '[{"name":"Windows","platform":"StandaloneWindows64","output":"build/StandaloneWindows64","check":"build/StandaloneWindows64/GoreSandbox.exe"},{"name":"Android","platform":"Android","output":"build/Android","check":"build/Android/GoreSandbox.apk"}]') || '[{"name":"Android","platform":"Android","output":"build/Android","check":"build/Android/GoreSandbox.apk"}]') }}
     steps:
       - name: Check secrets are set
         id: secrets
