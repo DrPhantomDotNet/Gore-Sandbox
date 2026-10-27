@@ -125,10 +125,13 @@ jobs:
             [ "$status" -eq 0 ] && status=1
           fi
           if [ "$status" -ne 0 ]; then
-            # Put the important lines on the run page as an error summary (secrets are masked by GitHub).
-            summary=$(grep -iE "licens|activat|seat|entitlement|sign.?in|login|password|two.?factor|2fa|verification|error|exception|failed|fatal" build.log \
-              | grep -viE "warning CS|^\s*$" | tail -n 25 | cut -c1-300 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
-            echo "::error title=${{ matrix.name }} build failed::${summary:-see the build log}"
+            # Error summaries on the run page (GitHub masks secrets). The full log is in the build step.
+            enc() { sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g'; }
+            errs=$(grep -E "error CS[0-9]+|Error building|BuildFailedException|Build Finished, Result|compiler errors|\[CIBuild\]|Exception:|ERROR|Aborting batchmode|exited with code|No space left|Killed" build.log \
+              | grep -viE "warning CS" | awk '!seen[$0]++' | head -n 40 | cut -c1-300 | enc)
+            echo "::error title=${{ matrix.name }}: build errors::${errs:-none matched}"
+            before=$(awk '/Returning personal license seat|Return license|Returning the license/{exit} {print}' build.log | tail -n 45 | cut -c1-260 | enc)
+            echo "::error title=${{ matrix.name }}: end of the Unity log::${before:-empty}"
           fi
           exit $status
 
