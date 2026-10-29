@@ -5,7 +5,24 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.6.1 — EARLY ACCESS</size></b>
+@"<b><size=30>v0.7.0 — STORY MODE</size></b>
+<color=#ff9a40>Chapter 1 is here. Big Marcus has a job for you.</color>
+<b>STORY MODE</b>
+• New PLAY STORY button on the main menu
+• Chapter 1: meet Big Marcus in the Alleyway, take the job, and face Z
+• Boss fight against Z: a huge health bar, headshots deal double damage, and stage 2 when he gets enraged
+• MISSION PASSED / MISSION FAILED screens, objectives and a new achievement: Chapter 1 Complete
+• New map: Alleyway (also playable in sandbox)
+<b>WEAPONS</b>
+• MAC-11: a tiny machine pistol that empties its 32 rounds in a blink
+• Dual Katanas: one blade in each hand, alternating slashes and a cross-slash finisher
+• Weapon customization: sights (red dot, holographic, 4x scope), extended and drum mags, suppressor, compensator, grips and a laser
+• Open it from the spawn menu (CUSTOMIZE on each gun) or the pause menu (CUSTOMIZE WEAPONS)
+<b>MOBILE</b>
+• INTERACT button: glows when you look at something you can use, and says TALK for characters
+• Prompts on phones say ""Tap INTERACT"" instead of [E]
+
+<b><size=30>v0.6.1 — EARLY ACCESS</size></b>
 <color=#ff9a40>Gore Sandbox is now in Early Access!</color>
 • Join the community: new DISCORD button on the main menu (feedback, bug reports, update news)
 • EARLY ACCESS badge on the main menu: expect bugs and frequent updates, and please report anything weird

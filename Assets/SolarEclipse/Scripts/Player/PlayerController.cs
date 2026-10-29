@@ -310,6 +310,7 @@ namespace SolarEclipse
             // Characters you can talk to (story NPCs) put an IInteractable on the Goredoll: talking wins over inspecting.
             var talk = part != null && part.Doll != null ? part.Doll.GetComponentInParent<IInteractable>() : null;
             if (talk != null) { talk.Interact(gameObject); return; }
+            if (part != null && part.Doll != null && StoryMode.Active) return; // no wound inspector mid-mission (it would pause the fight)
             if (part != null && part.Doll != null)
             {
                 UIRoot.Push(new WoundInspectorScreen(part.Doll, part));
@@ -339,6 +340,7 @@ namespace SolarEclipse
             var part = hit.collider.GetComponent<BodyPart>();
             var talk = part != null && part.Doll != null ? part.Doll.GetComponentInParent<IInteractable>() : null;
             if (talk != null) { InteractTarget = talk.Prompt; LookHint = key + talk.Prompt; return; }
+            if (part != null && part.Doll != null && StoryMode.Active) return;
             if (part != null && part.Doll != null) { InteractTarget = "Inspect"; LookHint = key + "Inspect " + part.Doll.DisplayName + "'s wounds"; return; }
             var use = hit.collider.GetComponentInParent<IInteractable>();
             if (use != null) { InteractTarget = use.Prompt; LookHint = key + use.Prompt; }

@@ -210,6 +210,7 @@ namespace SolarEclipse
             phase = Phase.Fight;
             if (zTalk != null) Destroy(zTalk);
             zTalk = null;
+            if (marcus != null && marcus.Talk != null) Destroy(marcus.Talk); // nothing more to say
             if (z != null) z.BeginFight();
             SetObjective("Kill Z");
             ShowBanner("KILL Z", null, new Color(1f, 0.25f, 0.2f), 2.2f);

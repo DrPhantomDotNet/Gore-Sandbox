@@ -76,6 +76,7 @@ namespace SolarEclipse
             if (info.Amount <= 0f) return true;
 
             float dmg = info.Amount * Mathf.Max(0.1f, Rules.DamageMultiplier) * (part.IsHead ? 2f : 1f);
+            if (info.Type == DamageType.Explosion) dmg = Mathf.Min(dmg, 25f); // a blast hits every limb at once
             Pool -= dmg;
             LastHitTime = Time.time;
             if (Stage == 1 && Pool <= MaxPool * 0.5f) EnterStage2();
