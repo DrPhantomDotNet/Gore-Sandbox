@@ -126,6 +126,19 @@ namespace SolarEclipse
             // Sandbox tools (Creative)
             new WeaponDef { Id = "ropetool", Name = "Rope Tool", Kind = WeaponKind.RopeTool, Glyph = "rope", Description = "LMB end A, LMB end B: tie props, Goredolls and the world together (hang them from ceilings). RMB cuts a rope, R: tight / slack / long.", HipPos = new Vector3(0.13f, -0.15f, 0.3f) },
             new WeaponDef { Id = "gravitygun", Name = "Gravity Gun", Kind = WeaponKind.GravityGun, Glyph = "gravgun", Description = "RMB pulls and holds objects and Goredolls, LMB punts them (or anything in front of you).", HipPos = new Vector3(0.13f, -0.16f, 0.3f) },
+            // ---- Gun pack 3 (Weapons/Mac11.cs, DualKatanas.cs, WeaponModels4.cs, Audio/RecipesGuns3.cs). Append only: the index is sent over the network.
+            new WeaponDef
+            {
+                Id = "mac11", Name = "MAC-11", Kind = WeaponKind.Firearm, Glyph = "smg", Description = "Tiny .380 machine pistol. 1150 rounds per minute, 32-round mag in the grip. Climbs hard, sprays wide at range.",
+                Damage = 21, Rpm = 1150, Auto = true, HipSpread = 3.2f, AimSpread = 1.25f, Recoil = 0.95f, Penetration = 0.3f, Force = 6, Caliber = 9f, Mag = 32, Range = 140f,
+                ReloadTime = 1.65f, EmptyExtra = 0.4f, FireSound = "gun_mac11", MagOut = "mag_out_smg", MagIn = "mag_in_smg", Charge = "charging_handle",
+                HipPos = new Vector3(0.12f, -0.14f, 0.32f), AimFov = 0.82f, AimDistance = 0.21f, CasingType = 0, WeightKg = 1.6f, NoiseRadius = 90f,
+            },
+            new WeaponDef
+            {
+                Id = "katana_dual", Name = "Dual Katanas", Kind = WeaponKind.Melee, Glyph = "katana", Description = "A katana in each hand. LMB = fast alternating left/right slashes (combo). RMB = both blades cross-slash: huge damage, cuts almost always.",
+                Damage = 58, Force = 16, HipPos = new Vector3(0.14f, -0.2f, 0.3f), WeightKg = 2.4f,
+            },
         };
 
         public static WeaponDef Get(string id) => All.Find(w => w.Id == id);

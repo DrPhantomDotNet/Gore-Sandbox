@@ -60,6 +60,7 @@ namespace SolarEclipse
                 return;
             }
             if (NetState.IsHost && !Severed) NetManager.I.BroadcastDollDamage(this, info);
+            if (!StoryHooks.Process(this, ref info)) return; // story NPCs: Z's boss health pool (Goredoll/ZBoss.cs)
             if (Body != null && info.Force.sqrMagnitude > 0)
                 Body.AddForceAtPosition(info.Force * Rules.BulletForceMultiplier, info.Point, ForceMode.Impulse);
             if (info.Amount <= 0f) return;

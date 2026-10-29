@@ -21,9 +21,19 @@ namespace SolarEclipse
         Transform handMag;
         Light flashLight;
 
-        public int Capacity => Def.Mag;
+        /// <summary>Attachment modifiers (Weapons/Attachments.cs). Identity for guns without a saved loadout.</summary>
+        public AttachStats Mods = AttachStats.None;
+        /// <summary>Def used for the bullets themselves (damage/range modified by a suppressor); the catalog Def otherwise.</summary>
+        public WeaponDef ShotDef;
+        float scopeView;
+        public int Capacity => Mathf.Max(1, Mathf.RoundToInt(Def.Mag * Mods.MagMul));
+        float HipSpreadM => Def.HipSpread * Mods.HipSpreadMul;
+        float AimSpreadM => Def.AimSpread * Mods.AimSpreadMul;
+        public override float AimFov => Mods.AimFov > 0f ? Mods.AimFov : Def.AimFov;
+        protected override float AimDistance => Mods.AimDistance > 0f ? Mods.AimDistance : Def.AimDistance;
+        public override void DrawOverlay(float W, float H) { if (Equipped && Mods.Optic == 3) AttachmentScope.Draw(W, H, scopeView); }
         /// <summary>Current cone in degrees (crosshair gap).</summary>
-        public float Spread => Mathf.Lerp(Def.HipSpread, Def.AimSpread, aim) + bloom + (Player != null ? Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aim * 0.6f) : 0f);
+        public float Spread => Mathf.Lerp(HipSpreadM, AimSpreadM, aim) + bloom + (Player != null ? Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aim * 0.6f) : 0f);
         public virtual bool OpenBolt => Def.Id == "uzi";
         // ---- subclass hooks (Weapons/Guns2: pump shotgun, sniper, revolver, minigun, harpoon gun)
         /// <summary>False blocks firing (pump/bolt cycling, minigun spin-up).</summary>
@@ -36,7 +46,7 @@ namespace SolarEclipse
         protected virtual void OnShot() { }
         /// <summary>Fires one bullet/pellet (default: hitscan). Override for projectiles.</summary>
         protected virtual void FireRound(Vector3 origin, Vector3 dir, Vector3 muzzle, int index, bool authority) =>
-            Ballistics.Fire(origin, dir, Def, Player, muzzle, DamageType.Bullet, Def.Pellets == 1 || index % 3 == 0, authority);
+            Ballistics.Fire(origin, dir, ShotDef ?? Def, Player, muzzle, DamageType.Bullet, Def.Pellets == 1 || index % 3 == 0, authority);
         public override bool Busy => Reloading;
         public override bool IsAiming => PlayerInput.Frame.Aim && !Reloading && !Player.Sprinting && inspectT < 0f;
         public override string AmmoText => Rules.InfiniteAmmo ? "INF" : Ammo + " / " + Capacity;
@@ -44,6 +54,7 @@ namespace SolarEclipse
 
         protected override void OnAttach()
         {
+            Attachments.Apply(this); // saved sight / magazine / muzzle / grip / laser for this gun (before the ammo count)
             Ammo = Capacity + (OpenBolt || Def.ShellReload ? 0 : 1);
             auto = Def.Auto;
             BuildFlash();
@@ -130,7 +141,7 @@ namespace SolarEclipse
         public override void Tick(InputFrame f, float dt)
         {
             Vm.ResetHands();
-            aim = MathX.Damp(aim, IsAiming ? 1f : 0f, 14f, dt);
+            aim = MathX.Damp(aim, IsAiming ? 1f : 0f, 14f * Mods.AimSpeedMul, dt);
             Vm.AimWeight = aim;
             bloom = Mathf.MoveTowards(bloom, 0f, dt * 3f);
 
@@ -158,6 +169,13 @@ namespace SolarEclipse
             else TickInspect(f, dt, ref pos, ref rot);
             Vm.TargetPos = pos;
             Vm.TargetRot = rot;
+            if (Mods.Optic == 3)
+            {
+                // 4x scope attachment: hide the gun and hands once the eye is behind the glass (like the sniper).
+                scopeView = Mathf.Clamp01((aim - 0.78f) / 0.17f);
+                AttachmentScope.SetHidden(Model, scopeView > 0.5f);
+                if (scopeView > 0.5f) { Vm.HideLeft = true; Vm.HideRight = true; }
+            }
 
             // ----- Moving parts
             slideKick = Mathf.MoveTowards(slideKick, 0f, dt / 0.06f);
@@ -187,11 +205,16 @@ namespace SolarEclipse
             inspectT = -1f;
 
             var muzzle = Model.Muzzle.position;
-            AudioManager.Play(Def.FireSound, Eye, 1f, Random.Range(0.96f, 1.04f), 0f, 1.5f, 80f, AudioBus.Sfx);
-            AudioManager.Play("gun_tail", Eye + Aim * 2f, 0.55f, Random.Range(0.9f, 1.05f), 0.6f, 5f, 200f);
-            GameEvents.EmitNoise(Eye, Def.NoiseRadius, 1f, Player);
+            if (Mods.Suppressed)
+                AudioManager.Play("gun_suppressed", Eye, 0.85f, Random.Range(0.96f, 1.06f) * (Def.Caliber > 7f ? 0.82f : 1f), 0f, 1.5f, 40f, AudioBus.Sfx);
+            else
+            {
+                AudioManager.Play(Def.FireSound, Eye, 1f, Random.Range(0.96f, 1.04f), 0f, 1.5f, 80f, AudioBus.Sfx);
+                AudioManager.Play("gun_tail", Eye + Aim * 2f, 0.55f, Random.Range(0.9f, 1.05f), 0.6f, 5f, 200f);
+            }
+            GameEvents.EmitNoise(Eye, Def.NoiseRadius * (Mods.Suppressed ? 0.25f : 1f), 1f, Player);
 
-            float spread = Mathf.Lerp(Def.HipSpread, Def.AimSpread, aim) + bloom + Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aim * 0.6f);
+            float spread = Mathf.Lerp(HipSpreadM, AimSpreadM, aim) + bloom + Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aim * 0.6f);
             if (!Player.Grounded) spread += 2f;
             // Offline/host: real shot. Client: draw it now, send the exact same directions to the host.
             bool authority = NetState.Authority;
@@ -199,7 +222,7 @@ namespace SolarEclipse
             Ballistics.BeginShot();
             for (int i = 0; i < Def.Pellets; i++)
             {
-                float pelletSpread = Def.Pellets > 1 ? Def.HipSpread * Mathf.Lerp(1f, 0.8f, aim) : spread;
+                float pelletSpread = Def.Pellets > 1 ? HipSpreadM * Mathf.Lerp(1f, 0.8f, aim) : spread;
                 var r = Random.insideUnitCircle * pelletSpread;
                 var dir = CamT.rotation * Quaternion.Euler(r.y, r.x, 0) * Vector3.forward;
                 dirs.Add(dir);
@@ -208,14 +231,14 @@ namespace SolarEclipse
             if (authority) Ballistics.EndShot(Aim);
             if (NetState.IsClient) NetManager.I.RequestFire(Def, Eye, dirs);
             else if (NetState.IsHost) NetManager.I.BroadcastFire(NetManager.I.LocalId, WeaponCatalog.All.IndexOf(Def), Eye, dirs);
-            bloom = Mathf.Min(bloom + Def.Recoil * 0.25f, 4f);
+            bloom = Mathf.Min(bloom + Def.Recoil * Mods.RecoilMul * 0.25f, 4f);
 
-            // Flash, light, smoke
-            flashT = 0.045f;
+            // Flash, light, smoke (a suppressor hides the flash)
+            flashT = Mods.Suppressed ? 0f : 0.045f;
             flash.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
             flash.transform.localScale = Vector3.one * Random.Range(0.8f, 1.25f);
-            FX.MuzzleSmoke(muzzle, Aim, Def.Pellets > 1 ? 1.8f : 1f);
-            FX.Flash(Eye + Aim * 0.8f, new Color(1f, 0.75f, 0.45f), 9f, 2.2f, 0.05f);
+            FX.MuzzleSmoke(muzzle, Aim, (Def.Pellets > 1 ? 1.8f : 1f) * (Mods.Suppressed ? 0.5f : 1f));
+            if (!Mods.Suppressed) FX.Flash(Eye + Aim * 0.8f, new Color(1f, 0.75f, 0.45f), 9f, 2.2f, 0.05f);
 
             // Casing: the AR-17 ejects its shell, open-bolt UZI throws brass right.
             if (EjectOnFire) Casings.Eject(Model.Eject != null ? Model.Eject.position : muzzle, CamT.right, CamT.up, Player.CC.velocity, Def.CasingType);
@@ -224,7 +247,7 @@ namespace SolarEclipse
             if (Ammo == 0 && Def.Id == "glock" && !Rules.InfiniteAmmo) slideLocked = true;
 
             // Recoil: viewmodel kick + camera punch (less when aiming).
-            float R = Def.Recoil * (Player.Crouching ? 0.7f : 1f);
+            float R = Def.Recoil * Mods.RecoilMul * (Player.Crouching ? 0.7f : 1f);
             float a = Mathf.Lerp(1f, 0.55f, aim);
             Vm.AddRecoil(new Vector3(Random.Range(-0.15f, 0.15f), 0.25f, -1.6f) * 0.4f * R * a, new Vector3(-28f * R * a, Random.Range(-6f, 6f) * R, Random.Range(-10f, 10f) * R));
             CameraFX.Punch(0.55f * R * a, Random.Range(-0.35f, 0.35f) * R);
@@ -250,7 +273,7 @@ namespace SolarEclipse
                 shellT = 0f;
                 reloadDur = 0.35f + shellsToLoad * Def.ReloadTime + (emptyReload ? Def.EmptyExtra : 0f);
             }
-            else reloadDur = (Rules.NoReload ? 0.05f : Def.ReloadTime + (emptyReload ? Def.EmptyExtra : 0f));
+            else reloadDur = (Rules.NoReload ? 0.05f : Def.ReloadTime * Mods.ReloadMul + (emptyReload ? Def.EmptyExtra : 0f));
             AudioManager.Play("cloth", Eye, 0.35f, 1f, 0f);
         }
 

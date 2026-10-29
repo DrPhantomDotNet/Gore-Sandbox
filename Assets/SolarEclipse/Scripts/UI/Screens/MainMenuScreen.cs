@@ -83,11 +83,17 @@ namespace SolarEclipse
             {
                 float a = Intro(0.15f + i * 0.07f, 0.4f);
                 bool big = i == 0, mp = i == 1;
-                var r = new Rect(90 - (1 - a) * 220, yy, big || mp ? 440 : 380, big ? 72 : mp ? 60 : 60);
-                yy += big ? 80 : mp ? 84 : 72;
+                var r = new Rect(90 - (1 - a) * 220, yy, big || mp ? 440 : 380, big ? 72 : mp ? 60 : 56);
+                yy += big ? 80 : mp ? 76 : 64;
                 var kind = big ? ButtonKind.Primary : i == labels.Length - 1 ? ButtonKind.Danger : ButtonKind.Normal;
                 var old = GUI.color; GUI.color = new Color(1, 1, 1, a);
                 if (UI.Button(r, labels[i], kind, IconFactory.Get(icons[i]), big ? 34 : mp ? 26 : 26)) OnMain(i);
+                // Story mode (World/StoryMode.cs), right under PLAY.
+                if (big)
+                {
+                    if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 440, 60), "PLAY STORY", ButtonKind.Normal, IconFactory.Get("book"), 26, true, "Chapter 1: Big Marcus has a job for you")) StoryMode.Begin();
+                    yy += 68;
+                }
                 GUI.color = old;
             }
 

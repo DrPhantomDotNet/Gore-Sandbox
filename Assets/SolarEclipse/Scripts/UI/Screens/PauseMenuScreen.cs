@@ -34,6 +34,7 @@ namespace SolarEclipse
             if (UI.Button(B(), "SETTINGS", ButtonKind.Normal, IconFactory.Get("gear"))) UIRoot.Push(new SettingsScreen(true));
             if (UI.Button(B(), "CONTROLS", ButtonKind.Normal, IconFactory.Get("keyboard"))) UIRoot.Push(new HelpScreen());
             if (UI.Button(B(), "SESSION STATS", ButtonKind.Normal, IconFactory.Get("chart"))) UIRoot.Push(new ScoreboardScreen());
+            if (UI.Button(B(), "CUSTOMIZE WEAPONS", ButtonKind.Normal, IconFactory.Get("wrench"))) UIRoot.Push(new WeaponCustomizeScreen());
             if (NetState.IsClient) { y += 0; }
             else if (UI.Button(B(), "CLEAR EVERYTHING SPAWNED", ButtonKind.Ghost, IconFactory.Get("trash"), 20))
                 UIRoot.Push(new ConfirmDialog("Clear the map?", "Removes every Goredoll, prop, gib and blood decal.", () => { WorldRoot.Current?.ClearDynamic(); GameEvents.ShowToast("Map cleared"); }, "CLEAR", ButtonKind.Danger));

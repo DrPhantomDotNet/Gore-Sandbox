@@ -61,7 +61,7 @@ namespace SolarEclipse
 
         public void Sever(BodyPart part, Vector3 point, Vector3 normal, bool sharp)
         {
-            if (part == null || !part.CanSever || !Settings.Dismemberment) return;
+            if (part == null || !part.CanSever || !Settings.Dismemberment || StoryHooks.NoDismember(part)) return;
             if (sharp && part.IsLimb && !part.Sliced) { Slice(part, point, normal); return; }
             if (Forward(0, part, point, normal, sharp)) return;
             if (sharp && part.IsLimb && !part.Sliced) { Slice(part, point, normal); return; }
@@ -110,7 +110,7 @@ namespace SolarEclipse
         /// <summary>Cuts a limb mesh along the blade's plane. The far half becomes a free piece with the rest of the limb attached.</summary>
         public void Slice(BodyPart part, Vector3 worldPoint, Vector3 worldPlaneNormal)
         {
-            if (part == null || part.Severed || part.Gibbed || part.Sliced || !Settings.Dismemberment) return;
+            if (part == null || part.Severed || part.Gibbed || part.Sliced || !Settings.Dismemberment || StoryHooks.NoDismember(part)) return;
             if (Forward(1, part, worldPoint, worldPlaneNormal, true)) return;
             var t = part.transform;
             // Keep cuts mostly across the limb so the result reads as an amputation.
@@ -216,7 +216,7 @@ namespace SolarEclipse
 
         public void Gib(BodyPart part, Vector3 dir)
         {
-            if (part == null || part.Gibbed || !part.Gibbable || !Settings.Dismemberment) return;
+            if (part == null || part.Gibbed || !part.Gibbable || !Settings.Dismemberment || StoryHooks.NoDismember(part)) return;
             if (Forward(2, part, part.transform.position, dir, false)) return;
             var pos = part.Col != null ? part.Col.bounds.center : part.transform.position;
             var vel = part.Body != null ? RB.Vel(part.Body) : Vector3.zero;

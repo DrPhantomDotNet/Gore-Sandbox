@@ -135,6 +135,7 @@ namespace SolarEclipse
         public void Launch(Vector3 velocity)
         {
             if (Forward) { if (NetState.LocalAction) NetManager.I.RequestLaunch(this, velocity); return; }
+            if (StoryHooks.NoLaunch(this)) return; // story NPCs that can't be pushed around yet
             Ragdoll.Launch(velocity);
         }
 

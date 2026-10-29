@@ -46,6 +46,7 @@ namespace SolarEclipse
                     BackroomsMap.CreateDef(), // procedurally generated (World/BackroomsMap.cs)
                     ArenaMap.CreateDef(), // endless horde mode (World/ArenaMap.cs + World/HordeMode.cs)
                     RooftopsMap.CreateDef(), // city rooftops at night (World/RooftopsMap.cs)
+                    AlleywayMap.CreateDef(), // night alley + courtyard; story mode chapter 1 (World/AlleywayMap.cs, World/StoryMode.cs)
                     BossRealm.CreateDef(), // "????" boss fight (singleplayer only, gated by Orbie in MapSelectScreen)
                 };
                 return all;

@@ -30,6 +30,8 @@ namespace SolarEclipse
         public LifeState State = LifeState.Alive;
         /// <summary>Zombie: no blood loss, pain, shock or organ deaths. Only dies when UndeadMayDie is set (3 headshots, head destroyed, Kill) or when decapitated.</summary>
         public bool Undead, UndeadMayDie;
+        /// <summary>Story bosses (Goredoll/ZBoss.cs): nothing can kill them while set.</summary>
+        public bool Immortal;
         public string CauseOfDeath = "";
         public float TimeOfDeath = -1f;
         float heartStopTimer = -1f, hypoxiaTimer, faintTimer;
@@ -135,7 +137,7 @@ namespace SolarEclipse
 
         public void Die(string cause)
         {
-            if (State == LifeState.Dead) return;
+            if (State == LifeState.Dead || Immortal) return;
             if (Undead && !UndeadMayDie && !Decapitated) return;
             State = LifeState.Dead;
             CauseOfDeath = cause;

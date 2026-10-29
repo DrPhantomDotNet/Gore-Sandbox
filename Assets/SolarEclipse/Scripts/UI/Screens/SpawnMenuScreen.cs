@@ -212,7 +212,10 @@ namespace SolarEclipse
                     UI.Label(new Rect(r.xMax - 470, r.y + 12, 200, 86), $"DMG {w.Damage}{(w.Pellets > 1 ? "×" + w.Pellets : "")}\nRPM {w.Rpm}\nMAG {w.Mag}", 15, UI.Accent2, TextAnchor.MiddleLeft);
                 bool owned = p != null && p.Inventory.Has(w.Id);
                 bool equipped = owned && p.Inventory.Current != null && p.Inventory.Current.Def.Id == w.Id;
-                if (UI.Button(new Rect(r.xMax - 250, r.y + 25, 230, 60), equipped ? "EQUIPPED" : "EQUIP", equipped ? ButtonKind.Primary : ButtonKind.Normal, IconFactory.Get("hand"), 22, p != null && !equipped))
+                bool custom = Attachments.Supports(w); // Weapons/Attachments.cs: EQUIP on top, CUSTOMIZE below
+                if (custom && UI.Button(new Rect(r.xMax - 250, r.y + 58, 230, 46), "CUSTOMIZE", ButtonKind.Ghost, IconFactory.Get("wrench"), 18))
+                    UIRoot.Push(new WeaponCustomizeScreen(w.Id));
+                if (UI.Button(custom ? new Rect(r.xMax - 250, r.y + 6, 230, 46) : new Rect(r.xMax - 250, r.y + 25, 230, 60), equipped ? "EQUIPPED" : "EQUIP", equipped ? ButtonKind.Primary : ButtonKind.Normal, IconFactory.Get("hand"), 22, p != null && !equipped))
                 {
                     p.Inventory.Give(w.Id);
                     AudioManager.Ui("ui_success");

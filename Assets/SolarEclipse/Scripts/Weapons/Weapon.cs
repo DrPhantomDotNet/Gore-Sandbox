@@ -19,6 +19,8 @@ namespace SolarEclipse
         public virtual bool IsAiming => false;
         public float AimWeight => aim;
         public virtual float AimFov => Def.AimFov;
+        /// <summary>Eye to rear sight distance when aiming (optic attachments change it).</summary>
+        protected virtual float AimDistance => Def.AimDistance;
         public virtual bool ConsumesKick => false;
         public virtual bool ConsumesScroll => false;
         public virtual bool Busy => false;
@@ -34,6 +36,8 @@ namespace SolarEclipse
         {
             var extra = Guns2.Create(def); // Weapons/Guns2.cs: shotgun, sniper, revolver, minigun, harpoon gun
             if (extra != null) return extra;
+            var extra3 = Guns3.Create(def); // Weapons/Mac11.cs: MAC-11, dual katanas
+            if (extra3 != null) return extra3;
             var boom = Explosives.CreateWeapon(def); // Weapons/Explosives.cs: rocket launcher, frag, C4, katana, sledgehammer
             if (boom != null) return boom;
             switch (def.Kind)
@@ -107,10 +111,10 @@ namespace SolarEclipse
         {
             if (Model == null) return Def.HipPos;
             if (Model.SightRear != null && Model.SightFront != null)
-                return new Vector3(0f, 0f, Def.AimDistance) - AimRot() * SocketLocal(Model.SightRear);
+                return new Vector3(0f, 0f, AimDistance) - AimRot() * SocketLocal(Model.SightRear);
             if (Model.Sight == null) return Def.HipPos;
             var s = Model.Sight.localPosition;
-            return new Vector3(-s.x, -s.y, Def.AimDistance - s.z);
+            return new Vector3(-s.x, -s.y, AimDistance - s.z);
         }
 
         /// <summary>Socket-local rotation that turns the SightRear→SightFront line onto the camera's forward axis (no roll).</summary>

@@ -214,6 +214,8 @@ namespace SolarEclipse
             RecipesZombie.Define(Def); // zombie groans, bites, shrieks
             RecipesTools.Define(Def); // rope tool, gravity gun, bullet time, photo mode
             RecipesGuns2.Define(Def); // shotgun, sniper, revolver, minigun, harpoon gun
+            RecipesGuns3.Define(Def); // MAC-11, suppressed shot (attachments)
+            RecipesStory.Define(Def); // story mode: dialogue blips, mission passed/failed stings, boss fight loop
         }
 
         /// <summary>Synthesises everything; yields every frame while turning finished buffers into clips.</summary>
