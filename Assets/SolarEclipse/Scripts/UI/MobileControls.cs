@@ -48,7 +48,7 @@ namespace SolarEclipse
         void Awake()
         {
             Add(Kind.Fire, "FIRE", "crosshair"); Add(Kind.Fire2, "FIRE", "crosshair"); Add(Kind.Aim, "AIM", "eye", true); Add(Kind.Jump, "JUMP", "arrow_up"); Add(Kind.Crouch, "CROUCH", "arrow_down", true);
-            Add(Kind.Sprint, "SPRINT", "run", true); Add(Kind.Reload, "RELOAD", "refresh"); Add(Kind.Use, "USE", "hand"); Add(Kind.Kick, "KICK", "boot");
+            Add(Kind.Sprint, "SPRINT", "run", true); Add(Kind.Reload, "RELOAD", "refresh"); Add(Kind.Use, "INTERACT", "hand"); Add(Kind.Kick, "KICK", "boot");
             Add(Kind.Spawn, "SPAWN", "plus"); Add(Kind.Rotate, "ROTATE", "refresh"); Add(Kind.Mode, "MODE", "list"); Add(Kind.Inspect, "INSPECT", "search");
             Add(Kind.Menu, "MENU", "menu"); Add(Kind.Noclip, "NOCLIP", "ghost"); Add(Kind.Closer, "PULL", "minus"); Add(Kind.Further, "PUSH", "plus"); Add(Kind.Weapon, "NEXT", "arrow_right"); Add(Kind.Chat, "CHAT", "list"); Add(Kind.SlowMo, "SLOW-MO", "clock"); Add(Kind.Photo, "PHOTO", "camera");
         }
@@ -79,10 +79,20 @@ namespace SolarEclipse
                         b.Label = aiming ? "AIMING" : "AIM";
                         break;
                     case Kind.Jump: b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - s - g, s, s); break;
-                    case Kind.Reload: b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : "RELOAD"; break;
+                    case Kind.Reload: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : "RELOAD"; break;
                     case Kind.Crouch: b.Rect = new Rect(W - s * 1.6f - 40 - (s + g) * 2, H - s - 60, s, s); break;
-                    case Kind.Kick: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - s - g, s, s); b.Label = holding ? "FREEZE" : "KICK"; break;
-                    case Kind.Use: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - s - g, s, s); break;
+                    case Kind.Kick: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - s - g, s, s); b.Label = holding ? "FREEZE" : "KICK"; break;
+                    case Kind.Use:
+                    {
+                        // INTERACT sits next to JUMP (right thumb); it grows and glows when there's something to use.
+                        var pc = PlayerController.Instance;
+                        bool can = pc != null && pc.CanInteract;
+                        float us = can ? s * 1.18f : s;
+                        float cx = W - s * 2 - 40 - g + s * 0.5f, cy = H - s * 1.6f - 60 - s - g + s * 0.5f;
+                        b.Rect = new Rect(cx - us * 0.5f, cy - us * 0.5f, us, us);
+                        b.Label = can && pc.InteractTarget != null && pc.InteractTarget.StartsWith("Talk") ? "TALK" : "INTERACT";
+                        break;
+                    }
                     case Kind.Sprint: b.Rect = new Rect(40, H - s - 340, s, s); break;
                     case Kind.Spawn: b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = spawnGun; break;
                     case Kind.Rotate: b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = holding; break;
@@ -243,6 +253,14 @@ namespace SolarEclipse
             {
                 if (!b.Visible) continue;
                 bool lit = b.Held || b.On;
+                if (b.Kind == Kind.Use && PlayerController.Instance != null && PlayerController.Instance.CanInteract)
+                {
+                    // Pulsing glow so you notice you can interact.
+                    float p = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 6f);
+                    var glow = new Rect(b.Rect.x - 10 - p * 6, b.Rect.y - 10 - p * 6, b.Rect.width + 20 + p * 12, b.Rect.height + 20 + p * 12);
+                    UI.Tex(glow, TextureFactory.Ring, UI.Accent2.WithAlpha(0.5f + 0.4f * p));
+                    lit = true;
+                }
                 UI.Tex(b.Rect, TextureFactory.Circle, (lit ? UI.Accent : new Color(0.1f, 0.1f, 0.12f)).WithAlpha(alpha * (lit ? 0.9f : 0.6f)));
                 UI.Tex(b.Rect, TextureFactory.Ring, Color.white.WithAlpha(alpha * 0.5f));
                 var icon = IconFactory.Get(b.Icon);

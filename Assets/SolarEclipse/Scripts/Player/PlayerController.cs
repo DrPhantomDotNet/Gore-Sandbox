@@ -307,6 +307,9 @@ namespace SolarEclipse
         {
             if (!Physics.Raycast(EyePosition, AimDirection, out var hit, 3.2f, Layers.ShootMask | (1 << Layers.Trigger), QueryTriggerInteraction.Collide)) return;
             var part = hit.collider.GetComponent<BodyPart>();
+            // Characters you can talk to (story NPCs) put an IInteractable on the Goredoll: talking wins over inspecting.
+            var talk = part != null && part.Doll != null ? part.Doll.GetComponentInParent<IInteractable>() : null;
+            if (talk != null) { talk.Interact(gameObject); return; }
             if (part != null && part.Doll != null)
             {
                 UIRoot.Push(new WoundInspectorScreen(part.Doll, part));
@@ -322,14 +325,23 @@ namespace SolarEclipse
 
         float nextNetPush;
 
+        /// <summary>What the INTERACT/USE action would do right now ("Talk to Big Marcus", "Open door"...), or null.</summary>
+        public string InteractTarget { get; private set; }
+        /// <summary>True when something usable/talkable is under the crosshair (the mobile INTERACT button lights up).</summary>
+        public bool CanInteract => InteractTarget != null;
+
         void UpdateLookHint()
         {
             LookHint = null;
+            InteractTarget = null;
             if (!Physics.Raycast(EyePosition, AimDirection, out var hit, 3.2f, Layers.ShootMask | (1 << Layers.Trigger), QueryTriggerInteraction.Collide)) return;
+            string key = Settings.TouchControlsActive ? "Tap INTERACT: " : "[E] ";
             var part = hit.collider.GetComponent<BodyPart>();
-            if (part != null && part.Doll != null) { LookHint = "[E] Inspect " + part.Doll.DisplayName + "'s wounds"; return; }
+            var talk = part != null && part.Doll != null ? part.Doll.GetComponentInParent<IInteractable>() : null;
+            if (talk != null) { InteractTarget = talk.Prompt; LookHint = key + talk.Prompt; return; }
+            if (part != null && part.Doll != null) { InteractTarget = "Inspect"; LookHint = key + "Inspect " + part.Doll.DisplayName + "'s wounds"; return; }
             var use = hit.collider.GetComponentInParent<IInteractable>();
-            if (use != null) LookHint = "[E] " + use.Prompt;
+            if (use != null) { InteractTarget = use.Prompt; LookHint = key + use.Prompt; }
         }
 
         public void Kick()
