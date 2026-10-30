@@ -81,7 +81,7 @@ namespace SolarEclipse
                 case 2:
                 {
                     search = UI.TextField(new Rect(view.x, view.y, 360, 44), search, "propsearch", false, "Search props...");
-                    var list = SpawnCatalog.Props.FindAll(d => string.IsNullOrEmpty(search) || d.Name.ToLowerInvariant().Contains(search.ToLowerInvariant()));
+                    var list = SpawnCatalog.Props.FindAll(d => (d.Id != "hangman" || !ChatFilter.ForcedOn) && (string.IsNullOrEmpty(search) || d.Name.ToLowerInvariant().Contains(search.ToLowerInvariant())));
                     DrawGrid(new Rect(view.x, view.y + 56, view.width, view.height - 56), list, "props", "No props match \"" + search + "\".");
                     break;
                 }

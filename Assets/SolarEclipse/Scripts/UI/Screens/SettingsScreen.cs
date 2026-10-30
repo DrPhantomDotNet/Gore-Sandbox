@@ -108,9 +108,10 @@ namespace SolarEclipse
                     if (UI.Slider(Next(), "Max shell casings", ref fc, 0, 300, "0")) { d.maxCasings = Mathf.RoundToInt(fc); changed = true; }
                     break;
                 case 4:
-                    changed |= UI.Selector(Next(), "Gore level", ref d.goreLevel, Settings.GoreLevels, Settings.GoreDescriptions[Mathf.Clamp(d.goreLevel, 0, 5)]);
+                    changed |= UI.Selector(Next(), "Gore level", ref d.goreLevel, Settings.GoreLevels, Settings.GoreDescriptions[Mathf.Clamp(d.goreLevel, 0, 6)]);
                     changed |= UI.Selector(Next(), "Blood colour", ref d.bloodColor, Settings.BloodColorNames);
                     changed |= UI.Slider(Next(), "Blood amount", ref d.bloodAmount, 0.1f, 3f, "0.00", null, "x");
+                    changed |= UI.Toggle(Next(), "Blood on screen", ref d.bloodOnScreen, "Close kills splash blood on your screen.");
                     float fd = d.maxDecals;
                     if (UI.Slider(Next(), "Max blood decals", ref fd, 50, 2000, "0")) { d.maxDecals = Mathf.RoundToInt(fd); changed = true; }
                     float fg = d.maxGibs;
@@ -163,7 +164,7 @@ namespace SolarEclipse
                 case 1: return 7;
                 case 2: return 14;
                 case 3: return 9;
-                case 4: return 8;
+                case 4: return 9;
                 case 6: return 12;
                 default: return 11;
             }

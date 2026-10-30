@@ -47,6 +47,7 @@ namespace SolarEclipse
             Add("bottle", "Glass Bottle", "Shatters.", "pill", Bottle);
             Add("pallet", "Pallet", "Wooden shipping pallet.", "grid", Pallet);
             Add("dumbbell", "Dumbbell", "20 kg of iron.", "link", Dumbbell);
+            Add("hangman", "Hangman", "Wooden gallows with a rope. Bring a Goredoll's head to the noose with the Spawn Gun, or press INTERACT on it to hang the nearest one. Shoot or cut the rope to drop them.", "link", Hangman); // World/Hangman.cs
         }
 
         static void Add(string id, string name, string desc, string glyph, Func<Vector3, Quaternion, GameObject> spawn)
@@ -194,6 +195,29 @@ namespace SolarEclipse
             cc.radius = 0.43f; cc.height = 0.26f; cc.direction = 1;
             Body(go, 9f, SurfaceType.Carpet);
             PhysMat.Apply(cc, "Rubber", 0.6f, 0.9f);
+            return go;
+        }
+
+        /// <summary>Gallows frame (base, post, beam, brace); the rope and noose are physics bodies made by HangmanRig.</summary>
+        static GameObject Hangman(Vector3 p, Quaternion r)
+        {
+            var go = Root("Hangman", p, r);
+            var mb = new MeshBuilder { Color = new Color(0.42f, 0.29f, 0.18f), Gloss = 0.15f };
+            mb.Box(new Vector3(0, 0.1f, 0), new Vector3(2.2f, 0.2f, 2.2f));
+            mb.Box(new Vector3(0, 1.75f, -0.8f), new Vector3(0.2f, 3.3f, 0.2f));
+            mb.Box(new Vector3(0, 3.3f, -0.15f), new Vector3(0.18f, 0.18f, 1.5f));
+            mb.Push(new Vector3(0, 2.95f, -0.52f), Quaternion.Euler(45f, 0, 0));
+            mb.Box(Vector3.zero, new Vector3(0.12f, 0.12f, 0.75f));
+            mb.Pop();
+            mb.SetColor(new Color(0.55f, 0.45f, 0.3f), 0.1f);
+            mb.Cylinder(new Vector3(0, 3.22f, HangmanRig.AnchorZ), new Vector3(0, 3.38f, HangmanRig.AnchorZ), 0.035f, 0.035f, 8); // knot on the beam
+            Render(go, mb, Mats.LitTextured(TextureFactory.Wood));
+            var b = go.AddComponent<BoxCollider>(); b.center = new Vector3(0, 0.1f, 0); b.size = new Vector3(2.2f, 0.2f, 2.2f);
+            var post = go.AddComponent<BoxCollider>(); post.center = new Vector3(0, 1.75f, -0.8f); post.size = new Vector3(0.2f, 3.3f, 0.2f);
+            var beam = go.AddComponent<BoxCollider>(); beam.center = new Vector3(0, 3.3f, -0.15f); beam.size = new Vector3(0.18f, 0.18f, 1.5f);
+            var rb = Body(go, 260f, SurfaceType.Wood);
+            rb.centerOfMass = new Vector3(0, 0.25f, -0.2f);
+            go.AddComponent<HangmanRig>();
             return go;
         }
 

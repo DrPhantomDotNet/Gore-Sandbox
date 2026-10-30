@@ -68,13 +68,14 @@ namespace SolarEclipse
                 case Page.Gore:
                 {
                     UI.Label(new Rect(body.x, body.y, body.width, 50), "<b>How much gore do you want?</b>", 32, c);
-                    float bw = (body.width - 5 * 14) / 6f;
-                    for (int i = 0; i < 6; i++)
+                    int n = Settings.GoreLevels.Length;
+                    float bw = (body.width - (n - 1) * 12) / n;
+                    for (int i = 0; i < n; i++)
                     {
-                        var b = new Rect(body.x + i * (bw + 14), body.y + 80, bw, 80);
+                        var b = new Rect(body.x + i * (bw + 12), body.y + 80, bw, 80);
                         if (UI.Button(b, Settings.GoreLevels[i], d.goreLevel == i ? ButtonKind.Primary : ButtonKind.Normal, null, 20)) d.goreLevel = i;
                     }
-                    UI.Label(new Rect(body.x, body.y + 190, body.width, 90), Settings.GoreDescriptions[Mathf.Clamp(d.goreLevel, 0, 5)], 22, UI.Accent2.WithAlpha(t), TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+                    UI.Label(new Rect(body.x, body.y + 190, body.width, 90), Settings.GoreDescriptions[Mathf.Clamp(d.goreLevel, 0, 6)], 22, UI.Accent2.WithAlpha(t), TextAnchor.UpperLeft, FontStyle.Normal, true, true);
                     break;
                 }
 

@@ -254,7 +254,7 @@ namespace SolarEclipse
             R("say", "AI", "Makes the Goredoll you aim at say a voice line (v_*).", a => { var d = AimDoll(); if (d != null) d.Voice.Say(S(a, 0, "v_hey"), 1f, true); }, "<clip>");
 
             // ------------------------------------------------------------ gore
-            R("gore", "Gore", "Gore level 0-5 (none, minimum, low, medium, high, unreal).", a => { Settings.Data.goreLevel = Mathf.Clamp(N(a, 0, 4), 0, 5); Settings.Save(); Log("Gore: " + Settings.GoreLevels[Settings.Data.goreLevel]); }, "<0-5>");
+            R("gore", "Gore", "Gore level 0-6 (none, minimum, low, medium, high, unreal, super ultra).", a => { Settings.Data.goreLevel = Mathf.Clamp(N(a, 0, 4), 0, 6); Settings.Save(); Log("Gore: " + Settings.GoreLevels[Settings.Data.goreLevel]); }, "<0-6>");
             R("blood_color", "Gore", "Blood colour: " + string.Join(", ", Settings.BloodColorNames.Select((n, i) => i + "=" + n)), a => { Settings.Data.bloodColor = Mathf.Clamp(N(a, 0, 0), 0, Settings.BloodColorNames.Length - 1); Settings.Save(); }, "<index>");
             R("blood", "Gore", "Blood amount multiplier.", a => { Settings.Data.bloodAmount = F(a, 0, 1f); Settings.Save(); }, "<x>");
             R("bleed", "Gore", "Bleeding speed multiplier.", a => { Rules.BleedMultiplier = F(a, 0, 1f); }, "<x>");

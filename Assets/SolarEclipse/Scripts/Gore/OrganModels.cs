@@ -77,6 +77,97 @@ namespace SolarEclipse
             mb.Sphere(Vector3.zero, Vector3.one * 0.013f, 4, 6);
         });
 
+        // ---- The Gore Update (v0.9.0): teeth, eyeballs, skull pieces, ribs, vertebrae, jaw
+
+        public static Mesh Tooth(int seed) => Get("tooth" + seed, mb =>
+        {
+            mb.SetColor(new Color(0.96f, 0.94f, 0.86f), 0.7f);
+            float w = seed == 0 ? 0.006f : 0.0045f;
+            mb.Box(new Vector3(0, 0.004f, 0), new Vector3(w, 0.009f, 0.005f));
+            mb.Cylinder(new Vector3(0, 0f, 0), new Vector3(0, -0.009f, 0), 0.0024f, 0.0008f, 5); // root
+            mb.SetColor(new Color(0.55f, 0.05f, 0.06f), 0.8f);
+            mb.Sphere(new Vector3(0, -0.006f, 0), Vector3.one * 0.0025f, 4, 5);
+        });
+
+        public static Mesh Eyeball(int iris) => Get("eye" + iris, mb =>
+        {
+            Color[] irises = { new Color(0.35f, 0.2f, 0.08f), new Color(0.25f, 0.45f, 0.75f), new Color(0.3f, 0.5f, 0.25f) };
+            mb.SetColor(new Color(0.95f, 0.93f, 0.9f), 0.85f);
+            mb.Sphere(Vector3.zero, Vector3.one * 0.012f, 8, 10);
+            mb.SetColor(irises[iris % irises.Length], 0.9f);
+            mb.Sphere(new Vector3(0, 0, 0.0095f), new Vector3(0.0055f, 0.0055f, 0.003f), 6, 8);
+            mb.SetColor(new Color(0.02f, 0.02f, 0.02f), 0.9f);
+            mb.Sphere(new Vector3(0, 0, 0.0115f), new Vector3(0.0025f, 0.0025f, 0.0012f), 5, 6);
+            mb.SetColor(new Color(0.6f, 0.08f, 0.1f), 0.7f); // optic nerve
+            mb.Cylinder(new Vector3(0, 0, -0.011f), new Vector3(0.002f, -0.002f, -0.03f), 0.003f, 0.0018f, 5);
+        });
+
+        public static Mesh SkullPiece(int seed) => Get("skull" + seed, mb =>
+        {
+            var r = new System.Random(seed * 31 + 7);
+            float w = 0.03f + (float)r.NextDouble() * 0.035f, h = 0.025f + (float)r.NextDouble() * 0.03f;
+            mb.SetColor(new Color(0.93f, 0.89f, 0.8f), 0.35f);
+            mb.Sphere(Vector3.zero, new Vector3(w, h, 0.006f), 5, 7, p => new Vector3(p.x, p.y, p.z - (p.x * p.x + p.y * p.y) * 6f) * (0.8f + 0.4f * Mathf.PerlinNoise(p.x * 60f + seed, p.y * 60f)));
+            mb.SetColor(new Color(0.65f, 0.1f, 0.1f), 0.7f);
+            mb.Sphere(new Vector3(0, 0, -0.004f), new Vector3(w * 0.8f, h * 0.8f, 0.004f), 4, 6);
+            if (seed % 2 == 0) { mb.SetColor(new Color(0.12f, 0.08f, 0.05f), 0.2f); mb.Sphere(new Vector3(0, 0, 0.006f), new Vector3(w * 0.7f, h * 0.6f, 0.003f), 4, 6); } // hair
+        });
+
+        public static Mesh Rib(int seed) => Get("rib" + seed, mb =>
+        {
+            mb.SetColor(new Color(0.92f, 0.88f, 0.78f), 0.4f);
+            float len = 0.1f + seed * 0.025f;
+            Vector3 P(int i) => new Vector3(Mathf.Sin(i / 5f * 1.4f) * len * 0.6f, 0, Mathf.Cos(i / 5f * 1.4f) * len * 0.6f - len * 0.3f);
+            for (int i = 0; i < 5; i++) mb.Cylinder(P(i), P(i + 1), 0.0055f, 0.0055f, 6); // curved bone from short pieces
+            mb.SetColor(new Color(0.6f, 0.1f, 0.1f), 0.6f);
+            mb.Sphere(new Vector3(0, 0, len * 0.3f), Vector3.one * 0.008f, 4, 5);
+        });
+
+        public static Mesh Vertebra() => Get("vertebra", mb =>
+        {
+            mb.SetColor(new Color(0.9f, 0.86f, 0.76f), 0.4f);
+            mb.Cylinder(new Vector3(0, -0.009f, 0), new Vector3(0, 0.009f, 0), 0.016f, 0.016f, 8);
+            mb.Box(new Vector3(0, 0, -0.022f), new Vector3(0.008f, 0.01f, 0.026f));
+            mb.Box(new Vector3(0, 0, -0.008f), new Vector3(0.05f, 0.007f, 0.008f));
+            mb.SetColor(new Color(0.65f, 0.1f, 0.1f), 0.7f);
+            mb.Sphere(new Vector3(0, 0.01f, 0), new Vector3(0.012f, 0.004f, 0.012f), 4, 6);
+        });
+
+        public static Mesh Jaw() => Get("jaw", mb =>
+        {
+            mb.SetColor(new Color(0.93f, 0.89f, 0.8f), 0.4f);
+            Vector3 J(int i) => new Vector3(Mathf.Sin((i / 6f - 0.5f) * 2.6f) * 0.05f, 0, Mathf.Cos((i / 6f - 0.5f) * 2.6f) * 0.05f);
+            for (int i = 0; i < 6; i++) mb.Cylinder(J(i), J(i + 1), 0.009f, 0.009f, 6);
+            mb.SetColor(new Color(0.96f, 0.94f, 0.86f), 0.7f);
+            for (int i = 1; i < 8; i++) { float a = (i / 8f - 0.5f) * 2.4f; mb.Box(new Vector3(Mathf.Sin(a) * 0.05f, 0.011f, Mathf.Cos(a) * 0.05f), new Vector3(0.006f, 0.008f, 0.005f)); }
+            mb.SetColor(new Color(0.6f, 0.08f, 0.1f), 0.7f);
+            mb.Box(new Vector3(0, -0.006f, 0.03f), new Vector3(0.05f, 0.004f, 0.02f));
+        });
+
+        /// <summary>One loose bloody piece (gib) with physics: drips, splats when it lands, goes in the gib limit.</summary>
+        public static GameObject Chunk(string name, Mesh mesh, Vector3 worldPos, float mass, float radius, Vector3 velocity, float lifetime = 60f)
+        {
+            var go = new GameObject(name);
+            go.layer = Layers.Debris;
+            go.transform.SetParent(WorldRoot.Current != null ? WorldRoot.Current.DynamicRoot : null, false);
+            go.transform.SetPositionAndRotation(worldPos, Random.rotation);
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterial = Mats.Lit;
+            var sc = go.AddComponent<SphereCollider>();
+            sc.radius = radius;
+            var rb = go.AddComponent<Rigidbody>();
+            rb.mass = mass;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            RB.SetDamping(rb, 0.2f, 0.6f);
+            RB.SetVel(rb, velocity);
+            rb.angularVelocity = Random.insideUnitSphere * 12f;
+            go.AddComponent<Gib>();
+            go.AddComponent<Surface>().Type = SurfaceType.Flesh;
+            var s = go.AddComponent<Spawned>(); s.DisplayName = name;
+            Debris.Register(go, lifetime, Debris.GroupGib);
+            return go;
+        }
+
         static Mesh Get(string key, System.Action<MeshBuilder> build)
         {
             if (cache.TryGetValue(key, out var m) && m != null) return m;
@@ -169,26 +260,7 @@ namespace SolarEclipse
         {
             var t = part.transform;
             void Spawn(string name, Mesh mesh, Vector3 local, float mass, float radius)
-            {
-                var go = new GameObject(name);
-                go.layer = Layers.Debris;
-                go.transform.SetParent(WorldRoot.Current != null ? WorldRoot.Current.DynamicRoot : null, false);
-                go.transform.SetPositionAndRotation(t.TransformPoint(local), Random.rotation);
-                go.AddComponent<MeshFilter>().sharedMesh = mesh;
-                go.AddComponent<MeshRenderer>().sharedMaterial = Mats.Lit;
-                var sc = go.AddComponent<SphereCollider>();
-                sc.radius = radius;
-                var rb = go.AddComponent<Rigidbody>();
-                rb.mass = mass;
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-                RB.SetDamping(rb, 0.2f, 0.6f);
-                RB.SetVel(rb, inheritVelocity + (Random.onUnitSphere + dir * 0.6f) * Random.Range(2f, 6f));
-                rb.angularVelocity = Random.insideUnitSphere * 10f;
-                go.AddComponent<Gib>();
-                go.AddComponent<Surface>().Type = SurfaceType.Flesh;
-                var s = go.AddComponent<Spawned>(); s.DisplayName = name;
-                Debris.Register(go, 60f, Debris.GroupGib);
-            }
+                => Chunk(name, mesh, t.TransformPoint(local), mass, radius, inheritVelocity + (Random.onUnitSphere + dir * 0.6f) * Random.Range(2f, 6f) * (Settings.SuperUltra ? 1.5f : 1f));
 
             bool organs = Settings.Organs;
             switch (part.Type)
@@ -203,12 +275,33 @@ namespace SolarEclipse
                     if (organs) Intestines(part, dir, inheritVelocity);
                     break;
                 case PartType.Head:
-                    if (organs) Spawn("Brain", Brain(), new Vector3(0, 0.15f, 0), 1.3f, 0.06f);
+                    if (organs)
+                    {
+                        Spawn("Brain", Brain(), new Vector3(0, 0.15f, 0), 1.3f, 0.06f);
+                        // The Gore Update: eyes, teeth, jaw and skull pieces.
+                        int iris = part.Doll != null && part.Doll.Look != null ? Mathf.Abs(part.Doll.Look.Name.GetHashCode()) % 3 : 0;
+                        Spawn("Eyeball", Eyeball(iris), new Vector3(-0.035f, 0.12f, 0.1f), 0.02f, 0.012f);
+                        Spawn("Eyeball", Eyeball(iris), new Vector3(0.035f, 0.12f, 0.1f), 0.02f, 0.012f);
+                        Spawn("Jaw", Jaw(), new Vector3(0, 0.05f, 0.06f), 0.25f, 0.04f);
+                        int teeth = Mathf.RoundToInt(Random.Range(6, 11) * GoreKit.ChunkMul);
+                        for (int i = 0; i < teeth; i++) Spawn("Tooth", Tooth(i % 3 == 0 ? 0 : 1), new Vector3(Random.Range(-0.03f, 0.03f), 0.07f, 0.1f), 0.005f, 0.006f);
+                        int skull = Mathf.RoundToInt(5 * GoreKit.ChunkMul);
+                        for (int i = 0; i < skull; i++) Spawn("Skull piece", SkullPiece(Random.Range(0, 6)), Random.insideUnitSphere * 0.06f + new Vector3(0, 0.16f, 0), 0.05f, 0.025f);
+                        Stats.Add(GoreKit.StatTeeth, teeth);
+                    }
                     break;
             }
-            int meat = part.IsLimb ? 4 : 7;
+            if (organs && (part.Type == PartType.Chest || part.Type == PartType.Abdomen))
+            {
+                int ribs = part.Type == PartType.Chest ? Mathf.RoundToInt(4 * GoreKit.ChunkMul) : 0;
+                for (int i = 0; i < ribs; i++) Spawn("Rib", Rib(Random.Range(0, 3)), Random.insideUnitSphere * 0.08f + part.Spec.ColliderCenter, 0.06f, 0.03f);
+                int verts = Mathf.RoundToInt(2 * GoreKit.ChunkMul);
+                for (int i = 0; i < verts; i++) Spawn("Vertebra", Vertebra(), new Vector3(0, Random.Range(0f, 0.15f), -0.08f), 0.05f, 0.02f);
+            }
+            int meat = Mathf.RoundToInt((part.IsLimb ? 4 : 7) * GoreKit.ChunkMul);
             for (int i = 0; i < meat; i++) Spawn("Flesh", Meat(Random.Range(0, 6)), Random.insideUnitSphere * 0.05f + part.Spec.ColliderCenter, 0.2f, 0.03f);
-            for (int i = 0; i < (part.IsLimb ? 2 : 4); i++) Spawn("Bone fragment", BoneShard(Random.Range(0, 4)), Random.insideUnitSphere * 0.05f + part.Spec.ColliderCenter, 0.08f, 0.015f);
+            int bones = Mathf.RoundToInt((part.IsLimb ? 2 : 4) * GoreKit.ChunkMul);
+            for (int i = 0; i < bones; i++) Spawn("Bone fragment", BoneShard(Random.Range(0, 4)), Random.insideUnitSphere * 0.05f + part.Spec.ColliderCenter, 0.08f, 0.015f);
         }
 
         /// <summary>A dangling jointed chain of intestine segments.</summary>
@@ -216,7 +309,8 @@ namespace SolarEclipse
         {
             Rigidbody prev = null;
             var start = part.transform.TransformPoint(new Vector3(0, 0.05f, 0.08f));
-            for (int i = 0; i < 9; i++)
+            int segments = Settings.SuperUltra ? 16 : Settings.Unreal ? 12 : 9;
+            for (int i = 0; i < segments; i++)
             {
                 var go = new GameObject("Intestine");
                 go.layer = Layers.Debris;

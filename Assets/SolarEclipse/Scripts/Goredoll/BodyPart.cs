@@ -204,6 +204,19 @@ namespace SolarEclipse
                 if (rot < 0 && rot != -1f) rot += 360f;
                 if (w.Kind != WoundKind.Blunt || dmg > 12f) Decals.Wound(pos, info.Normal, cell, size, Col, rot);
                 if (w.BleedRate > 0.5f) Doll.Bleeding.AddEmitter(this, w);
+
+                // The Gore Update (Gore/GoreKit.cs)
+                bool super = Settings.SuperUltra, unreal = Settings.Unreal;
+                if (w.Kind == WoundKind.GunshotExit || (info.IsBallistic && dmg > (super ? 10f : unreal ? 22f : 35f)) || (info.Type == DamageType.Slash && dmg > 30f) || info.Type == DamageType.Explosion)
+                    GoreKit.WallSpray(pos, info.Direction, dmg);
+                if (IsHead && Settings.Organs && ((info.Type == DamageType.Blunt && dmg > 12f) || info.IsBallistic))
+                {
+                    float chance = (info.IsBallistic ? 0.35f : 0.5f) * (super ? 1.8f : unreal ? 1.3f : 1f);
+                    if (Random.value < chance) GoreKit.KnockTeeth(this, info.Direction, Random.Range(1, super ? 7 : unreal ? 4 : 3));
+                }
+                if (w.Fracture && IsLimb && (super || (unreal && Random.value < 0.6f) || Random.value < 0.3f)) GoreKit.CompoundFracture(this, pos, info.Normal);
+                if (info.Type == DamageType.Explosion) GoreKit.Burn(this, Mathf.Clamp01(dmg / 60f));
+                if ((info.IsBallistic && dmg > 25f) || info.Type == DamageType.Explosion || (info.IsSharp && dmg > 30f)) GoreKit.ScreenSplat(pos, dmg / 40f);
             }
             string clip = IsHead && info.IsBallistic ? "headshot" : info.Type == DamageType.Stab ? "stab" : info.Type == DamageType.Slash ? "slice" : "flesh_hit";
             if (info.Type == DamageType.Blunt || info.Type == DamageType.Fall) clip = dmg > 25f ? "punch_hit" : "body_thud_soft";
@@ -214,19 +227,27 @@ namespace SolarEclipse
         void CheckDismemberment(DamageInfo info, float dmg)
         {
             if (!Settings.Dismemberment || Doll.Dismember == null) return;
-            bool extreme = Settings.Unreal;
+            bool extreme = Settings.Unreal, super = Settings.SuperUltra;
             if (info.Type == DamageType.Crush && Gibbable) { Doll.Dismember.Gib(this, info.Direction); return; }
             if (info.Type == DamageType.Explosion)
             {
-                if (dmg > MaxHealth * (extreme ? 0.9f : 1.3f) && Gibbable && Random.value < 0.7f) { Doll.Dismember.Gib(this, info.Direction); return; }
-                if (dmg > MaxHealth * 0.6f && CanSever && Random.value < 0.7f) { Doll.Dismember.Sever(this, transform.position, -info.Direction, false); return; }
+                if (dmg > MaxHealth * (super ? 0.55f : extreme ? 0.9f : 1.3f) && Gibbable && Random.value < (super ? 0.95f : 0.7f)) { Doll.Dismember.Gib(this, info.Direction); return; }
+                if (dmg > MaxHealth * (super ? 0.35f : 0.6f) && CanSever && Random.value < (super ? 0.95f : 0.7f)) { Doll.Dismember.Sever(this, transform.position, -info.Direction, false); return; }
             }
             if (info.IsBallistic)
             {
-                // Big rounds at close range pop heads.
-                if (IsHead && (dmg > 140f || info.Type == DamageType.Admin) && Random.value < (extreme ? 0.9f : 0.6f)) { Doll.Dismember.Gib(this, info.Direction); return; }
-                if (CanSever && (Health < -MaxHealth * (extreme ? 0.2f : 0.55f) || Rules.AlwaysDismember)) { Doll.Dismember.Sever(this, info.Point, info.Normal, false); return; }
+                // Big rounds at close range pop heads (The Gore Update: easier on Unreal, any big hit on Super Ultra).
+                if (IsHead && (dmg > (super ? 60f : extreme ? 110f : 140f) || info.Type == DamageType.Admin) && Random.value < (super ? 1f : extreme ? 0.9f : 0.6f)) { Doll.Dismember.Gib(this, info.Direction); return; }
+                if (CanSever && (Health < -MaxHealth * (super ? 0f : extreme ? 0.2f : 0.55f) || Rules.AlwaysDismember)) { Doll.Dismember.Sever(this, info.Point, info.Normal, false); return; }
+                // Overkill: shooting the dead keeps breaking them apart.
+                if (extreme && Doll.IsDead && Random.value < (super ? 0.45f : 0.2f))
+                {
+                    if (CanSever) { Doll.Dismember.Sever(this, info.Point, info.Normal, false); return; }
+                    if (Gibbable && Health < -MaxHealth * (super ? 0.5f : 1.5f)) { Doll.Dismember.Gib(this, info.Direction); return; }
+                }
             }
+            // Heavy blade hits take limbs and heads off (axes, katanas, machetes, chainsaw).
+            if (extreme && info.IsSharp && dmg > (super ? 30f : 55f) && CanSever && Random.value < (super ? 0.8f : 0.4f)) { Doll.Dismember.Sever(this, info.Point, info.Normal, true); return; }
             if (Rules.AlwaysDismember && CanSever) Doll.Dismember.Sever(this, info.Point, info.Normal, info.IsSharp);
         }
 

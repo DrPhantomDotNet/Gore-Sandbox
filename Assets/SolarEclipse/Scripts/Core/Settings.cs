@@ -25,7 +25,7 @@ namespace SolarEclipse
         public bool gyroAim = false, gyroInvertX = false, gyroInvertY = false, shakeToRagdoll = false;
         public float gyroSensitivity = 1f;
         // Gameplay / gore
-        public int goreLevel = 4; // 0 none, 1 minimum, 2 low, 3 medium, 4 high, 5 unreal
+        public int goreLevel = 4; // 0 none, 1 minimum, 2 low, 3 medium, 4 high, 5 unreal, 6 super ultra
         public int goreScale = 2;  // 1 = old 4-step scale (migrated on load), 2 = current 6-step scale
         public bool setupDone = false;          // first-launch setup screen finished
         public int bloodColor = 0;
@@ -45,7 +45,8 @@ namespace SolarEclipse
         // Updates
         public bool autoUpdate = true;          // check GitHub for a newer version on startup and install it
         // Startup
-        public bool playIntro = true;           // ~20 s cinematic after the studio logo (UI/Screens/IntroScreen.cs); always skippable
+        public bool playIntro = true;
+        public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)           // ~20 s cinematic after the studio logo (UI/Screens/IntroScreen.cs); always skippable
         // Chat
         public bool chatFilter = true;          // hide profanity in chat (forced on when ageGroup == 1)
         public int ageGroup = 0;                // 0 not set, 1 under 13, 2 13-17, 3 18+ (only stored on this device)
@@ -62,7 +63,7 @@ namespace SolarEclipse
         public static SettingsData Data { get; private set; } = new SettingsData();
         public static event Action Changed;
 
-        public static readonly string[] GoreLevels = { "None", "Minimum", "Low", "Medium", "High", "Unreal" };
+        public static readonly string[] GoreLevels = { "None", "Minimum", "Low", "Medium", "High", "Unreal", "Super Ultra" };
         public static readonly string[] GoreDescriptions =
         {
             "No blood, no wounds you can see, no dismemberment.",
@@ -71,6 +72,7 @@ namespace SolarEclipse
             "Blood, wounds and dismemberment.",
             "Everything: dismemberment, organs, lots of blood. (Default)",
             "Over the top: extra blood, extra gore, everything breaks.",
+            "MAXIMUM: rivers of blood, heads pop, teeth fly, bones break through, guts everywhere.",
         };
         public static readonly string[] BloodColorNames = { "Red", "Dark Red", "Alien Green", "Robot Blue", "Black Oil", "Bubblegum", "Rainbow" };
         static readonly Color[] BloodColors =
@@ -102,8 +104,9 @@ namespace SolarEclipse
         public static bool Dismemberment => Data.goreLevel >= 3;
         public static bool Organs => Data.goreLevel >= 4;
         public static bool Unreal => Data.goreLevel >= 5;
-        static readonly float[] bloodByLevel = { 0f, 0.2f, 0.45f, 0.75f, 1f, 1.8f };
-        public static float BloodScale => bloodByLevel[UnityEngine.Mathf.Clamp(Data.goreLevel, 0, 5)] * Data.bloodAmount;
+        public static bool SuperUltra => Data.goreLevel >= 6; // Gore/GoreKit.cs
+        static readonly float[] bloodByLevel = { 0f, 0.2f, 0.45f, 0.75f, 1f, 1.8f, 3f };
+        public static float BloodScale => bloodByLevel[UnityEngine.Mathf.Clamp(Data.goreLevel, 0, 6)] * Data.bloodAmount;
 
         public static bool TouchControlsActive
             => Data.touchMode == 1 || (Data.touchMode == 0 && (Application.isMobilePlatform || Input.touchSupported && Input.touchCount > 0 && !Input.mousePresent));

@@ -84,8 +84,11 @@ namespace SolarEclipse
 
         void Consequences(BodyPart lost, Vector3 pos, Vector3 dir)
         {
-            BloodFX.Burst(pos, dir, 1.4f, Settings.BloodColor);
-            BloodFX.Burst(pos, -dir, 0.8f, Settings.BloodColor);
+            float more = GoreKit.ChunkMul;
+            BloodFX.Burst(pos, dir, 1.4f * more, Settings.BloodColor);
+            BloodFX.Burst(pos, -dir, 0.8f * more, Settings.BloodColor);
+            GoreKit.ScreenSplat(pos, 1.5f * more);
+            GoreKit.WallSpray(pos, dir, 60f * more);
             AudioManager.Play("dismember", pos, 1f);
             var v = doll.Vitals;
             v.AddPain(85f);
@@ -247,8 +250,14 @@ namespace SolarEclipse
             if (part.Col != null) part.Col.enabled = false;
             if (part.Body != null) { part.Body.isKinematic = true; part.Body.detectCollisions = false; }
             OrganModels.Spill(part, dir, vel);
-            BloodFX.Burst(pos, dir, 2.2f, Settings.BloodColor);
-            for (int i = 0; i < 6; i++)
+            float more = GoreKit.ChunkMul;
+            BloodFX.Burst(pos, dir, 2.2f * more, Settings.BloodColor);
+            if (Settings.Unreal) { BloodFX.Burst(pos, -dir, 1.4f * more, Settings.BloodColor); BloodFX.Mist(pos, dir, 1.5f * more); }
+            GoreKit.ScreenSplat(pos, 2.5f * more);
+            GoreKit.PoolAt(pos, 1.1f * more);
+            for (int s = 0; s < (Settings.SuperUltra ? 4 : Settings.Unreal ? 2 : 1); s++) GoreKit.WallSpray(pos, (dir + Random.insideUnitSphere * 0.6f).normalized, 80f);
+            if (part.Type == PartType.Head) Stats.Add(GoreKit.StatHeads);
+            for (int i = 0; i < Mathf.RoundToInt(6 * more); i++)
                 if (Physics.Raycast(pos, (Random.onUnitSphere + Vector3.down).normalized, out var hit, 3f, Layers.DecalMask, QueryTriggerInteraction.Ignore))
                     Decals.Blood(hit.point, hit.normal, Random.Range(0.4f, 1f), Random.value < 0.5f ? 0 : 3, hit.collider);
             AudioManager.Play("gib", pos, 1f);

@@ -5,7 +5,37 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.8.1 — DEV TOOLS</size></b>
+@"<b><size=30>v0.9.0 — THE GORE UPDATE</size></b>
+<color=#ff9a40>More blood. More guts. More bones. More teeth.</color>
+<b>NEW GORE LEVEL: SUPER ULTRA</b>
+• Above Unreal: 3x the blood, 2.5x the chunks, every effect turned up to the max (Settings > Gore)
+<b>NEW BODY PARTS THAT FLY</b>
+• Teeth: punches, bats, kicks and bullets to the face knock teeth out
+• Head pops now throw out eyeballs, the jaw, teeth, skull pieces and the brain
+• Chest and stomach blasts throw out ribs and pieces of the spine
+• Longer guts, more meat and more bone fragments on Unreal and Super Ultra
+<b>BRUTAL HITS</b>
+• Heads pop much more easily on Unreal, and from any big hit on Super Ultra
+• Heavy blades (axes, katanas, machetes, the chainsaw) cut off limbs and heads on Unreal and Super Ultra
+• Overkill: shooting dead bodies keeps breaking them apart (Unreal and Super Ultra)
+• Broken bones burst out through the skin
+• Explosions burn and blacken the skin
+<b>BLOOD EVERYWHERE</b>
+• Blood sprays onto the wall behind every big hit and exit wound
+• Pools of blood spread under the dead and wherever something gets gibbed
+• Bloody footprints: walk through blood and you (and the Goredolls) leave red footprints
+• Dragging bodies leaves smears on the floor
+• Blood splashes your screen on close kills (can be turned off in Settings > Gore)
+<b>HANGMAN</b>
+• New prop in the spawn menu: a wooden gallows with a physics rope
+• Bring a Goredoll's head to the noose with the Spawn Gun, or press INTERACT on it to hang the nearest one
+• The body hangs and swings on the rope; shoot or cut the rope (or INTERACT again) to drop it
+• Hidden for players under 13
+<b>NEW ACHIEVEMENTS</b>
+• Dentist, Pop Goes the Head, Blood Bath, Compound Interest, Well Done and SUPER ULTRA
+• Everything still follows your gore setting: None still means no blood at all
+
+<b><size=30>v0.8.1 — DEV TOOLS</size></b>
 <color=#ff9a40>Make weapons, stories and screens in the Unity editor.</color>
 • New EXTRAS button on the main menu (shows up when there are extra stories or screens)
 • PLAY STORY has a MORE STORIES list for stories made in the Unity editor
