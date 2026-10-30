@@ -91,7 +91,7 @@ namespace SolarEclipse
                 // Story mode (World/StoryMode.cs), right under PLAY.
                 if (big)
                 {
-                    if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 440, 60), "PLAY STORY", ButtonKind.Normal, IconFactory.Get("book"), 26, true, "Chapter 1: Big Marcus has a job for you")) StoryMode.Begin();
+                    if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 440, 60), "PLAY STORY", ButtonKind.Normal, IconFactory.Get("book"), 26, true, "Chapter 1: The East Side - 4 missions")) UIRoot.Push(new StoryMenuScreen());
                     yy += 68;
                 }
                 GUI.color = old;

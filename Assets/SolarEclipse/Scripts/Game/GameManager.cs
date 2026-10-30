@@ -137,6 +137,7 @@ namespace SolarEclipse
             Random.state = randomState;
             b.Finish();
             if (NetState.Active) NetManager.I.OnMapBuilt(world.transform);
+            else StoryRunner.OnMapBuilt(world.transform); // Story/StoryRunner.cs: chapter missions + stories
             world.Builder = b;
             world.PlayerSpawn = b.PlayerSpawn;
             world.PlayerYaw = b.PlayerYaw;
@@ -194,7 +195,7 @@ namespace SolarEclipse
                 NetManager.I.OnMapLoaded();
                 if (Settings.Data.tutorialHints) GameEvents.ShowToast(NetState.IsHost ? "You're hosting. Esc > Players to kick, ban or give Creative mode. T: chat · " + VoiceChat.KeyHint : "T: chat · " + VoiceChat.KeyHint + " · Tab: players");
             }
-            else if (Settings.Data.tutorialHints && def.Id != BossRealm.MapId && !StoryMode.Active) GameEvents.ShowToast("Esc: game settings · Esc with the Spawn Gun (2): spawn menu · V: noclip · F5: dev panel");
+            else if (Settings.Data.tutorialHints && def.Id != BossRealm.MapId && !StoryMode.Active && !StoryRunner.Active) GameEvents.ShowToast("Esc: game settings · Esc with the Spawn Gun (2): spawn menu · V: noclip · F5: dev panel");
             Debug.Log($"Loaded map '{def.Id}' (seed {seed}) with {opt.StartingNpcs} Goredolls{(NavGrid.Current != null ? ", " + NavGrid.Current.WalkableCount + " walkable cells" : "")}.");
             loading = null;
         }

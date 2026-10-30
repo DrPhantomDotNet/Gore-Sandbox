@@ -13,7 +13,8 @@ namespace SolarEclipse
         public readonly HashSet<string> Flags = new HashSet<string>();
         public Action<StoryContext> OnPassed;       // "pass" ending (null = back to the menu)
         public Action<StoryContext, StoryStep> OnTheEnd; // "end" ending (null = THE END screen, then the menu)
-        public Action OnQuit;                       // after a failed run's MENU / a test's end (story maker returns here)
+        public Action OnQuit;                       // after a failed run's MENU
+        public Action Retry;                        // RETRY after MISSION FAILED (null = replay this context)
         public string Subtitle = "";
     }
 
@@ -130,6 +131,8 @@ namespace SolarEclipse
             Rules.Invincible = Rules.OneHitKill = Rules.AlwaysDismember = Rules.FreezeAi = Rules.SuperKick = Rules.ExplosiveBullets = false;
             Rules.DamageMultiplier = Rules.NpcHealthMultiplier = Rules.PlayerSpeedMultiplier = 1f;
             if (Rules.TimeScale != 1f) Rules.TimeScale = 1f;
+            // Nobody shoots you during cutscenes and conversations (or after the end).
+            Rules.AiIgnorePlayer = ended || cutCam != null || UIRoot.Find<StoryDialog>() != null || UIRoot.Find<StoryFadeScreen>() != null;
             if (p != null && p.Noclip) p.SetNoclip(false);
             var sm = UIRoot.Find<SpawnMenuScreen>();
             if (sm != null) { UIRoot.Remove(sm); AudioManager.Ui("ui_error"); GameEvents.ShowToast("No spawning in story mode."); }
@@ -348,7 +351,7 @@ namespace SolarEclipse
                 case StepType.Kill:
                 {
                     killTargets = new List<Cast>();
-                    if (s.target == "enemies") { foreach (var c in cast.Values) if (c.Def.Hostile && c.Alive) killTargets.Add(c); }
+                    if (s.target == "enemies") { foreach (var c in cast.Values) if (c.Def.Hostile && c.Alive && (c.Boss == null || c.Boss.IsAwake)) killTargets.Add(c); }
                     else { var c = Find(s.target) ?? SpawnActor(pack.Actor(s.target)); if (c != null && c.Alive) killTargets.Add(c); }
                     killTotal = killTargets.Count;
                     if (killTotal == 0) { killTargets = null; break; }
@@ -480,7 +483,7 @@ namespace SolarEclipse
             {
                 case "fail":
                     EndCutscene();
-                    StartCoroutine(Later(0.3f, () => UIRoot.Push(new MissionFailedScreen(string.IsNullOrEmpty(s.text) ? "Mission failed." : s.text, () => Play(Ctx)) { OnMenu = Ctx.OnQuit })));
+                    StartCoroutine(Later(0.3f, () => UIRoot.Push(new MissionFailedScreen(string.IsNullOrEmpty(s.text) ? "Mission failed." : s.text, RetryAction) { OnMenu = Ctx.OnQuit })));
                     break;
                 case "end":
                     StartCoroutine(Later(0.6f, () =>
@@ -513,13 +516,15 @@ namespace SolarEclipse
             a();
         }
 
+        Action RetryAction => Ctx.Retry ?? (() => Play(Ctx));
+
         void Fail(string reason, float delay)
         {
             if (ended) return;
             ended = true;
             AudioManager.StopMusic();
             EndCutscene();
-            StartCoroutine(Later(delay, () => UIRoot.Push(new MissionFailedScreen(reason, () => Play(Ctx)) { OnMenu = Ctx.OnQuit })));
+            StartCoroutine(Later(delay, () => UIRoot.Push(new MissionFailedScreen(reason, RetryAction) { OnMenu = Ctx.OnQuit })));
         }
 
         // ================================================================== HUD

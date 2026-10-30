@@ -5,7 +5,44 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.7.1 — THE SUBJECT</size></b>
+@"<b><size=30>v0.8.0 — THE EAST SIDE</size></b>
+<color=#ff9a40>Chapter 1 is finished, modding is here, and 30 new weapons.</color>
+<b>STORY: CHAPTER 1 IS COMPLETE</b>
+• PLAY STORY now opens the chapter menu: 4 missions, CONTINUE, replay any mission you've finished
+• Mission 1 The Alley now leads into the rest of the story
+• Mission 2 The Docks: a brand new night harbour map. Find Rico, pay him, scare him or walk away, then survive Z's crew
+• Mission 3 The Warehouse: go in quiet or loud, then decide what happens to Dez the bookkeeper
+• Mission 4 The Rooftop: face Vex on the helipad of the Meridian Tower
+• Cutscenes with letterbox camera shots, phone texts from Big Marcus, choice dialogue and boss fights
+• Your choices are remembered: Vex knows what you did to Dez
+• 3 endings: The New Right Hand, King of the East Side and Walk Away
+• THE END, END OF CHAPTER 1 and the end credits
+• New achievements: End of Chapter 1 and one for every ending. ""Chapter 1 Complete"" is now called ""Z Is Dead""
+<b>30 NEW WEAPONS</b>
+• 20 guns: Desert Eagle, M1911, Beretta 92, Glock 18, TEC-9, MP5, P90, KRISS Vector, UMP-45, Thompson, AK-47, M4A1, SCAR-H, FAMAS, G36, Lever-Action, Double Barrel, AA-12, M249 SAW, Barrett .50
+• 10 melee: Baseball Bat, Spiked Bat, Crowbar, Lead Pipe, Frying Pan, Machete, Meat Cleaver, Combat Knife, Fire Axe, Chainsaw
+• Melee combos, heavy right-click attacks, charged axe chops and a chainsaw that saws limbs off
+<b>MODDING HUB</b>
+• Weapon Editor: build a gun or melee weapon from parts, set the trigger, bullet source, hold points, sights, shell eject, magazine, sound and every stat, with a live 3D preview
+• TEST your weapon right away, then upload it to the Mod board for everyone
+• Install other players' mods: they show up in the spawn menu with a MODDED tag
+• Share codes for Discord, and an IMPORT CODE button
+• Anti-cheat: every mod has fair limits (damage, fire rate, size...) checked when it's saved, uploaded, installed and in multiplayer
+• Virus-safe: mods are data only, they can never run programs on your device
+<b>ADVANCED MODDING</b>
+• Make custom NPCs (look, health, speed, team, weapon) and custom scripted weapons
+• Their behaviour is written in SandScript, the game's own safe scripting language, with a built-in editor
+• Example mods to try: Angry Chef, Coward and the Lightning Pistol
+<b>PROFILES AND BADGES</b>
+• New PROFILE card on the main menu: pick an icon (24), a hat (15) and colours, or a custom body
+• Hats and icons show in multiplayer for everyone
+• Badges: Player, Developer, Admin, Early Access and Tester, shown next to names in player lists
+• Badges can only be given from the dev menu and are signed, so they can't be faked
+<b>ALSO</b>
+• New map: The Docks (also playable in sandbox)
+• This update comes out for Android and Windows
+
+<b><size=30>v0.7.1 — THE SUBJECT</size></b>
 <color=#ff9a40>A new cinematic intro.</color>
 • New 20 second cinematic intro after the studio logo: a rainy alley, a flickering lamp, a red laser dot... and the GORE SANDBOX logo
 • Flows straight into the main menu without a cut

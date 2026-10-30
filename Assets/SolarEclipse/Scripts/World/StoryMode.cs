@@ -112,7 +112,7 @@ namespace SolarEclipse
             SpawnZ();
             phase = Phase.TalkMarcus;
             SetObjective("Talk to Big Marcus");
-            ShowBanner("CHAPTER 1", "THE ALLEY", new Color(1f, 0.78f, 0.16f), 3.5f);
+            ShowBanner("MISSION 1", "THE ALLEY", new Color(1f, 0.78f, 0.16f), 3.5f);
         }
 
         void Update()
@@ -256,7 +256,7 @@ namespace SolarEclipse
         {
             yield return new WaitForSecondsRealtime(2f);
             while (UIRoot.Find<PauseMenuScreen>() != null) yield return null;
-            UIRoot.Push(new MissionPassedScreen("Z is dead."));
+            UIRoot.Push(new MissionPassedScreen("Z is dead.", "MISSION 1 OF " + Chapter1.MissionCount + " COMPLETE", () => Chapter1.Completed(1))); // on to The Docks (Story/Chapter1.cs)
         }
 
         void Fail(string reason, float delay)

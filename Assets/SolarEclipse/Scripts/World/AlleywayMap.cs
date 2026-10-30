@@ -34,7 +34,7 @@ namespace SolarEclipse
         public static void EnsureAchievement()
         {
             if (!Stats.Achievements.Exists(a => a.Id == "story_ch1"))
-                Stats.Achievements.Add(new Achievement("story_ch1", "Chapter 1 Complete", "Finish story chapter 1: take out Z.", "story_ch1", 1));
+                Stats.Achievements.Add(new Achievement("story_ch1", "Z Is Dead", "Story chapter 1, mission 1: take out Z.", "story_ch1", 1));
         }
 
         static Material M(Texture2D t) => MapBuilder.Tex(t);
