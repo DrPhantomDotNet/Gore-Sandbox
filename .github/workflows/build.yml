@@ -127,9 +127,15 @@ jobs:
             echo "::warning title=${{ matrix.name }}::Unity built the game successfully; ignoring GameCI's exit code $status after the build."
             status=0
           fi
+          enc() { sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g'; }
+          if [ "${{ matrix.platform }}" = "StandaloneWindows64" ]; then
+            # VR check on the run page: did Editor/VRSetup.cs run, and is OpenXR in the build?
+            vr=$(grep -h "\[VRSetup\]" build.log | awk '!seen[$0]++' | head -n 6 | cut -c1-220 | enc)
+            ox=$(find build -iname "*openxr*" 2>/dev/null | head -n 6 | tr '\n' ' ')
+            echo "::notice title=VR setup::${vr:-no VRSetup lines in the log} | OpenXR files: ${ox:-none}"
+          fi
           if [ "$status" -ne 0 ]; then
             # Error summaries on the run page (GitHub masks secrets). The full log is in the build step.
-            enc() { sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g'; }
             errs=$(grep -E "error CS[0-9]+|Error building|BuildFailedException|Build Finished, Result|compiler errors|\[CIBuild\]|Exception:|ERROR|Aborting batchmode|exited with code|No space left|Killed" build.log \
               | grep -viE "warning CS" | awk '!seen[$0]++' | head -n 40 | cut -c1-300 | enc)
             echo "::error title=${{ matrix.name }}: build errors::${errs:-none matched}"
