@@ -25,6 +25,7 @@ namespace SolarEclipse.Mods
         static readonly Queue<string> iconQueue = new Queue<string>();
         static int builtinCount = -1;
         static string pendingTest;
+        static readonly Dictionary<object, float> nextShot = new Dictionary<object, float>();
         static float pendingTestTime;
 
         /// <summary>What validation had to clamp the last time it ran (shown to the user).</summary>
@@ -335,6 +336,15 @@ namespace SolarEclipse.Mods
         {
             var d = Design(def);
             if (d != null && d.melee) return;
+            if (authority && src != null && d != null)
+            {
+                // Host-side fire-rate check with the host's copy: a client can't shoot faster than the mod allows.
+                float gap = 60f / Mathf.Max(1f, def.Rpm) * 0.6f;
+                if (d.trigger == 3) gap = Mathf.Max(gap, d.chargeTime * 0.6f);
+                if (nextShot.TryGetValue(src, out var t) && Time.time < t) return;
+                if (nextShot.Count > 64) nextShot.Clear();
+                nextShot[src] = Time.time + gap;
+            }
             int n = Mathf.Min(dirs.Count, d != null ? d.pellets : 16);
             for (int i = 0; i < n; i++) FireRound(def, d, origin, dirs[i], muzzle, i, src, authority, mask);
         }

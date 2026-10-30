@@ -105,6 +105,7 @@ namespace SolarEclipse
 
         public static WeaponModel Build(string id, int layer)
         {
+            if (id != null && id.StartsWith(Mods.ModWeapons.Prefix)) return Mods.ModWeapons.BuildModel(id, layer); // Weapon Editor mods
             switch (id)
             {
                 case "glock": return Glock(layer);

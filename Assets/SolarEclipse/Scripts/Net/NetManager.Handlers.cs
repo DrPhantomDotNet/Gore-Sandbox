@@ -33,6 +33,7 @@ namespace SolarEclipse
             {
                 case Msg.Welcome: OnWelcome(rd); break;
                 case Msg.CustomMap: OnCustomMap(rd); break;
+                case Msg.ModRules: case Msg.ModWeaponDef: case Msg.ModReject: ClientModMsg(type, rd); break;
                 case Msg.ThrowableFx: case Msg.C4Detonated: ClientExplosivesMsg(type, rd); break;
                 case Msg.ProfileData: case Msg.BadgeGrant: ClientProfileMsg(type, rd); break; // NetManager.Profile.cs
                 case Msg.PlayerList:
@@ -295,13 +296,14 @@ namespace SolarEclipse
             byte shooter = rd.Byte(); int widx = rd.Byte(); var origin = rd.Vec3(); int n = rd.Byte();
             var dirs = new List<Vector3>();
             for (int i = 0; i < n; i++) dirs.Add(rd.Vec3());
-            if (widx < 0 || widx >= WeaponCatalog.All.Count) return;
-            var def = WeaponCatalog.All[widx];
+            var def = Mods.ModNet.FromNet(widx); // modded weapons use the host's session indices (Net/NetManager.Mods.cs)
+            if (def == null) return;
             var p = Get(shooter);
             var muzzle = p != null && p.Avatar != null ? p.Avatar.MuzzlePosition : origin;
             if (p != null && p.Avatar != null) p.Avatar.OnFire(def);
             AudioManager.Play(def.FireSound ?? "gun_glock", muzzle, 1f, Random.Range(0.96f, 1.04f), 1f, 3f, 150f);
             if (Guns2.IsHarpoon(def)) { foreach (var d in dirs) Harpoon.Launch(origin + d * 0.35f, d, def, null, false); return; } // visual-only harpoon
+            if (Mods.ModWeapons.IsMod(def)) { Mods.ModWeapons.FireRemote(def, origin, dirs, null, muzzle, false, 0); return; }
             for (int i = 0; i < dirs.Count; i++) Ballistics.Fire(origin, dirs[i], def, null, muzzle, def.Kind == WeaponKind.Admin ? DamageType.Admin : DamageType.Bullet, def.Pellets == 1 || i % 3 == 0, false);
         }
 
@@ -399,8 +401,8 @@ namespace SolarEclipse
                 case Msg.ReqFire:
                 {
                     int widx = rd.Byte(); var origin = rd.Vec3(); int n = rd.Byte();
-                    if (widx >= WeaponCatalog.All.Count || n > 16) break;
-                    var def = WeaponCatalog.All[widx];
+                    var def = Mods.ModNet.FromNet(widx); // the host's own validated copy for modded weapons
+                    if (def == null || n > 16) break;
                     var dirs = new List<Vector3>();
                     for (int i = 0; i < n; i++) dirs.Add(rd.Vec3().normalized);
                     if (Vector3.Distance(origin, p.Pos) > 4f) origin = p.Pos + Vector3.up * 1.6f; // sanity
@@ -410,6 +412,7 @@ namespace SolarEclipse
                     GameEvents.EmitNoise(origin, def.NoiseRadius, 1f, src);
                     Ballistics.BeginShot();
                     if (Guns2.IsHarpoon(def)) foreach (var d in dirs) Harpoon.Launch(origin + d * 0.35f, d, def, src, true); // host-side pinning
+                    else if (Mods.ModWeapons.IsMod(def)) Mods.ModWeapons.FireRemote(def, origin, dirs, src, muzzle, true, Layers.RemoteShootMask);
                     else
                     for (int i = 0; i < dirs.Count; i++) Ballistics.Fire(origin, dirs[i], def, src, muzzle, DamageType.Bullet, def.Pellets == 1 || i % 3 == 0, true, Layers.RemoteShootMask);
                     Ballistics.EndShot(dirs.Count > 0 ? dirs[0] : Vector3.forward);
@@ -426,6 +429,7 @@ namespace SolarEclipse
                     break;
                 }
                 case Msg.ReqThrowable: case Msg.ReqDetonate: HostExplosivesMsg(p, type, rd); break;
+                case Msg.ReqModWeapon: HostModMsg(p, type, rd); break;
                 case Msg.ProfileUpdate: case Msg.ReqBadgeGrant: HostProfileMsg(p, type, rd); break; // NetManager.Profile.cs
                 case Msg.ReqExplosion:
                 {
@@ -703,7 +707,9 @@ namespace SolarEclipse
 
         public void RequestFire(WeaponDef def, Vector3 origin, List<Vector3> dirs)
         {
-            w.Reset(); w.Byte((byte)WeaponCatalog.All.IndexOf(def)); w.Vec3(origin); w.Byte((byte)dirs.Count);
+            int netIndex = Mods.ModNet.ToNet(def);
+            if (netIndex < 0) return; // modded weapon the host hasn't accepted (yet)
+            w.Reset(); w.Byte((byte)netIndex); w.Vec3(origin); w.Byte((byte)dirs.Count);
             foreach (var d in dirs) w.Vec3(d);
             ToHost(Msg.ReqFire);
         }

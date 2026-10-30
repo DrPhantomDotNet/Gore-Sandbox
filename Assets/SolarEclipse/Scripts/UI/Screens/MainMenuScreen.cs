@@ -105,6 +105,9 @@ namespace SolarEclipse
             if (!string.IsNullOrEmpty(GameInfo.DiscordUrl)) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "DISCORD", ButtonKind.Ghost, IconFactory.Get("chat"), 20, true, "Join the community: feedback, bug reports, updates")) Application.OpenURL(GameInfo.DiscordUrl); }
             if (!string.IsNullOrEmpty(GameInfo.ItchUrl)) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "ITCH.IO", ButtonKind.Ghost, IconFactory.Get("globe"), 20, true, "The game's itch.io page")) Application.OpenURL(GameInfo.ItchUrl); }
 
+            // Profile card under the top-right buttons: your icon, name and badges. Tap to edit (UI/Screens/ProfileScreen.cs).
+            DrawProfileCard(new Rect(W - 30 - 420, 94, 420, 92));
+
             // Bottom-left: version + access, exactly as specified
             if (GameInfo.EarlyAccess)
             {
@@ -125,6 +128,20 @@ namespace SolarEclipse
             var e = Event.current;
             if (e.type == EventType.MouseDown && e.button == 0 && UIRoot.Top == this && e.mousePosition.x / UI.Scale > 560)
                 MenuBackdrop.TryPoke(e.mousePosition);
+        }
+
+        static void DrawProfileCard(Rect r)
+        {
+            var prof = PlayerProfile.Local;
+            bool hover = UI.Hover(r);
+            UI.Rounded(r, hover ? new Color(0.2f, 0.2f, 0.24f, 0.85f) : new Color(0, 0, 0, 0.5f), false);
+            PlayerProfile.DrawIcon(new Rect(r.x + 12, r.y + 12, r.height - 24, r.height - 24), prof);
+            float x = r.x + r.height + 2;
+            UI.Label(new Rect(x, r.y + 8, r.width - (x - r.x) - 130, 40), PlayerProfile.LocalName, 24, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold, true, false, UI.HeavyFont);
+            BadgeChips.Draw(new Rect(x, r.y + 52, r.width - (x - r.x) - 12, 28), prof.BadgeMask, BadgeChips.Width(prof.BadgeMask, 28) > r.width - (x - r.x) - 12);
+            UI.Rounded(new Rect(r.xMax - 124, r.y + 12, 112, 36), UI.Accent.WithAlpha(0.85f), true);
+            UI.Label(new Rect(r.xMax - 124, r.y + 12, 112, 36), "PROFILE", 17, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+            if (UI.Hit(r)) { AudioManager.Ui("ui_click"); UIRoot.Push(new ProfileScreen()); }
         }
 
         void OnMain(int i)

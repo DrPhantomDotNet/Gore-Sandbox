@@ -290,6 +290,10 @@ namespace SolarEclipse
                 UI.Label(new Rect(r.x, r.yMax - 40, r.width, 30), "Release Tab to close", 14, UI.Muted, TextAnchor.MiddleCenter);
                 return;
             }
+            // Singleplayer: just you (profile icon, name, badges), then the Goredoll roster.
+            UI.Label(new Rect(view.x, view.y - 4, view.width, 30), "PLAYERS", 18, UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Bold);
+            PlayersPanel.Draw(new Rect(view.x, view.y + 28, view.width - 16, 74));
+            view.y += 116; view.height -= 116;
             UI.Label(new Rect(view.x, view.y - 4, view.width, 30), "GOREDOLLS", 18, UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Bold);
             view.y += 30; view.height -= 30;
             float content = Goredoll.All.Count * 48;

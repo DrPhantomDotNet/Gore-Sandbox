@@ -31,6 +31,8 @@ namespace SolarEclipse
         CustomMap = 121,
         // explosives (Net/NetManager.Explosives.cs): client -> host requests, host -> client effects
         ReqThrowable = 140, ThrowableFx = 141, ReqDetonate = 142, C4Detonated = 143,
+        // modded weapons (Net/NetManager.Mods.cs): host -> client rule + relayed mod packages, client -> host package
+        ModRules = 200, ModWeaponDef = 201, ReqModWeapon = 202, ModReject = 203,
         // player profiles + badges (Net/NetManager.Profile.cs)
         ProfileUpdate = 220, ProfileData = 221, BadgeGrant = 222, ReqBadgeGrant = 223,
     }
@@ -68,6 +70,7 @@ namespace SolarEclipse
         public bool PvP = true;
         public bool CreativeForAll;     // new players start with Creative
         public int Loadout = 1;         // 0 fists only, 1 fists + guns
+        public bool AllowMods;          // modded weapons (Weapon Editor mods) may be used; the host validates them
     }
 
     /// <summary>

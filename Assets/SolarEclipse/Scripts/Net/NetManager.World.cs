@@ -260,7 +260,7 @@ namespace SolarEclipse
             float pitch = pc.Cam != null ? pc.Cam.transform.eulerAngles.x : 0f;
             p.Pitch = pitch > 180f ? pitch - 360f : pitch;
             var cur = pc.Inventory != null ? pc.Inventory.Current : null;
-            p.Weapon = (byte)(cur != null ? WeaponCatalog.All.IndexOf(cur.Def) : 0);
+            p.Weapon = (byte)(cur != null ? Mathf.Max(0, Mods.ModNet.ToNet(cur.Def)) : 0); // modded weapons: host session index
             byte f = 0;
             if (pc.Crouching) f |= NetPlayer.FCrouch;
             if (cur != null && cur.IsAiming) f |= NetPlayer.FAim;

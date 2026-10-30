@@ -52,7 +52,10 @@ namespace SolarEclipse
             UI.Label(new Rect(r.x + 330, r.y + 20, 140, 40), "Your name", 17, UI.Muted, TextAnchor.MiddleRight);
             var name = UI.TextField(new Rect(r.x + 480, r.y + 16, 300, 48), Settings.Data.playerName, "mp_name", false, "Name");
             if (name != Settings.Data.playerName) Settings.Data.playerName = name.Length > 20 ? name.Substring(0, 20) : name;
-            UI.Label(new Rect(r.x + 800, r.y + 16, r.width - 830, 48), "Lobby: " + nm.LobbyStatus, 15, nm.Lobby != null && nm.Lobby.Online ? UI.Good : UI.Muted, TextAnchor.MiddleRight);
+            // Profile (icon, hat, look, badges): UI/Screens/ProfileScreen.cs
+            PlayerProfile.DrawIcon(new Rect(r.x + 796, r.y + 16, 48, 48), PlayerProfile.Local);
+            if (UI.Button(new Rect(r.x + 852, r.y + 16, 170, 48), "PROFILE", ButtonKind.Normal, null, 18, true, "Your icon, hat, look and badges (what other players see).")) UIRoot.Push(new ProfileScreen());
+            UI.Label(new Rect(r.x + 1036, r.y + 16, r.width - 1066, 48), "Lobby: " + nm.LobbyStatus, 15, nm.Lobby != null && nm.Lobby.Online ? UI.Good : UI.Muted, TextAnchor.MiddleRight);
 
             int nt = UI.Tabs(new Rect(r.x + 24, r.y + 80, r.width - 48, 50), tab, Tabs, 19);
             if (nt != tab) { tab = nt; AudioManager.Ui("ui_tab"); }
@@ -137,7 +140,8 @@ namespace SolarEclipse
             UI.Toggle(new Rect(body.x, y, colW, 56), "Everyone starts in Creative mode", ref host.CreativeForAll, "Creative = noclip, Spawn Gun, spawn menu, Admin Gun. You can grant or remove it per player from Esc > Players.");
             if (Stats.HasEasterEgg("Nextbots")) UI.Toggle(new Rect(x2, y, colW, 56), "Nextbots roam", ref nextbots); y += 70;
             UI.Label(new Rect(body.x, y, 200, 52), "Password (optional)", 17, UI.Muted);
-            host.Password = UI.TextField(new Rect(body.x + 210, y, colW - 210, 52), host.Password, "mp_pass", true, "none"); y += 70;
+            host.Password = UI.TextField(new Rect(body.x + 210, y, colW - 210, 52), host.Password, "mp_pass", true, "none");
+            UI.Toggle(new Rect(x2, y, colW, 56), "Allow modded weapons", ref host.AllowMods, "Players may use weapons from the Modding Hub. You (the host) check every mod with the anti-cheat limits and everyone uses your copy. Off = modded weapons are hidden."); y += 70;
 
             UI.Label(new Rect(body.x, y, body.width, 60),
                 Settings.Data.restrictedNetwork

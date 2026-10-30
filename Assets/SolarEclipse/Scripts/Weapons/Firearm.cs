@@ -252,7 +252,7 @@ namespace SolarEclipse
             }
             if (authority) Ballistics.EndShot(Aim);
             if (NetState.IsClient) NetManager.I.RequestFire(Def, Eye, dirs);
-            else if (NetState.IsHost) NetManager.I.BroadcastFire(NetManager.I.LocalId, WeaponCatalog.All.IndexOf(Def), Eye, dirs);
+            else if (NetState.IsHost && SolarEclipse.Mods.ModNet.ToNet(Def) >= 0) NetManager.I.BroadcastFire(NetManager.I.LocalId, SolarEclipse.Mods.ModNet.ToNet(Def), Eye, dirs);
             bloom = Mathf.Min(bloom + Def.Recoil * Mods.RecoilMul * 0.25f, 4f);
 
             // Flash, light, smoke (a suppressor hides the flash)

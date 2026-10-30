@@ -34,6 +34,8 @@ namespace SolarEclipse
 
         public static Weapon Create(WeaponDef def)
         {
+            var modded = Mods.ModWeapons.CreateWeapon(def); // Mods/ModWeapon.cs: Weapon Editor mods ("mod_<id>")
+            if (modded != null) return modded;
             var extra = Guns2.Create(def); // Weapons/Guns2.cs: shotgun, sniper, revolver, minigun, harpoon gun
             if (extra != null) return extra;
             var extra3 = Guns3.Create(def); // Weapons/Mac11.cs: MAC-11, dual katanas

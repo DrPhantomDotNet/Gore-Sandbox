@@ -15,7 +15,7 @@ namespace SolarEclipse
         readonly Dictionary<PartType, Transform> parts = new Dictionary<PartType, Transform>();
         Transform model, socket;
         WeaponModel weapon;
-        int weaponIndex = -1;
+        int weaponIndex = -1, netWeapon = -1;
         float phase, flash, recoil, deadBlend, crouchBlend, height = 1f;
         Vector3 lastPos;
         Light muzzleLight;
@@ -187,7 +187,7 @@ namespace SolarEclipse
             if (face != null) face.Expression = dead ? Expression.Dead : (Player.Flags & NetPlayer.FFiring) != 0 ? Expression.Angry : Expression.Neutral;
 
             // Weapon in hand
-            if (Player.Weapon != weaponIndex) SetWeapon(Player.Weapon);
+            if (Player.Weapon != netWeapon) { netWeapon = Player.Weapon; SetWeapon(Mods.ModNet.LocalIndex(Player.Weapon)); } // modded weapons: host session index -> local catalog
             if (weapon != null)
             {
                 weapon.gameObject.SetActive(!dead);

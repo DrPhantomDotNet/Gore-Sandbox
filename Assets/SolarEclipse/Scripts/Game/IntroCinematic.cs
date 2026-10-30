@@ -299,6 +299,7 @@ namespace SolarEclipse
             Shake = 1f; Flash = 0.5f; lampFlash = 1f;
             if (GameManager.I != null) GameManager.I.SlowMo(0.2f, 2.6f);
             if (!TryChest(out var chest)) return;
+            if (lastDot == Vector3.zero) lastDot = chest.Body.worldCenterOfMass + (Shooter - chest.Body.worldCenterOfMass).normalized * 0.13f;
             // The death would put "The Subject - Shot" in the kill feed over the film: mute it until we are done.
             if (!killFeedSaved) { savedKillFeed = Settings.Data.killFeed; killFeedSaved = true; Settings.Data.killFeed = false; }
             var d = (lastDot - Shooter).normalized;

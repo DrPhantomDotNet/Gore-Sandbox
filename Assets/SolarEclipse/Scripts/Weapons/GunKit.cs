@@ -28,6 +28,8 @@ namespace SolarEclipse
         public bool Scope, Rail, Bipod, Brake, FlashHider, GasTube, DoubleBarrel, Foregrip, CarryHandle, Hammer, Lever, TopCharge, RibbedSlide;
         /// <summary>Hinged barrels that tip down while reloading (break action). The piece is called "Hinge".</summary>
         public bool BreakAction;
+        /// <summary>Extra height of the iron sight line (e.g. over a top magazine).</summary>
+        public float SightLift;
         public Color Body = new Color(0.11f, 0.11f, 0.12f), Furniture = new Color(0.11f, 0.11f, 0.12f), Metal = new Color(0.12f, 0.12f, 0.13f);
         public float BodyGloss = 0.3f;
         public bool MetalBody;
@@ -363,14 +365,15 @@ namespace SolarEclipse
             }
             else
             {
-                float baseRear = top + (s.Rail ? 0.009f : 0f) + (s.CarryHandle ? 0.039f : 0f);
+                float baseRear = top + (s.Rail ? 0.009f : 0f) + (s.CarryHandle ? 0.039f : 0f) + s.SightLift;
                 float sightY = baseRear + 0.012f;
                 float rearZ = s.CarryHandle ? s.RecBack + 0.04f : (s.Stock == GunStock.Bullpup ? s.RecBack + recLen * 0.45f : s.RecBack + 0.03f);
-                float frontZ = s.DoubleBarrel || s.BreakAction ? s.Muzzle - 0.012f : Mathf.Max(s.GuardEnd, s.RecFront) + 0.02f;
+                float frontZ = s.DoubleBarrel || s.BreakAction ? s.Muzzle - 0.012f : Mathf.Max(s.Guard == GunGuard.None ? s.RecFront : s.GuardEnd, s.RecFront) + 0.02f;
                 if (frontZ > s.Muzzle - 0.01f) frontZ = s.Muzzle - 0.01f;
                 float frontBase = s.DoubleBarrel || s.BreakAction ? B + s.BarrelR + 0.002f : B + s.BarrelR;
                 if (s.Guard != GunGuard.None && frontZ <= s.GuardEnd + 0.001f && frontZ >= s.GuardStart) frontBase = B + s.GuardR;
                 if (frontZ < s.RecFront) frontBase = top;
+                if (s.SightLift > 0f) frontBase = Mathf.Max(frontBase, top);
                 if (s.DoubleBarrel || s.BreakAction)
                 {
                     // Shotgun bead + notch on the tang.

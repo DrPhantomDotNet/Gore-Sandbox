@@ -144,7 +144,7 @@ namespace SolarEclipse
             if (cur != null && sinceSwitch < 2.5f)
             {
                 float a = 1f - Mathf.Clamp01((sinceSwitch - 1.8f) / 0.7f);
-                UI.Label(new Rect(0, y + slot + 4, W, 30), cur.Def.Name.ToUpperInvariant(), 22, new Color(1, 1, 1, a), TextAnchor.MiddleCenter, FontStyle.Normal, true, false, UI.HeavyFont);
+                UI.Label(new Rect(0, y + slot + 4, W, 30), cur.Def.Name.ToUpperInvariant() + Mods.ModWeapons.Suffix(cur.Def), 22, new Color(1, 1, 1, a), TextAnchor.MiddleCenter, FontStyle.Normal, true, false, UI.HeavyFont);
             }
         }
 

@@ -196,7 +196,7 @@ namespace SolarEclipse
         void DrawGuns(Rect view)
         {
             var p = PlayerController.Instance;
-            var list = WeaponCatalog.All.FindAll(w => w.Kind != WeaponKind.Fists);
+            var list = WeaponCatalog.All.FindAll(w => w.Kind != WeaponKind.Fists && Mods.ModWeapons.Listed(w)); // installed mods only (hidden in MP unless the host allows them)
             const float rowH = 110;
             float content = list.Count * (rowH + 12) + 70;
             float s = UI.BeginScroll("guns", view, content);
@@ -207,6 +207,12 @@ namespace SolarEclipse
                 UI.Rounded(r, UI.Hover(r) ? new Color(1, 1, 1, 0.1f) : UI.PanelLight, false);
                 UI.Tex(new Rect(r.x + 16, r.y + 10, 200, rowH - 20), Hud.WeaponIcon(w), Color.white, ScaleMode.ScaleToFit);
                 UI.Label(new Rect(r.x + 240, r.y + 12, 500, 36), w.Name.ToUpperInvariant(), 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
+                if (Mods.ModWeapons.IsMod(w)) // "Modded" tag (Mods/ModWeapon.cs)
+                {
+                    float tx = r.x + 250 + Mathf.Min(480, UI.TextWidth(w.Name.ToUpperInvariant(), 28, FontStyle.Normal, UI.HeavyFont));
+                    UI.Rounded(new Rect(tx, r.y + 16, 96, 28), UI.Accent2, true);
+                    UI.Label(new Rect(tx, r.y + 16, 96, 28), Mods.ModWeapons.Tag, 15, Color.black, TextAnchor.MiddleCenter, FontStyle.Bold, false);
+                }
                 UI.Label(new Rect(r.x + 240, r.y + 50, r.width - 520, 50), w.Description, 16, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
                 if (w.Kind == WeaponKind.Firearm)
                     UI.Label(new Rect(r.xMax - 470, r.y + 12, 200, 86), $"DMG {w.Damage}{(w.Pellets > 1 ? "×" + w.Pellets : "")}\nRPM {w.Rpm}\nMAG {w.Mag}", 15, UI.Accent2, TextAnchor.MiddleLeft);
