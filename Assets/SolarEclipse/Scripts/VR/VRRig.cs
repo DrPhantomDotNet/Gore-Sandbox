@@ -206,7 +206,7 @@ namespace SolarEclipse
                 else if (Mathf.Abs(sx) > 0.15f) pendingTurn += sx * d.vrTurnSpeed * Time.deltaTime;
                 // Weapon switching (right stick up/down).
                 float sy = Rs.Stick.y;
-                if (Mathf.Abs(sy) > 0.75f && Time.time > nextSwitch && !(p.Inventory.Current is SpawnGun)) { nextSwitch = Time.time + 0.35f; Cycle(sy > 0 ? 1 : -1); }
+                if (Mathf.Abs(sy) > 0.75f && Time.time > nextSwitch && !(p.Inventory.Current is SpawnGun sg && sg.Holding)) { nextSwitch = Time.time + 0.35f; Cycle(sy > 0 ? 1 : -1); }
                 if (Ls.StickClickDown) sprintToggle = !sprintToggle;
                 if (Ls.Stick.magnitude < 0.2f) sprintToggle = false;
                 if (Ls.PrimaryDown) crouchToggle = !crouchToggle;
@@ -394,7 +394,8 @@ namespace SolarEclipse
             }
 
             // Two hands: left grip on the foregrip steadies and aims the gun.
-            if (!twoHand && !racking && heldMag == null && L.Grabbed == null && Ls.GripDown && w.Model.SupportL != null && Near(L.T.position, w.Model.SupportL.position, 0.16f))
+            bool longGun = w.Model.SupportL != null && (w.Model.SupportL.position - R.T.position).sqrMagnitude > 0.15f * 0.15f; // pistols: no
+            if (!twoHand && !racking && heldMag == null && L.Grabbed == null && Ls.GripDown && longGun && Near(L.T.position, w.Model.SupportL.position, 0.16f))
             { twoHand = true; VRManager.Haptic(false, 0.2f, 0.03f); }
             if (twoHand && !Ls.GripHeld) twoHand = false;
         }

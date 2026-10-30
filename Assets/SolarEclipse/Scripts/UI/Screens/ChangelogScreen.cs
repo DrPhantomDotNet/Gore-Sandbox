@@ -5,7 +5,30 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.9.0 — THE GORE UPDATE</size></b>
+@"<b><size=30>v0.10.0 — VR (BETA)</size></b>
+<color=#ff9a40>Play Gore Sandbox in VR on PC (SteamVR, Meta Quest Link / Air Link, WMR).</color>
+<b>HOW TO PLAY IN VR</b>
+• Windows version only. Start SteamVR first, then the game: it starts in VR by itself
+• Settings > VR: START VR / STOP VR, recenter, snap or smooth turning, walking direction, gun angle, height
+• Controls: left stick move, right stick turn (up/down: next/previous weapon), right trigger fire, grips grab, A jump, B eject mag, X crouch, Y menu, left trigger interact, right stick click kick
+<b>GUNS IN YOUR HANDS</b>
+• Guns sit in your real hand: aim down the real sights, two hands on rifles (grip the foregrip with your left hand)
+• Manual reloading: B drops the magazine, reach to either hip and grip to grab a fresh one (infinite mags), push it into the gun, then grab the slide or charging handle and pull it back
+• Recoil and every shot are felt in the controller
+<b>BLADES AND FISTS</b>
+• Knives, katanas, machetes, axes and the chainsaw cut where you actually swing: limbs are sliced along the blade's path
+• Thrust to stab: the blade sinks in and the body hangs on it until you pull it back out
+• Bats, pipes and pans hit as hard as you swing
+• Make a fist (grip) and punch
+<b>GRAB EVERYTHING</b>
+• Grab Goredolls by any body part with either hand: drag them, lift them, throw them
+• Grab props, dropped magazines and gibs
+<b>MENUS IN VR</b>
+• Every menu floats in front of you: point with the laser and pull the trigger, right stick to scroll, Y to go back
+• The HUD floats in front of your eyes; the main menu follows your head
+• This is a beta: tell us on Discord what feels wrong
+
+<b><size=30>v0.9.0 — THE GORE UPDATE</size></b>
 <color=#ff9a40>More blood. More guts. More bones. More teeth.</color>
 <b>NEW GORE LEVEL: SUPER ULTRA</b>
 • Above Unreal: 3x the blood, 2.5x the chunks, every effect turned up to the max (Settings > Gore)

@@ -111,7 +111,8 @@ namespace SolarEclipse
                 f.Undo = R.SecondaryDown;
                 f.Delete = R.StickClickDown;
                 float sy = R.Stick.y;
-                f.Scroll = Mathf.Abs(sy) > 0.3f ? sy * Time.deltaTime * 6f : 0f; // push / pull what you hold
+                bool holding = PlayerController.Instance.Inventory.Current is SpawnGun sg && sg.Holding;
+                f.Scroll = holding && Mathf.Abs(sy) > 0.3f ? sy * Time.deltaTime * 6f : 0f; // push / pull what you hold
             }
             else
             {

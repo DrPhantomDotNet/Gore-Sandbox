@@ -38,6 +38,13 @@ Whenever a change is made, release it — don't leave it unpushed:
 - Editor tools: `Editor/GoreDevHub.cs` (SolarEclipse > Dev Hub), `Editor/GoreContentEditors.cs`, `Editor/GoreStoryDrawers.cs`.
   Guide for humans: `Assets/SolarEclipse/DEVELOPING.md`. Keep it in sync when these change.
 
+## VR (Windows only)
+
+- OpenXR via `com.unity.xr.management` + `com.unity.xr.openxr` (manifest). `Editor/VRSetup.cs` configures them by reflection
+  (OpenXR loader for Standalone, init-on-start OFF, controller profiles, Multi Pass because the custom unlit shaders have no
+  single-pass-instanced support). Runtime code only uses UnityEngine.XR (XRModule/VRModule/SubsystemsModule; the strict
+  compile checks reference those) and reflection. `Scripts/VR`: VRManager (start/stop, input), VRRig (player), VRUI (panel).
+
 ## Conventions
 
 - UI is IMGUI through the `UI` static class (`UI/UIKit.cs`) on a virtual canvas 1080 units high.

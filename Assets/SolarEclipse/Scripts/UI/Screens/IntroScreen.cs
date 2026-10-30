@@ -13,7 +13,7 @@ namespace SolarEclipse
     public sealed class IntroScreen : UIScreen
     {
         // Not on a brand-new install: the first-launch setup (gore level, age) must come before any gore is shown.
-        public static bool ShouldPlay => Settings.Data.playIntro && Settings.Data.setupDone && GameManager.I != null && SoundBank.Ready;
+        public static bool ShouldPlay => Settings.Data.playIntro && Settings.Data.setupDone && GameManager.I != null && SoundBank.Ready && !VRManager.Active; // VR: a moving camera you don't control makes people sick
 
         const float SkipFade = 0.35f;
         const float ShotTime = IntroCinematic.ShotTime, BlackTime = IntroCinematic.BlackTime, LogoTime = IntroCinematic.LogoTime,
