@@ -109,11 +109,13 @@ namespace SolarEclipse
     /// main menu, where Orbie says the chapter ending line.</summary>
     public sealed class MissionPassedScreen : UIScreen
     {
-        readonly string subtitle;
+        readonly string subtitle, line;
+        readonly Action then;
         const float FadeAt = 5.2f, FadeTime = 1.2f;
         bool left;
 
-        public MissionPassedScreen(string subtitle) { this.subtitle = subtitle; }
+        /// <param name="then">What happens after the fade (null = main menu + Orbie's line, the old chapter ending).</param>
+        public MissionPassedScreen(string subtitle, string line = "CHAPTER 1 COMPLETE  -  RESPECT +", Action then = null) { this.subtitle = subtitle; this.line = line; this.then = then; }
 
         public override bool IsModal => true;
         public override bool ShowCursor => false;
@@ -131,6 +133,8 @@ namespace SolarEclipse
             if (!left && Age > FadeAt + FadeTime + 0.15f)
             {
                 left = true;
+                UIRoot.Remove(this);
+                if (then != null) { then(); return; }
                 GameManager.I.ReturnToMenu();
                 UIRoot.Push(new StoryOrbieScreen("That's it for the story for now.. there will be more but it takes a lot of time to make this."));
             }
@@ -158,7 +162,7 @@ namespace SolarEclipse
             float sa = Mathf.Clamp01((t - 0.8f) / 0.4f) * (1f - Mathf.Clamp01((t - FadeAt) / 0.6f));
             UI.Label(new Rect(0, H * 0.36f + 168, W, 60), subtitle, 40, new Color(1f, 1f, 1f, sa), TextAnchor.MiddleCenter, FontStyle.Bold);
             float ca = Mathf.Clamp01((t - 1.4f) / 0.4f) * (1f - Mathf.Clamp01((t - FadeAt) / 0.6f));
-            UI.Label(new Rect(0, H * 0.36f + 230, W, 44), "CHAPTER 1 COMPLETE  -  RESPECT +", 26, new Color(0.85f, 0.85f, 0.85f, ca), TextAnchor.MiddleCenter, FontStyle.Bold);
+            UI.Label(new Rect(0, H * 0.36f + 230, W, 44), line, 26, new Color(0.85f, 0.85f, 0.85f, ca), TextAnchor.MiddleCenter, FontStyle.Bold);
 
             // Fade to black.
             float fade = Mathf.Clamp01((t - FadeAt) / FadeTime);
@@ -174,6 +178,8 @@ namespace SolarEclipse
     {
         readonly string reason;
         readonly Action retry;
+        /// <summary>Extra action after MENU (the story maker uses it to reopen the editor).</summary>
+        public Action OnMenu;
 
         public MissionFailedScreen(string reason, Action retry) { this.reason = reason; this.retry = retry; }
 
@@ -205,7 +211,7 @@ namespace SolarEclipse
             var r1 = new Rect(W / 2f - bw - gap / 2f, H * 0.66f, bw, 104);
             var r2 = new Rect(W / 2f + gap / 2f, H * 0.66f, bw, 104);
             if (UI.Button(r1, "RETRY", ButtonKind.Primary, IconFactory.Get("play"), 40)) { AudioManager.Ui("ui_click"); UIRoot.Remove(this); retry?.Invoke(); return; }
-            if (UI.Button(r2, "MENU", ButtonKind.Normal, IconFactory.Get("exit"), 40)) { AudioManager.Ui("ui_click"); UIRoot.Remove(this); GameManager.I.ReturnToMenu(); }
+            if (UI.Button(r2, "MENU", ButtonKind.Normal, IconFactory.Get("exit"), 40)) { AudioManager.Ui("ui_click"); UIRoot.Remove(this); GameManager.I.ReturnToMenu(); OnMenu?.Invoke(); }
         }
 
         public override bool OnBack() => true;

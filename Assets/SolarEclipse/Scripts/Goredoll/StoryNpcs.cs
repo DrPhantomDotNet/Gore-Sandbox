@@ -14,7 +14,9 @@ namespace SolarEclipse
         {
             if (part == null || part.Doll == null) return true;
             var z = part.Doll.GetComponent<ZBoss>();
-            return z == null || z.OnHit(part, ref info);
+            if (z != null) return z.OnHit(part, ref info);
+            var b = part.Doll.GetComponent<StoryBoss>(); // Story/StoryActors.cs
+            return b == null || b.OnHit(part, ref info);
         }
 
         /// <summary>Goredoll.Launch: Z can't be thrown around before the fight starts.</summary>
@@ -22,7 +24,9 @@ namespace SolarEclipse
         {
             if (d == null) return false;
             var z = d.GetComponent<ZBoss>();
-            return z != null && z.Stage == 0;
+            if (z != null) return z.Stage == 0;
+            var b = d.GetComponent<StoryBoss>();
+            return b != null && !b.IsAwake;
         }
 
         /// <summary>Dismemberment: Z keeps his limbs and head until his health pool is empty.</summary>
@@ -30,7 +34,9 @@ namespace SolarEclipse
         {
             if (part == null || part.Doll == null) return false;
             var z = part.Doll.GetComponent<ZBoss>();
-            return z != null && !z.Defeated;
+            if (z != null) return !z.Defeated;
+            var b = part.Doll.GetComponent<StoryBoss>();
+            return b != null && !b.Defeated;
         }
     }
 
