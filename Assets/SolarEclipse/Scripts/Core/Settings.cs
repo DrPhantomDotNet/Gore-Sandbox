@@ -44,6 +44,8 @@ namespace SolarEclipse
         public bool proximityVoice = true;
         // Updates
         public bool autoUpdate = true;          // check GitHub for a newer version on startup and install it
+        // Startup
+        public bool playIntro = true;           // ~20 s cinematic after the studio logo (UI/Screens/IntroScreen.cs); always skippable
         // Chat
         public bool chatFilter = true;          // hide profanity in chat (forced on when ageGroup == 1)
         public int ageGroup = 0;                // 0 not set, 1 under 13, 2 13-17, 3 18+ (only stored on this device)

@@ -94,6 +94,13 @@ namespace SolarEclipse
             ["mac11"] = new Mount { Allowed = "reddot holo ext drum supp comp vgrip agrip laser", Rail = new Vector3(0, 0.078f, 0.06f), Under = new Vector3(0, 0.016f, 0.125f), LaserPos = new Vector3(0.026f, 0.04f, 0.12f) },
         };
 
+        // Arsenal pack guns (Weapons/ArsenalPack.cs) register their mounts from their GunKit specs.
+        static Attachments()
+        {
+            ArsenalPack.RegisterMounts((id, allowed, rail, under, laser, onSlide) =>
+                Mounts[id] = new Mount { Allowed = allowed, Rail = rail, Under = under, LaserPos = laser, OpticOnSlide = onSlide });
+        }
+
         /// <summary>Whether this weapon can be customized at all.</summary>
         public static bool Supports(WeaponDef def) => def != null && def.Kind == WeaponKind.Firearm && Mounts.ContainsKey(def.Id);
         public static bool Supports(string id) => Supports(WeaponCatalog.Get(id));

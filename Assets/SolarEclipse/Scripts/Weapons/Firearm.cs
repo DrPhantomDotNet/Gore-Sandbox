@@ -13,6 +13,7 @@ namespace SolarEclipse
         public int Ammo;
         public bool Reloading => reloadT >= 0f;
         bool auto;
+        bool burst; int burstLeft; // burst fire (Def.Burst > 1): B cycles AUTO / BURST / SEMI
         float nextFire, bloom, reloadT = -1f, reloadDur, slideKick, flashT;
         bool emptyReload, magDropped, magInserted, slideLocked, chargePlayed1, chargePlayed2;
         int shellsToLoad;
@@ -50,13 +51,14 @@ namespace SolarEclipse
         public override bool Busy => Reloading;
         public override bool IsAiming => PlayerInput.Frame.Aim && !Reloading && !Player.Sprinting && inspectT < 0f;
         public override string AmmoText => Rules.InfiniteAmmo ? "INF" : Ammo + " / " + Capacity;
-        public override string ModeText => Def.Auto ? (auto ? "AUTO" : "SEMI") : Def.Pellets > 1 ? "SEMI · 12GA" : "SEMI";
+        public override string ModeText => burst ? "BURST" : Def.Auto ? (auto ? "AUTO" : "SEMI") : Def.Pellets > 1 ? "SEMI · 12GA" : "SEMI";
 
         protected override void OnAttach()
         {
             Attachments.Apply(this); // saved sight / magazine / muzzle / grip / laser for this gun (before the ammo count)
             Ammo = Capacity + (OpenBolt || Def.ShellReload ? 0 : 1);
             auto = Def.Auto;
+            burst = Def.Burst > 1 && !Def.Auto;
             BuildFlash();
             // A magazine copy that rides in the left hand during reloads.
             if (Model.MagMesh != null || Model.Mag != null)
@@ -145,10 +147,17 @@ namespace SolarEclipse
             Vm.AimWeight = aim;
             bloom = Mathf.MoveTowards(bloom, 0f, dt * 3f);
 
-            if (f.Mode && Def.Auto) { auto = !auto; AudioManager.Play("fire_mode", Eye, 0.5f, 1f, 0f); GameEvents.ShowToast(Def.Name + ": " + (auto ? "full auto" : "semi auto")); }
+            if (f.Mode && Def.Burst > 1) CycleBurstMode();
+            else if (f.Mode && Def.Auto) { auto = !auto; AudioManager.Play("fire_mode", Eye, 0.5f, 1f, 0f); GameEvents.ShowToast(Def.Name + ": " + (auto ? "full auto" : "semi auto")); }
 
             // ----- Firing
             bool wantsFire = auto ? f.FireHeld : f.Fire;
+            if (burst)
+            {
+                if (f.Fire && burstLeft <= 0 && Time.time >= nextFire) burstLeft = Def.Burst;
+                if (Reloading || Player.Sprinting || Ammo <= 0 && !Rules.InfiniteAmmo) burstLeft = Mathf.Min(burstLeft, 0);
+                if (burstLeft > 0) wantsFire = true;
+            }
             if (Reloading && Def.ShellReload && f.Fire && Ammo > 0) { reloadT = -1f; if (handMag != null) handMag.gameObject.SetActive(false); }
             if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot)
             {
@@ -197,10 +206,23 @@ namespace SolarEclipse
 
         // ------------------------------------------------------------------ Shooting
 
+        /// <summary>B on a burst-capable gun: AUTO (if it has it) -> BURST -> SEMI.</summary>
+        void CycleBurstMode()
+        {
+            if (auto) { auto = false; burst = true; }
+            else if (burst) burst = false;
+            else if (Def.Auto) auto = true;
+            else burst = true;
+            burstLeft = 0;
+            AudioManager.Play("fire_mode", Eye, 0.5f, 1f, 0f);
+            GameEvents.ShowToast(Def.Name + ": " + (auto ? "full auto" : burst ? Def.Burst + "-round burst" : "semi auto"));
+        }
+
         void Shoot()
         {
             if (!Rules.InfiniteAmmo) Ammo--;
             nextFire = Time.time + 60f / Def.Rpm;
+            if (burstLeft > 0 && --burstLeft == 0) nextFire += 0.16f; // short pause between bursts
             Stats.Add(Stats.ShotsFired);
             inspectT = -1f;
 

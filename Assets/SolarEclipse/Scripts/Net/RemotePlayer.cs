@@ -36,15 +36,28 @@ namespace SolarEclipse
 
         public void SetName(string n) { if (Player != null) Player.Name = n; gameObject.name = "Player " + n; }
 
-        void Build()
+        // Profile (icon/hat/look) last applied to the model: rebuilt when the player's profile changes.
+        ProfileData appliedProfile;
+        int appliedVersion = -1;
+
+        void BuildModel()
         {
-            // Appearance is seeded from the player's name so everyone sees the same person.
-            var st = Random.state;
-            Random.InitState((Player.Name ?? "p").GetHashCode() ^ 0x5EED);
-            var look = Appearance.Random(-1);
-            Random.state = st;
+            // The player's profile look (Core/PlayerProfile.cs), else seeded from the name so everyone sees the same person.
+            var prof = NetManager.I != null ? NetManager.I.ProfileOf(Player) : null;
+            appliedProfile = prof; appliedVersion = prof != null ? prof.Version : -1;
+            var custom = prof != null ? prof.BodyLook : null;
+            Appearance look;
+            if (custom != null) look = custom.ToAppearance();
+            else
+            {
+                var st = Random.state;
+                Random.InitState((Player.Name ?? "p").GetHashCode() ^ 0x5EED);
+                look = Appearance.Random(-1);
+                Random.state = st;
+            }
             height = look.Height;
 
+            parts.Clear();
             model = new GameObject("Model").transform;
             model.SetParent(transform, false);
             model.localScale = Vector3.one * look.Height;
@@ -61,7 +74,25 @@ namespace SolarEclipse
                 parts[t] = go.transform;
             }
             face = FaceRig.Build(parts[PartType.Head], look);
+            if (custom != null && custom.Glasses) CustomDolls.AddGlasses(parts[PartType.Head], Layers.RemotePlayer);
+            if (prof != null) Hats.Attach(parts[PartType.Head], prof.Hat, prof.HatColor, Layers.RemotePlayer);
             IconFactory.SetLayer(model.gameObject, Layers.RemotePlayer);
+        }
+
+        /// <summary>Rebuilds the body when the player's profile arrives or changes (keeps the voice source).</summary>
+        void RefreshProfile()
+        {
+            var prof = NetManager.I != null ? NetManager.I.ProfileOf(Player) : null;
+            if (prof == appliedProfile && (prof == null || prof.Version == appliedVersion)) return;
+            if (VoiceSource != null) VoiceSource.transform.SetParent(transform, true);
+            if (model != null) { model.gameObject.SetActive(false); Destroy(model.gameObject); }
+            BuildModel();
+            if (VoiceSource != null) VoiceSource.transform.SetParent(parts[PartType.Head], false);
+        }
+
+        void Build()
+        {
+            BuildModel();
 
             socket = new GameObject("WeaponSocket").transform;
             socket.SetParent(transform, false);
@@ -96,6 +127,7 @@ namespace SolarEclipse
             var nm = NetManager.I;
             // Never show your own body (e.g. a stale avatar after an id change).
             if (nm != null && Player.Id == nm.LocalId) { if (Player.Avatar == this) Player.Avatar = null; Destroy(gameObject); return; }
+            if (Time.frameCount % 15 == (Player.Id % 15)) RefreshProfile();
             float dt = Time.deltaTime;
             // Hide the avatar while our camera is inside it (walking into another player).
             var cam = PlayerController.Instance != null ? PlayerController.Instance.Cam : null;

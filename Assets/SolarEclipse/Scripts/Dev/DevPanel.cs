@@ -30,7 +30,7 @@ namespace SolarEclipse
         int expanded = -1;
         readonly float[] fpsHistory = new float[240];
         int fpsHead;
-        static readonly string[] Tabs = { "CONSOLE", "QUICK", "SPAWN", "AI", "PLAYER", "RULES", "SOUNDS", "PERF", "INFO", "FUN", "MOBILE" };
+        static readonly string[] Tabs = { "CONSOLE", "QUICK", "SPAWN", "AI", "PLAYER", "RULES", "SOUNDS", "PERF", "INFO", "FUN", "MOBILE", "BADGES" };
         bool showHistory;
 
         /// <summary>True on phones/tablets: bigger rows, the native keyboard and a full-width panel.</summary>
@@ -123,6 +123,7 @@ namespace SolarEclipse
             {
                 LoggedIn = true;
                 error = "";
+                Badges.Unlock(pass); // decrypts the badge signing key in memory (Core/Badges.cs)
                 pass = "";
                 failed = 0;
                 AudioManager.Ui("ui_success");
@@ -211,6 +212,7 @@ namespace SolarEclipse
                 case 8: DrawInfo(body); break;
                 case 9: DevFunTab.DrawFun(body); break;
                 case 10: DevFunTab.DrawMobile(body); break;
+                case 11: DevBadges.Draw(body); break;
             }
         }
 
@@ -468,7 +470,7 @@ namespace SolarEclipse
                        $"Achievements: {Stats.UnlockedCount()}/{Stats.Achievements.Count} · Easter eggs found: {EasterEggs.All.Count(x => Stats.HasEasterEgg(x.Id))}/{EasterEggs.All.Count}\n\n" +
                        "Owner-Developer: Quibbo/DrPhantom · Developer: AlexKiller";
             UI.Label(body, s, 17, UI.TextColor, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
-            if (UI.Button(new Rect(body.x, body.yMax - 60, 220, 56), "LOG OUT", ButtonKind.Danger, IconFactory.Get("lock"), 18)) { LoggedIn = false; Debug.Log("[DevPanel] Logged out."); }
+            if (UI.Button(new Rect(body.x, body.yMax - 60, 220, 56), "LOG OUT", ButtonKind.Danger, IconFactory.Get("lock"), 18)) { LoggedIn = false; Badges.Lock(); Debug.Log("[DevPanel] Logged out."); }
         }
     }
 }

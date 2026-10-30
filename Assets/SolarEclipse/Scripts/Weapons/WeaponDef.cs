@@ -12,6 +12,8 @@ namespace SolarEclipse
         public WeaponKind Kind;
         public float Damage, Rpm = 400f, HipSpread = 1f, AimSpread = 0.1f, Recoil = 1f, Range = 400f, Penetration = 0.4f, Force = 10f, Caliber = 9f;
         public int Mag = 1, Pellets = 1, CasingType;
+        /// <summary>Rounds per trigger pull in burst mode (0 = no burst mode). Firearm.cs.</summary>
+        public int Burst;
         public bool Auto, ShellReload;
         public float ReloadTime = 1.8f, EmptyExtra = 0.4f, AimFov = 0.78f, AimDistance = 0.18f, NoiseRadius = 80f;   // AimDistance: eye → rear sight (m) when aiming
         public string FireSound, MagOut, MagIn, Charge;
@@ -140,6 +142,9 @@ namespace SolarEclipse
                 Damage = 58, Force = 16, HipPos = new Vector3(0.14f, -0.2f, 0.3f), WeightKg = 2.4f,
             },
         };
+
+        // Arsenal pack (Weapons/ArsenalPack.cs: 20 guns + 10 melee) is appended after the list above, before any modded weapon.
+        static WeaponCatalog() { ArsenalPack.AppendDefs(All); }
 
         public static WeaponDef Get(string id) => All.Find(w => w.Id == id);
     }

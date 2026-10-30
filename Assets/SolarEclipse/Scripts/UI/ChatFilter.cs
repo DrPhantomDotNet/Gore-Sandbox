@@ -35,9 +35,12 @@ namespace SolarEclipse
             "hello", "shell", "shells", "helmet", "skyscraper", "rapeseed", "boobytrap", "cockatoo", "retardant", "cockerel",
         };
 
-        public static string Apply(string text)
+        public static string Apply(string text) => !Active ? text : Censor(text);
+
+        /// <summary>Always filters, whatever the player's setting (mod names/descriptions shown to everyone).</summary>
+        public static string Censor(string text)
         {
-            if (!Active || string.IsNullOrEmpty(text)) return text;
+            if (string.IsNullOrEmpty(text)) return text;
             var sb = new StringBuilder(text);
             int i = 0;
             while (i < text.Length)

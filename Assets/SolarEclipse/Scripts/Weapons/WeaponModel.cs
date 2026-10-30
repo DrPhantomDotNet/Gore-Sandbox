@@ -119,7 +119,7 @@ namespace SolarEclipse
                 case "shotgun": case "sniper": case "revolver": case "minigun": case "harpoon": return WeaponModels2.Build(id, layer);
                 case "rpg": case "frag": case "c4": case "katana": case "sledgehammer": return WeaponModels3.Build(id, layer);
                 case "mac11": case "katana_dual": return WeaponModels4.Build(id, layer);
-                default: return Root("Fists", layer);
+                default: return ArsenalPack.BuildModel(id, layer) ?? Root("Fists", layer); // GunKit / MeleeKit (Weapons/ArsenalPack.cs)
             }
         }
 

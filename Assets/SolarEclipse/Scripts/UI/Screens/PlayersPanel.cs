@@ -13,7 +13,7 @@ namespace SolarEclipse
         public static void Draw(Rect view)
         {
             var nm = NetManager.I;
-            if (nm == null || !NetState.Active) { UI.Label(view, "Not in a multiplayer game.", 20, UI.Muted, TextAnchor.UpperLeft); return; }
+            if (nm == null || !NetState.Active) { DrawSelf(view); return; }
             bool host = NetState.IsHost;
             float y = view.y;
             if (host)
@@ -35,7 +35,7 @@ namespace SolarEclipse
             var list = new Rect(view.x, y, view.width, view.yMax - y);
             if (host && showBans) { DrawBans(list); return; }
 
-            const float rowH = 62f;
+            const float rowH = 74f;
             var players = new System.Collections.Generic.List<NetPlayer>(nm.Players.Values);
             players.Sort((a, b) => a.Id.CompareTo(b.Id));
             float content = players.Count * (rowH + 8);
@@ -48,27 +48,47 @@ namespace SolarEclipse
                 bool me = p.Id == nm.LocalId;
                 UI.Rounded(r, me ? new Color(UI.Accent.r, UI.Accent.g, UI.Accent.b, 0.25f) : UI.PanelLight, true);
                 bool talking = VoiceChat.I != null && (me ? VoiceChat.I.Transmitting : VoiceChat.I.IsTalking(p.Id));
-                UI.Tex(new Rect(r.x + 12, r.y + 15, 32, 32), IconFactory.Get(talking ? "speaker" : p.IsHost ? "crown" : "person"), talking ? UI.Good : p.IsHost ? UI.Warn : UI.Muted);
-                UI.Label(new Rect(r.x + 56, r.y, 260, rowH), p.Name + (me ? " (you)" : ""), 19, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
-                string tags = (p.IsHost ? "HOST  " : "") + (p.Creative || p.IsHost ? "CREATIVE  " : "") + (p.IsHost ? "" : p.PingMs + " ms");
-                UI.Label(new Rect(r.x + 320, r.y, 220, rowH), tags, 14, p.Creative || p.IsHost ? UI.Accent2 : UI.Muted);
+                bool dev = DevPanel.LoggedIn;
+                // Width of the buttons on the right, so the name/badges never run under them.
+                float buttonsW = (!me && VoiceChat.I != null ? 96 : 0) + (host && !me && !p.IsHost ? 414 : 0) + (dev ? 116 : 0);
+                // Profile icon, name and badge chips (Core/PlayerProfile.cs, UI/BadgeChips.cs)
+                var prof = nm.ProfileOf(p);
+                BadgeChips.PlayerLine(new Rect(r.x + 10, r.y + 8, Mathf.Max(160, r.width - buttonsW - 24), 40), prof, p.Name + (me ? " (you)" : ""), p.IsHost ? UI.Warn : Color.white, 19);
+                string tags = (talking ? "TALKING  " : "") + (p.IsHost ? "HOST  " : "") + (p.Creative || p.IsHost ? "CREATIVE  " : "") + (p.IsHost ? "" : p.PingMs + " ms");
+                UI.Label(new Rect(r.x + 60, r.y + 48, Mathf.Max(100, r.width - buttonsW - 74), 22), tags, 13, talking ? UI.Good : p.Creative || p.IsHost ? UI.Accent2 : UI.Muted);
                 float bx = r.xMax - 8;
+                if (dev)
+                {
+                    bx -= 116; if (UI.Button(new Rect(bx, r.y + 15, 110, 44), "BADGES", ButtonKind.Normal, null, 14, true, "Developer: give or remove badges.")) UIRoot.Push(new BadgeEditDialog(p));
+                }
                 if (!me && VoiceChat.I != null)
                 {
                     bool muted = VoiceChat.I.Muted.Contains(p.Name);
-                    bx -= 96; if (UI.Button(new Rect(bx, r.y + 9, 90, 44), muted ? "UNMUTE" : "MUTE", ButtonKind.Ghost, null, 14, true, "Mute this player's voice (only for you).")) VoiceChat.I.ToggleMute(p);
+                    bx -= 96; if (UI.Button(new Rect(bx, r.y + 15, 90, 44), muted ? "UNMUTE" : "MUTE", ButtonKind.Ghost, null, 14, true, "Mute this player's voice (only for you).")) VoiceChat.I.ToggleMute(p);
                 }
                 if (host && !me && !p.IsHost)
                 {
-                    bx -= 76; if (UI.Button(new Rect(bx, r.y + 9, 70, 44), "BAN", ButtonKind.Danger, null, 14)) { var pp = p; UIRoot.Push(new ConfirmDialog("Ban " + p.Name + "?", "They're kicked and can't rejoin your servers (by player id and IP). Unban from the BANNED list.", () => NetManager.I.Ban(pp), "BAN", ButtonKind.Danger)); }
-                    bx -= 82; if (UI.Button(new Rect(bx, r.y + 9, 76, 44), "KICK", ButtonKind.Danger, null, 14)) NetManager.I.Kick(p);
-                    bx -= 70; if (UI.Button(new Rect(bx, r.y + 9, 64, 44), "TP", ButtonKind.Ghost, null, 14, true, "Teleport to this player.") && PlayerController.Instance != null) PlayerController.Instance.Teleport(p.Pos + Vector3.up * 0.2f + Vector3.back);
+                    bx -= 76; if (UI.Button(new Rect(bx, r.y + 15, 70, 44), "BAN", ButtonKind.Danger, null, 14)) { var pp = p; UIRoot.Push(new ConfirmDialog("Ban " + p.Name + "?", "They're kicked and can't rejoin your servers (by player id and IP). Unban from the BANNED list.", () => NetManager.I.Ban(pp), "BAN", ButtonKind.Danger)); }
+                    bx -= 82; if (UI.Button(new Rect(bx, r.y + 15, 76, 44), "KICK", ButtonKind.Danger, null, 14)) NetManager.I.Kick(p);
+                    bx -= 70; if (UI.Button(new Rect(bx, r.y + 15, 64, 44), "TP", ButtonKind.Ghost, null, 14, true, "Teleport to this player.") && PlayerController.Instance != null) PlayerController.Instance.Teleport(p.Pos + Vector3.up * 0.2f + Vector3.back);
                     bool c = p.Creative;
                     bx -= 186;
-                    if (UI.Button(new Rect(bx, r.y + 9, 180, 44), c ? "CREATIVE: ON" : "GIVE CREATIVE", c ? ButtonKind.Primary : ButtonKind.Normal, null, 14, true, "Creative mode: noclip, Spawn Gun, spawn menu, Admin Gun.")) NetManager.I.SetCreative(p, !c);
+                    if (UI.Button(new Rect(bx, r.y + 15, 180, 44), c ? "CREATIVE: ON" : "GIVE CREATIVE", c ? ButtonKind.Primary : ButtonKind.Normal, null, 14, true, "Creative mode: noclip, Spawn Gun, spawn menu, Admin Gun.")) NetManager.I.SetCreative(p, !c);
                 }
             }
             UI.EndScroll("mp_players", list, content);
+        }
+
+        /// <summary>Singleplayer: just you (icon, name, badges) and a shortcut to the profile.</summary>
+        static void DrawSelf(Rect view)
+        {
+            var r = new Rect(view.x, view.y, view.width, 74);
+            UI.Rounded(r, new Color(UI.Accent.r, UI.Accent.g, UI.Accent.b, 0.25f), true);
+            float bw = DevPanel.LoggedIn ? 116 : 0;
+            BadgeChips.PlayerLine(new Rect(r.x + 10, r.y + 8, r.width - 180 - bw, 40), PlayerProfile.Local, PlayerProfile.LocalName + " (you)", Color.white, 19);
+            UI.Label(new Rect(r.x + 60, r.y + 48, r.width - 250, 22), "Singleplayer", 13, UI.Muted);
+            if (UI.Button(new Rect(r.xMax - 158, r.y + 15, 150, 44), "PROFILE", ButtonKind.Normal, IconFactory.Get("person"), 15)) UIRoot.Push(new ProfileScreen());
+            if (bw > 0 && UI.Button(new Rect(r.xMax - 158 - bw, r.y + 15, 110, 44), "BADGES", ButtonKind.Normal, null, 14)) UIRoot.Push(new BadgeEditDialog(null));
         }
 
         static void DrawBans(Rect list)

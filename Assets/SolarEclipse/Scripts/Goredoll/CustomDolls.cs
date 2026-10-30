@@ -110,6 +110,7 @@ namespace SolarEclipse
     {
         public int Armor;
         public CustomLook Custom;
+        public string ModTokens; // "~m<modId>~w<weaponId>" (Advanced Modding NPC mods, Mods/NpcModKind.cs), always last
     }
 
     public static class NpcMods
@@ -126,6 +127,11 @@ namespace SolarEclipse
                     int end = preset.IndexOf('~', ci + 2);
                     m.Custom = CustomLook.Decode(end < 0 ? preset.Substring(ci + 2) : preset.Substring(ci + 2, end - ci - 2));
                 }
+            }
+            if (!string.IsNullOrEmpty(preset))
+            {
+                int mi = preset.IndexOf("~m", StringComparison.Ordinal);
+                if (mi >= 0) m.ModTokens = preset.Substring(mi);
             }
             preset = Armor.BaseOf(preset);
             return m;
@@ -144,7 +150,15 @@ namespace SolarEclipse
             else if (basePreset == ArmedDolls.Soldier) armor = Armor.Full;
             if (ArmedDolls.IsArmed(basePreset) && doll.Zombie == null) ArmedDolls.Attach(doll, basePreset);
             if (armor > 0) DollArmor.Attach(doll, armor);
+            if (m.ModTokens != null && ModNpcHook != null)
+            {
+                try { ModNpcHook(doll, m.ModTokens); }
+                catch (Exception e) { Debug.LogWarning("Modded NPC setup failed: " + e.Message); }
+            }
         }
+
+        /// <summary>Set by Mods/NpcModKind.cs: weapon model + (host) ScriptedBrain for "~m" presets.</summary>
+        public static Action<Goredoll, string> ModNpcHook;
 
         /// <summary>Spawn menu: renders one missing portrait per call.</summary>
         public static void TickIcons()

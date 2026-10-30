@@ -47,7 +47,9 @@ namespace SolarEclipse
             if (!done && (t > Length || skip))
             {
                 done = true;
-                GameManager.I.OnSplashFinished();
+                // The cinematic intro (UI/Screens/IntroScreen.cs) calls OnSplashFinished itself when it ends or is skipped.
+                if (IntroScreen.ShouldPlay) UIRoot.Replace(new IntroScreen());
+                else GameManager.I.OnSplashFinished();
             }
 
             // Embers drift out from the sun after the impact.

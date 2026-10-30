@@ -303,11 +303,18 @@ namespace SolarEclipse
                 float a = visible ? 1f : 0.35f;
                 bool talking = VoiceChat.I != null && VoiceChat.I.IsTalking(np.Id);
                 string label = np.Name + ((np.Flags & NetPlayer.FDead) != 0 ? "  (dead)" : "");
-                float tw = UI.TextWidth(label, 17) + (talking ? 34 : 18);
+                // Profile icon + name + compact badge chips (Core/PlayerProfile.cs, UI/BadgeChips.cs)
+                var prof = nm.ProfileOf(np);
+                int badgeMask = prof != null ? prof.BadgeMask & ~1 : 0;
+                float chipsW = badgeMask != 0 ? BadgeChips.Width(badgeMask, 22, true, 3) + 6 : 0;
+                float tw = UI.TextWidth(label, 17) + (talking ? 34 : 18) + 26 + chipsW;
                 var r = new Rect(g.x - tw / 2, g.y - 30, tw, 28);
                 UI.Rounded(r, new Color(0, 0, 0, 0.45f * a), true);
-                if (talking) UI.Tex(new Rect(r.x + 6, r.y + 4, 20, 20), IconFactory.Get("speaker"), UI.Good.WithAlpha(a));
-                UI.Label(new Rect(r.x + (talking ? 26 : 0), r.y, r.width - (talking ? 26 : 0), r.height), label, 17, (np.IsHost ? UI.Warn : Color.white).WithAlpha(a), TextAnchor.MiddleCenter);
+                PlayerProfile.DrawIcon(new Rect(r.x + 3, r.y + 2, 24, 24), prof, a);
+                float lx = r.x + 26;
+                if (talking) { UI.Tex(new Rect(lx + 4, r.y + 4, 20, 20), IconFactory.Get("speaker"), UI.Good.WithAlpha(a)); lx += 26; }
+                UI.Label(new Rect(lx, r.y, r.xMax - lx - chipsW, r.height), label, 17, (np.IsHost ? UI.Warn : Color.white).WithAlpha(a), TextAnchor.MiddleCenter);
+                if (badgeMask != 0) BadgeChips.Draw(new Rect(r.xMax - chipsW, r.y + 3, chipsW - 4, 22), badgeMask, true, a, 3);
                 if (dist < 15f && (np.Flags & NetPlayer.FDead) == 0)
                 {
                     float hp = np.Health / 100f;

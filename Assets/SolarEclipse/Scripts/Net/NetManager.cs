@@ -31,6 +31,8 @@ namespace SolarEclipse
         CustomMap = 121,
         // explosives (Net/NetManager.Explosives.cs): client -> host requests, host -> client effects
         ReqThrowable = 140, ThrowableFx = 141, ReqDetonate = 142, C4Detonated = 143,
+        // player profiles + badges (Net/NetManager.Profile.cs)
+        ProfileUpdate = 220, ProfileData = 221, BadgeGrant = 222, ReqBadgeGrant = 223,
     }
 
     public sealed class NetPlayer
@@ -866,6 +868,7 @@ namespace SolarEclipse
             {
                 w.Reset();
                 ToHost(Msg.ClientReady);
+                SendMyProfile(); // NetManager.Profile.cs
                 foreach (var p in Players.Values) EnsureAvatar(p);
                 ApplyLoadout();
             }

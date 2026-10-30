@@ -34,6 +34,7 @@ namespace SolarEclipse
                 case Msg.Welcome: OnWelcome(rd); break;
                 case Msg.CustomMap: OnCustomMap(rd); break;
                 case Msg.ThrowableFx: case Msg.C4Detonated: ClientExplosivesMsg(type, rd); break;
+                case Msg.ProfileData: case Msg.BadgeGrant: ClientProfileMsg(type, rd); break; // NetManager.Profile.cs
                 case Msg.PlayerList:
                 {
                     int n = rd.Byte();
@@ -324,6 +325,7 @@ namespace SolarEclipse
                     if (p.Ready) break;
                     p.Ready = true;
                     SendWorldState(p);
+                    SendProfilesTo(p); // NetManager.Profile.cs
                     EnsureAvatar(p);
                     SystemMessage(p.Name + " joined the game.");
                     BroadcastPlayerList();
@@ -424,6 +426,7 @@ namespace SolarEclipse
                     break;
                 }
                 case Msg.ReqThrowable: case Msg.ReqDetonate: HostExplosivesMsg(p, type, rd); break;
+                case Msg.ProfileUpdate: case Msg.ReqBadgeGrant: HostProfileMsg(p, type, rd); break; // NetManager.Profile.cs
                 case Msg.ReqExplosion:
                 {
                     var pos = rd.Vec3(); float radius = Mathf.Min(rd.Float(), 20f), dmg = Mathf.Min(rd.Float(), 1000f), push = Mathf.Min(rd.Float(), 4f);

@@ -107,11 +107,15 @@ namespace SolarEclipse
             if (Position.y < (WorldRoot.Current != null ? WorldRoot.Current.KillY : -60f)) Despawn();
         }
 
+        /// <summary>Raised on every damaging hit (Advanced Modding: ScriptedBrain's "on hurt").</summary>
+        public event System.Action<DamageInfo, float> Damaged;
+
         public void OnPartDamaged(BodyPart part, DamageInfo info, Wound wound, float damage)
         {
             if (despawned) return;
             if (part.Severed) return;
             lastAttacker = info.Source;
+            Damaged?.Invoke(info, damage);
             if (info.Source is PlayerController || info.Source is Weapon) { GameEvents.Hit(info.Point, damage); KilledByPlayer = true; }
             else if (info.Source is RemotePlayer rp && NetState.IsHost) NetManager.I.SendHitMarker(rp, info.Point, damage);
             Brain.OnDamaged(info, damage);
