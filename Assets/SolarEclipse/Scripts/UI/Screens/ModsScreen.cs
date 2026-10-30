@@ -109,7 +109,7 @@ namespace SolarEclipse
             // Toolbar: search, sort, import, create
             search = UI.TextField(new Rect(x, y, 380, 60), search, "mods_search", false, "Search mods...");
             UI.Selector(new Rect(x + 392, y, 300, 60), "Sort", ref sort, Sorts);
-            if (UI.Button(new Rect(x + 704, y, 230, 60), "IMPORT CODE", ButtonKind.Normal, IconFactory.Get("download"), 20)) { importOpen = true; importText = ""; }
+            if (UI.Button(new Rect(x + 704, y, 230, 60), "IMPORT CODE", ButtonKind.Normal, IconFactory.Get("arrow_down"), 20)) { importOpen = true; importText = ""; }
             float cx = r.xMax - 24;
             foreach (var h in Handlers())
             {
@@ -212,7 +212,7 @@ namespace SolarEclipse
                 case 0:
                 {
                     bool newer = installed != null && installed.version < p.version;
-                    if (installed == null) { if (UI.Button(B(1, 0), "INSTALL", ButtonKind.Primary, IconFactory.Get("download"), 22)) DoInstall(p); }
+                    if (installed == null) { if (UI.Button(B(1, 0), "INSTALL", ButtonKind.Primary, IconFactory.Get("arrow_down"), 22)) DoInstall(p); }
                     else if (newer) { if (UI.Button(B(1, 0), "UPDATE", ButtonKind.Primary, IconFactory.Get("refresh"), 22)) DoInstall(p); }
                     else if (UI.Button(B(1, 0), "UNINSTALL", ButtonKind.Danger, IconFactory.Get("trash"), 20)) DoUninstall(p);
                     if (UI.Button(B(0, 0), "SHARE CODE", ButtonKind.Ghost, IconFactory.Get("copy"), 18)) CopyCode(p);
@@ -237,9 +237,9 @@ namespace SolarEclipse
                 default:
                     if (h != null && h.OpenEditor != null && UI.Button(B(0, 0), "EDIT", ButtonKind.Normal, IconFactory.Get("wrench"), 20)) OpenEditor(h, p);
                     bool up = online != null;
-                    if (UI.Button(B(1, 0), up ? "UPDATE ONLINE" : "UPLOAD", ButtonKind.Primary, IconFactory.Get("upload"), 20)) DoUpload(p);
+                    if (UI.Button(B(1, 0), up ? "UPDATE ONLINE" : "UPLOAD", ButtonKind.Primary, IconFactory.Get("arrow_up"), 20)) DoUpload(p);
                     if (UI.Button(B(0, 1), "SHARE CODE", ButtonKind.Ghost, IconFactory.Get("copy"), 18)) CopyCode(p);
-                    if (installed == null) { if (UI.Button(new Rect(B(1, 1).x, B(1, 1).y, 130, 60), "PLAY", ButtonKind.Normal, IconFactory.Get("download"), 18)) DoInstall(p); }
+                    if (installed == null) { if (UI.Button(new Rect(B(1, 1).x, B(1, 1).y, 130, 60), "PLAY", ButtonKind.Normal, IconFactory.Get("arrow_down"), 18)) DoInstall(p); }
                     else if (UI.Button(new Rect(B(1, 1).x, B(1, 1).y, 130, 60), "UNINST.", ButtonKind.Ghost, null, 16)) DoUninstall(p);
                     if (UI.Button(new Rect(B(1, 1).x + 142, B(1, 1).y, 130, 60), "DELETE", ButtonKind.Danger, null, 16))
                         UIRoot.Push(new ConfirmDialog("DELETE MOD", "Delete '" + p.name + "' from My Mods? Copy its share code first if you want to keep it.", () => ModStore.DeleteCreated(p.id), "DELETE", ButtonKind.Danger));
@@ -320,7 +320,7 @@ namespace SolarEclipse
                 try { importText = GUIUtility.systemCopyBuffer ?? ""; } catch { importText = ""; }
             }
             if (UI.Button(new Rect(r.x + 30, r.yMax - 84, 220, 64), "CANCEL", ButtonKind.Ghost, null, 22)) importOpen = false;
-            if (UI.Button(new Rect(r.xMax - 330, r.yMax - 84, 300, 64), "IMPORT", ButtonKind.Primary, IconFactory.Get("download"), 24, !string.IsNullOrWhiteSpace(importText)))
+            if (UI.Button(new Rect(r.xMax - 330, r.yMax - 84, 300, 64), "IMPORT", ButtonKind.Primary, IconFactory.Get("arrow_down"), 24, !string.IsNullOrWhiteSpace(importText)))
             {
                 var err = ModStore.Import(importText, out var p);
                 importOpen = false;

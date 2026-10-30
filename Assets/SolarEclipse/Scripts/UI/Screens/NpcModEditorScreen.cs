@@ -19,7 +19,7 @@ namespace SolarEclipse.Mods
         {
             UI.Fill(new Rect(0, 0, UI.VW, UI.VH), new Color(0.03f, 0.03f, 0.04f, 0.97f));
             UI.Label(new Rect(30, 14, UI.VW - 600, 60), title, 36, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
-            if (UI.Button(new Rect(UI.VW - 250, 14, 220, 60), "BACK", ButtonKind.Ghost, IconFactory.Get("back"), 22)) { UIRoot.Pop(); return; }
+            if (UI.Button(new Rect(UI.VW - 250, 14, 220, 60), "BACK", ButtonKind.Ghost, IconFactory.Get("arrow_left"), 22)) { UIRoot.Pop(); return; }
             if (!string.IsNullOrEmpty(statusErr)) UI.Label(new Rect(30, 78, UI.VW - 60, 40), statusErr, 20, UI.Bad);
             else if (!string.IsNullOrEmpty(status)) UI.Label(new Rect(30, 78, UI.VW - 60, 40), status, 20, UI.Good);
         }

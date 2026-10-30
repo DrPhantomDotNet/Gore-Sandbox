@@ -149,6 +149,7 @@ namespace SolarEclipse
             y += 66;
             var zombies = SpawnCatalog.AI.FindAll(d => d.Id.StartsWith("zombie_") || d.Id.StartsWith("armed_"));
             zombies.AddRange(CustomDolls.Defs);
+            zombies.AddRange(SolarEclipse.Mods.NpcModKind.Defs); // Advanced Modding NPCs (MOD)
             if (opts.width < 632 + 160 && UI.Button(new Rect(opts.xMax - 220, y, 220, 44), "CUSTOMIZE", ButtonKind.Primary, IconFactory.Get("person"), 18))
                 UIRoot.Push(new CustomizerScreen());
             if (zombies.Count > 0 && opts.yMax - y > 90)
@@ -197,6 +198,7 @@ namespace SolarEclipse
         {
             var p = PlayerController.Instance;
             var list = WeaponCatalog.All.FindAll(w => w.Kind != WeaponKind.Fists && Mods.ModWeapons.Listed(w)); // installed mods only (hidden in MP unless the host allows them)
+            list.AddRange(SolarEclipse.Mods.ScriptedWeaponMods.MenuDefs); // Advanced Modding scripted weapons (not in the catalog)
             const float rowH = 110;
             float content = list.Count * (rowH + 12) + 70;
             float s = UI.BeginScroll("guns", view, content);
@@ -223,7 +225,7 @@ namespace SolarEclipse
                     UIRoot.Push(new WeaponCustomizeScreen(w.Id));
                 if (UI.Button(custom ? new Rect(r.xMax - 250, r.y + 6, 230, 46) : new Rect(r.xMax - 250, r.y + 25, 230, 60), equipped ? "EQUIPPED" : "EQUIP", equipped ? ButtonKind.Primary : ButtonKind.Normal, IconFactory.Get("hand"), 22, p != null && !equipped))
                 {
-                    p.Inventory.Give(w.Id);
+                    if (!SolarEclipse.Mods.ScriptedWeaponMods.TryGive(p, w.Id)) p.Inventory.Give(w.Id);
                     AudioManager.Ui("ui_success");
                     GameEvents.ShowToast(w.Name + " equipped");
                     if (w.Kind != WeaponKind.SpawnGun) OnBack();

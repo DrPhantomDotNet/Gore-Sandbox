@@ -18,7 +18,20 @@ namespace SolarEclipse
         public const int Iterations = 200000;
         static readonly byte[] Sha256Prefix = { 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20 };
 
-        public static byte[] Sha256(byte[] data) { using (var h = SHA256.Create()) return h.ComputeHash(data); }
+        public static byte[] Sha256(byte[] data)
+        {
+            SHA256 h = null;
+            try { h = SHA256.Create(); } catch (Exception) { }
+            if (h == null) h = new SHA256Managed(); // in case code stripping removed the CryptoConfig mapping
+            using (h) return h.ComputeHash(data);
+        }
+
+        static Aes CreateAes()
+        {
+            Aes a = null;
+            try { a = Aes.Create(); } catch (Exception) { }
+            return a ?? new AesManaged();
+        }
 
         // ------------------------------------------------------------------ PBKDF2-HMAC-SHA256
 
@@ -99,7 +112,7 @@ namespace SolarEclipse
             using (var rng = RandomNumberGenerator.Create()) { rng.GetBytes(salt); rng.GetBytes(iv); }
             var aesKey = Pbkdf2(password, salt, Iterations, 32);
             byte[] ct;
-            using (var aes = Aes.Create())
+            using (var aes = CreateAes())
             {
                 aes.KeySize = 256; aes.Mode = CipherMode.CBC; aes.Padding = PaddingMode.PKCS7;
                 using (var enc = aes.CreateEncryptor(aesKey, iv)) { var plain = SerializeKey(key); ct = enc.TransformFinalBlock(plain, 0, plain.Length); Array.Clear(plain, 0, plain.Length); }
@@ -121,7 +134,7 @@ namespace SolarEclipse
                 var salt = new byte[16]; var iv = new byte[16];
                 Buffer.BlockCopy(blob, 0, salt, 0, 16); Buffer.BlockCopy(blob, 16, iv, 0, 16);
                 aesKey = Pbkdf2(password, salt, Iterations, 32);
-                using (var aes = Aes.Create())
+                using (var aes = CreateAes())
                 {
                     aes.KeySize = 256; aes.Mode = CipherMode.CBC; aes.Padding = PaddingMode.PKCS7;
                     using (var dec = aes.CreateDecryptor(aesKey, iv)) plain = dec.TransformFinalBlock(blob, 32, blob.Length - 32);
