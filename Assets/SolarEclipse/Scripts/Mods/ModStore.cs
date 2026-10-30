@@ -207,6 +207,8 @@ namespace SolarEclipse.Mods
                 catch (Exception e) { Debug.LogWarning("[Mods] install failed for '" + p.name + "': " + e.Message); }
             }
             foreach (var p in bad) Installed.Remove(p);
+            try { GoreContent.LoadWeapons(); } // weapons made in the Unity editor (Content/GoreWeaponAsset.cs)
+            catch (Exception e) { Debug.LogWarning("[Mods] editor content failed: " + e.Message); }
             Debug.Log("[Mods] " + Installed.Count + " installed, " + Created.Count + " created");
         }
 

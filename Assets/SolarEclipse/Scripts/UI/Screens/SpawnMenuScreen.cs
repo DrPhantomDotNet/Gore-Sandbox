@@ -209,7 +209,7 @@ namespace SolarEclipse
                 UI.Rounded(r, UI.Hover(r) ? new Color(1, 1, 1, 0.1f) : UI.PanelLight, false);
                 UI.Tex(new Rect(r.x + 16, r.y + 10, 200, rowH - 20), Hud.WeaponIcon(w), Color.white, ScaleMode.ScaleToFit);
                 UI.Label(new Rect(r.x + 240, r.y + 12, 500, 36), w.Name.ToUpperInvariant(), 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
-                if (Mods.ModWeapons.IsMod(w)) // "Modded" tag (Mods/ModWeapon.cs)
+                if (Mods.ModWeapons.IsMod(w) && !Mods.ModWeapons.IsOfficial(w)) // "Modded" tag (Mods/ModWeapon.cs)
                 {
                     float tx = r.x + 250 + Mathf.Min(480, UI.TextWidth(w.Name.ToUpperInvariant(), 28, FontStyle.Normal, UI.HeavyFont));
                     UI.Rounded(new Rect(tx, r.y + 16, 96, 28), UI.Accent2, true);

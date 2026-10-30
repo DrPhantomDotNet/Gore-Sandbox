@@ -67,8 +67,12 @@ namespace SolarEclipse.Mods
             return e != null && (e.Installed || e.Testing) && Usable(d);
         }
 
+        /// <summary>Ids of weapons made in the Unity editor (Content/GoreWeaponAsset.cs): part of the game, no MODDED tag.</summary>
+        public static readonly HashSet<string> Official = new HashSet<string>();
+        public static bool IsOfficial(WeaponDef d) => IsMod(d) && Official.Contains(d.Id.Substring(Prefix.Length));
+
         /// <summary>HUD / name suffix for modded weapons.</summary>
-        public static string Suffix(WeaponDef d) => IsMod(d) ? "  [" + Tag + "]" : "";
+        public static string Suffix(WeaponDef d) => IsMod(d) && !IsOfficial(d) ? "  [" + Tag + "]" : "";
 
         // ------------------------------------------------------------------ handler
 

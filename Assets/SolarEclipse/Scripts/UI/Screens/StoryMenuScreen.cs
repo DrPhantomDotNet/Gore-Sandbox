@@ -55,6 +55,8 @@ namespace SolarEclipse
             UI.Label(new Rect(r.x + 280, by, r.width - 620, 30), "ENDINGS FOUND: " + found + " / 3", 18, UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Bold);
             UI.Label(new Rect(r.x + 280, by + 30, r.width - 620, 34), sb.ToString(), 18, UI.Muted, TextAnchor.MiddleLeft);
 
+            if (GoreContent.Stories.Count > 0 && UI.Button(new Rect(r.xMax - 650, by, 300, 66), "MORE STORIES (" + GoreContent.Stories.Count + ")", ButtonKind.Normal, IconFactory.Get("book"), 22))
+                UIRoot.Push(new ExtrasScreen());
             if (UI.Button(new Rect(r.x + 30, by, 220, 66), "BACK", ButtonKind.Normal, IconFactory.Get("arrow_left"), 22)) OnBack();
             if (progress < Chapter1.MissionCount && UI.Button(new Rect(r.xMax - 330, by, 300, 66), "CONTINUE", ButtonKind.Primary, IconFactory.Get("play"), 26))
             {

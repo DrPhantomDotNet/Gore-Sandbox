@@ -31,6 +31,13 @@ Whenever a change is made, release it — don't leave it unpushed:
    ("user/game", variable or secret) exist. Community links live in `GameInfo` (`DiscordUrl`, `ItchUrl`, `EarlyAccess`).
 5. After pushing, watch the Actions run (`gh run list -R DrPhantomDotNet/Gore-Sandbox`) and report the result.
 
+## Unity editor content (for the owner)
+
+- Weapons (`GoreWeaponAsset`) and stories (`GoreStoryAsset`) can be ScriptableObject assets under
+  `Assets/Resources/GoreContent`; `Scripts/Content/GoreContent.cs` loads them. `[GoreMenuButton]` screens appear in EXTRAS.
+- Editor tools: `Editor/GoreDevHub.cs` (SolarEclipse > Dev Hub), `Editor/GoreContentEditors.cs`, `Editor/GoreStoryDrawers.cs`.
+  Guide for humans: `Assets/SolarEclipse/DEVELOPING.md`. Keep it in sync when these change.
+
 ## Conventions
 
 - UI is IMGUI through the `UI` static class (`UI/UIKit.cs`) on a virtual canvas 1080 units high.

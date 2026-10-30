@@ -5,7 +5,17 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.8.0 — THE EAST SIDE</size></b>
+@"<b><size=30>v0.8.1 — DEV TOOLS</size></b>
+<color=#ff9a40>Make weapons, stories and screens in the Unity editor.</color>
+• New EXTRAS button on the main menu (shows up when there are extra stories or screens)
+• PLAY STORY has a MORE STORIES list for stories made in the Unity editor
+• For developers: a Dev Hub window in Unity (SolarEclipse > Dev Hub)
+• Weapons as Unity assets: edit parts, hold points, trigger and stats in the Inspector, import a share code from the in-game Weapon Editor, test it with one click
+• Story missions as Unity assets: actors, dialogue, choices, phone texts, cutscene cameras and endings in the Inspector, placed where you stand while playing
+• New screens from a ready-made template, listed in EXTRAS
+• A developer guide: Assets/SolarEclipse/DEVELOPING.md
+
+<b><size=30>v0.8.0 — THE EAST SIDE</size></b>
 <color=#ff9a40>Chapter 1 is finished, modding is here, and 30 new weapons.</color>
 <b>STORY: CHAPTER 1 IS COMPLETE</b>
 • PLAY STORY now opens the chapter menu: 4 missions, CONTINUE, replay any mission you've finished

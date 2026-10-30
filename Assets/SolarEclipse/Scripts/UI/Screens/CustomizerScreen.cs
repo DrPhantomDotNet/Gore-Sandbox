@@ -342,7 +342,19 @@ namespace SolarEclipse
             float y2 = b.y + h + 14f;
             if (UI.Button(new Rect(b.x, y2, w3, h), "USE IN SPAWN GUN", ButtonKind.Primary, null, 18)) UseInSpawnGun(false);
             if (UI.Button(new Rect(b.x + w3 + gap, y2, w3, h), "SPAWN IN FRONT", ButtonKind.Ghost, IconFactory.Get("plus"), 18)) UseInSpawnGun(true);
-            if (UI.Button(new Rect(b.x + (w3 + gap) * 2f, y2, w3, h), "BACK", ButtonKind.Normal, IconFactory.Get("close"), 20)) OnBack();
+            if (Application.isEditor)
+            {
+                // Unity editor only: copy the look code for a story actor (Look code field, see DEVELOPING.md).
+                float hw = (w3 - gap) * 0.5f;
+                if (UI.Button(new Rect(b.x + (w3 + gap) * 2f, y2, hw, h), "LOOK CODE", ButtonKind.Normal, null, 16, true, "Copies this look's code for a story actor"))
+                {
+                    GUIUtility.systemCopyBuffer = look.Encode();
+                    Debug.Log("[Customizer] Look code copied: " + look.Encode());
+                    GameEvents.ShowToast("Look code copied: paste it into a story actor's Look code");
+                }
+                if (UI.Button(new Rect(b.x + (w3 + gap) * 2f + hw + gap, y2, hw, h), "BACK", ButtonKind.Normal, IconFactory.Get("close"), 18)) OnBack();
+            }
+            else if (UI.Button(new Rect(b.x + (w3 + gap) * 2f, y2, w3, h), "BACK", ButtonKind.Normal, IconFactory.Get("close"), 20)) OnBack();
         }
 
         bool Save(bool asNew)
