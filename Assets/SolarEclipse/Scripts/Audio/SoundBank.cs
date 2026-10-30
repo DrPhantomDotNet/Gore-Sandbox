@@ -206,6 +206,11 @@ namespace SolarEclipse
             Def("logo_impact", 1, (r, s, v) => U.Impact(r, s));
             Def("logo_shimmer", 1, (r, s, v) => U.Shimmer(r, s));
             Def("music_menu", 1, (r, s, v) => U.MenuMusic(r, s), 32000);
+            // Cinematic intro (UI/Screens/IntroScreen.cs)
+            Def("intro_score", 1, (r, s, v) => RecipesIntro.Score(r, s), 22050);
+            Def("intro_shot", 1, (r, s, v) => RecipesIntro.Gunshot(r, s));
+            Def("intro_logo", 1, (r, s, v) => RecipesIntro.LogoSlam(r, s));
+            Def("intro_buzz", 1, (r, s, v) => RecipesIntro.LampBuzz(r, s), 22050);
             Def("noclip_on", 1, (r, s, v) => W.Whoosh(r, s, 0.4f, 400, 3000, 2f));
             Def("noclip_off", 1, (r, s, v) => W.Whoosh(r, s, 0.4f, 3000, 400, 2f));
             RecipesBoss.Define(Def); // "????" boss realm

@@ -15,6 +15,9 @@ namespace SolarEclipse
         int pokes;
         static readonly string[] PokeLines = { "v_hey", "v_ow", "v_huh", "v_no", "v_whoa" };
 
+        /// <summary>The live menu camera (the intro cinematic flies into its pose), or null.</summary>
+        public static Camera Cam => current != null ? current.cam : null;
+
         public static void Create()
         {
             if (current != null) return;
