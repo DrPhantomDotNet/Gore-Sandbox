@@ -98,7 +98,7 @@ namespace SolarEclipse
             if (repaint) DrawNumbers(p);
             DrawHotbar(p, W);
             DrawCompass(p, W);
-            DrawCrosshair(p, W, H);
+            if (!VRManager.Active) DrawCrosshair(p, W, H); // VR: you aim down the real sights
             DrawHealth(p, H);
             DrawAmmo(p, W, H);
             DrawHints(p, W, H);

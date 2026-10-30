@@ -81,6 +81,46 @@ namespace SolarEclipse
             }
         }
 
+        // ------------------------------------------------------------------ VR manual reload (VR/VRRig.cs)
+        // Ammo counts the magazine plus the chambered round. Eject (B) drops the mag, a mag from the hip pouch goes
+        // in, and pulling the slide / charging handle chambers a round (or clears the one in the chamber).
+
+        public bool VRMagIn = true, VRChambered = true;
+        public bool VRManualMag => VRManager.Active && Settings.Data.vrManualReload && !Def.ShellReload && !OpenBolt && Model != null && Model.Mag != null && Model.MagMesh != null && !Rules.InfiniteAmmo;
+        bool VRHasHandle => Model != null && (Model.Slide != null || Model.Charge != null);
+
+        public void VREjectMag()
+        {
+            if (!VRMagIn || Reloading) return;
+            VRChambered = VRChambered && Ammo > 0;
+            Ammo = VRChambered ? 1 : 0;
+            VRMagIn = false;
+            DropMag();
+            magDropped = false;
+        }
+
+        public void VRInsertMag()
+        {
+            if (VRMagIn) return;
+            VRMagIn = true;
+            AudioManager.Play(Def.MagIn, Eye, 0.7f, 1f, 0f);
+            if (Model.Mag != null) { Model.Mag.gameObject.SetActive(true); Model.Mag.localPosition = Model.MagRest; }
+            Ammo = Capacity + (VRChambered ? 1 : 0);
+            if (!VRChambered && !VRHasHandle) { VRChambered = true; slideLocked = false; } // nothing to rack on this gun
+        }
+
+        public void VRRack()
+        {
+            if (VRChambered && Ammo > 0)
+            {
+                Ammo--; // the live round flies out
+                if (Model.Eject != null) Casings.Eject(Model.Eject.position, CamT.right, CamT.up, Player.CC.velocity, Def.CasingType);
+            }
+            VRChambered = VRMagIn && Ammo > 0;
+            slideLocked = false;
+            AudioManager.Play(Def.Id == "glock" ? "slide_fwd" : "bolt_release", Eye, 0.7f, 1f, 0f);
+        }
+
         public void Refill()
         {
             Ammo = Capacity + (OpenBolt || Def.ShellReload ? 0 : 1);
@@ -125,7 +165,7 @@ namespace SolarEclipse
             Vm.Left.SetPose(HandPose.Support);
             reloadT = -1f;
             if (handMag != null) handMag.gameObject.SetActive(false);
-            if (Model.Mag != null && !Def.ShellReload) { Model.Mag.gameObject.SetActive(true); Model.Mag.localPosition = Model.MagRest; }
+            if (Model.Mag != null && !Def.ShellReload) { Model.Mag.gameObject.SetActive(VRMagIn || !VRManualMag); Model.Mag.localPosition = Model.MagRest; }
             AudioManager.Play(Def.Charge ?? "equip_gun", Eye, 0.35f, 1.1f, 0f);
         }
 
@@ -161,15 +201,16 @@ namespace SolarEclipse
             if (Reloading && Def.ShellReload && f.Fire && Ammo > 0) { reloadT = -1f; if (handMag != null) handMag.gameObject.SetActive(false); }
             if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot)
             {
-                if (Ammo > 0 || Rules.InfiniteAmmo) Shoot();
+                bool vrDry = VRManualMag && !VRChambered;
+                if ((Ammo > 0 || Rules.InfiniteAmmo) && !vrDry) Shoot();
                 else if (f.Fire)
                 {
                     AudioManager.Play("dry_fire", Eye, 0.6f, 1f, 0f);
                     nextFire = Time.time + 0.25f;
-                    if (Settings.Data.autoReload) StartReload();
+                    if (Settings.Data.autoReload && !VRManualMag) StartReload();
                 }
             }
-            if (f.Reload && !Reloading) StartReload();
+            if (f.Reload && !Reloading && !VRManualMag) StartReload();
 
             // ----- Pose
             var pos = Vector3.Lerp(Def.HipPos, AimPos(), Ease(aim));
@@ -236,7 +277,8 @@ namespace SolarEclipse
             }
             GameEvents.EmitNoise(Eye, Def.NoiseRadius * (Mods.Suppressed ? 0.25f : 1f), 1f, Player);
 
-            float spread = Mathf.Lerp(HipSpreadM, AimSpreadM, aim) + bloom + Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aim * 0.6f);
+            float aimK = VRManager.Active ? 1f : aim; // VR: you aim down the real sights
+            float spread = Mathf.Lerp(HipSpreadM, AimSpreadM, aimK) + bloom + Mathf.Clamp01(Player.Speed / 6f) * 1.2f * (1f - aimK * 0.6f);
             if (!Player.Grounded) spread += 2f;
             // Offline/host: real shot. Client: draw it now, send the exact same directions to the host.
             bool authority = NetState.Authority;
@@ -267,6 +309,7 @@ namespace SolarEclipse
 
             slideKick = 1f;
             if (Ammo == 0 && Def.Id == "glock" && !Rules.InfiniteAmmo) slideLocked = true;
+            if (VRManualMag) VRChambered = Ammo > 0;
 
             // Recoil: viewmodel kick + camera punch (less when aiming).
             float R = Def.Recoil * Mods.RecoilMul * (Player.Crouching ? 0.7f : 1f);
@@ -482,6 +525,7 @@ namespace SolarEclipse
 
         void FinishReload()
         {
+            VRMagIn = true; VRChambered = true;
             if (!Def.ShellReload && !magInserted) InsertMag();
             if (emptyReload && !Def.ShellReload && !OpenBolt) Ammo = Capacity; // chambered from the new mag
             reloadT = -1f;

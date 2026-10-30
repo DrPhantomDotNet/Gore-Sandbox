@@ -5,7 +5,7 @@ namespace SolarEclipse
     /// <summary>Full settings: graphics, audio, controls, gameplay, gore and interface. Shared by the main and pause menus.</summary>
     public sealed class SettingsScreen : UIScreen
     {
-        static readonly string[] TabNames = { "GRAPHICS", "AUDIO", "CONTROLS", "GAMEPLAY", "GORE", "INTERFACE", "VOICE" };
+        static readonly string[] TabNames = { "GRAPHICS", "AUDIO", "CONTROLS", "GAMEPLAY", "GORE", "INTERFACE", "VOICE", "VR" };
         static readonly string[] VoiceModes = { "Push to talk", "Open mic (voice activation)", "Off" };
         static readonly KeyCode[] PttKeys = { KeyCode.G, KeyCode.CapsLock, KeyCode.LeftAlt, KeyCode.Mouse3, KeyCode.Mouse4, KeyCode.H, KeyCode.Y, KeyCode.LeftShift };
         static readonly string[] PttNames = { "G", "Caps Lock", "Left Alt", "Mouse button 4", "Mouse button 5", "H", "Y", "Left Shift" };
@@ -13,6 +13,7 @@ namespace SolarEclipse
         static readonly string[] Shadows = { "Off", "Hard", "Soft" };
         static readonly string[] AA = { "Off", "2x MSAA", "4x MSAA", "8x MSAA" };
         static readonly string[] TouchModes = { "Auto", "Always", "Never" };
+        static readonly string[] VrModes = { "Auto (when SteamVR is running)", "Always try", "Off" };
         static readonly string[] FpsCaps = { "30", "60", "90", "120", "144", "165", "240", "Unlimited" };
         static readonly int[] FpsValues = { 30, 60, 90, 120, 144, 165, 240, -1 };
         int tab;
@@ -123,6 +124,9 @@ namespace SolarEclipse
                 case 6:
                     changed |= DrawVoice(d);
                     break;
+                case 7:
+                    changed |= DrawVR(d);
+                    break;
                 case 5:
                     changed |= UI.Slider(Next(), "Interface scale", ref d.uiScale, 0.7f, 1.4f, "0.00");
                     if (!Application.isMobilePlatform && UI.Toggle(Next(), "Use built-in game font", ref d.builtinFont, "Turn on if text looks broken. Phones always use it."))
@@ -166,8 +170,39 @@ namespace SolarEclipse
                 case 3: return 9;
                 case 4: return 9;
                 case 6: return 12;
+                case 7: return 13;
                 default: return 11;
             }
+        }
+
+        /// <summary>VR (Windows + SteamVR / OpenXR): start/stop, turning, movement, reloading, gun angle, height.</summary>
+        bool DrawVR(SettingsData d)
+        {
+            bool changed = false;
+            if (!VRManager.Supported)
+            {
+                UI.Label(Next(), "VR works in the Windows version with a PC VR headset (SteamVR, Meta Quest Link or Air Link, WMR).", 20, UI.Muted, TextAnchor.MiddleLeft, FontStyle.Normal, true, true);
+                return false;
+            }
+            UI.Label(Next(), VRManager.Status, 22, VRManager.Active ? UI.Good : UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Bold, true, true);
+            var b = Next();
+            if (VRManager.Active)
+            {
+                if (UI.Button(new Rect(b.x, b.y, 300, b.height), "STOP VR", ButtonKind.Danger, null, 20)) VRManager.StopXR();
+                if (UI.Button(new Rect(b.x + 320, b.y, 300, b.height), "RECENTER", ButtonKind.Normal, null, 20)) VRManager.Recenter();
+            }
+            else if (UI.Button(new Rect(b.x, b.y, 300, b.height), "START VR", ButtonKind.Primary, null, 20)) VRManager.TryStart();
+            changed |= UI.Selector(Next(), "Start VR", ref d.vrMode, VrModes, "Auto starts VR when the game launches while SteamVR is running.");
+            changed |= UI.Toggle(Next(), "Snap turning", ref d.vrSnapTurn, "Off: smooth turning with the right stick.");
+            changed |= UI.Slider(Next(), "Snap angle", ref d.vrSnapAngle, 15f, 90f, "0", null, " deg");
+            changed |= UI.Slider(Next(), "Smooth turn speed", ref d.vrTurnSpeed, 45f, 360f, "0", null, " deg/s");
+            changed |= UI.Toggle(Next(), "Walk where the left hand points", ref d.vrHandDirection, "Off: you walk where you look.");
+            changed |= UI.Toggle(Next(), "Manual reloading", ref d.vrManualReload, "B drops the mag, grab a new one from your hip, push it in, pull the slide. Off: B reloads.");
+            changed |= UI.Slider(Next(), "Gun angle in hand", ref d.vrGunAngle, -40f, 40f, "0", null, " deg");
+            changed |= UI.Slider(Next(), "Height offset", ref d.vrHeightOffset, -0.5f, 0.5f, "0.00", "Makes you taller or shorter than you are.", " m");
+            UI.Label(Next(), "Controls: L stick move, R stick turn (up/down: next/previous weapon), R trigger fire, grips grab, A jump, B eject mag, X crouch, Y menu, L trigger interact, R stick click kick.", 17, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+            UI.Label(Next(), "Mags: reach to either hip and grip with the left hand. Push the mag into the gun, then grab the slide and pull it back. Blades: swing to slice limbs off, thrust to stab.", 17, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+            return changed;
         }
 
         /// <summary>Voice chat: pick the exact microphone, how to talk, and test it (you hear yourself).</summary>

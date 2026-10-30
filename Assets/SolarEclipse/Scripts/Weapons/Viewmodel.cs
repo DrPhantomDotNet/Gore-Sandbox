@@ -69,7 +69,12 @@ namespace SolarEclipse
         {
             recoilPosVel += posKick;
             recoilRotVel += rotKick;
+            if (VRManager.Active) VRManager.Haptic(true, Mathf.Clamp(rotKick.magnitude / 30f, 0.25f, 1f), 0.06f); // VR: the shot kicks the controller
         }
+
+        /// <summary>Current recoil offsets (VR/VRRig.cs applies them to the gun in the hand).</summary>
+        public Vector3 RecoilPos => recoilPos;
+        public Vector3 RecoilRot => recoilRot;
 
         public void PlayEquip() => equip = 0f;
 
@@ -95,6 +100,17 @@ namespace SolarEclipse
         {
             float dt = Mathf.Min(Time.deltaTime, 0.05f);
             if (player == null) return;
+            if (VRManager.Active && VRRig.I != null)
+            {
+                // VR: the weapon is in your real hand (VR/VRRig.cs poses it); no fake arms, sway or kick leg.
+                Spring(ref recoilPos, ref recoilPosVel, Vector3.zero, 160f, 18f, dt);
+                Spring(ref recoilRot, ref recoilRotVel, Vector3.zero, 140f, 16f, dt);
+                Right.gameObject.SetActive(false); Left.gameObject.SetActive(false);
+                if (Right.Forearm != null) Right.Forearm.gameObject.SetActive(false);
+                if (Left.Forearm != null) Left.Forearm.gameObject.SetActive(false);
+                Leg.gameObject.SetActive(false);
+                return;
+            }
             var look = player.LookDelta;
             float aimDamp = Mathf.Lerp(1f, 0.08f, AimWeight);   // sway/bob/breath almost gone while aiming down the sights
 

@@ -450,6 +450,13 @@ namespace SolarEclipse
 
         IEnumerator Shot(StoryStep s)
         {
+            if (VRManager.Active)
+            {
+                // VR: moving your view for you makes people sick; show the caption instead.
+                if (!string.IsNullOrEmpty(s.text)) ShowBanner("", ChatFilter.Active ? ChatFilter.Apply(s.text) : s.text, Color.white, Mathf.Max(2f, s.time));
+                yield return new WaitForSecondsRealtime(Mathf.Min(s.time, 2f));
+                yield break;
+            }
             BeginCutscene();
             if (cutCam == null) yield break;
             cutScreen.Caption = ChatFilter.Active ? ChatFilter.Apply(s.text) : s.text;

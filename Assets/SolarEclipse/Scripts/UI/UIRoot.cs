@@ -87,7 +87,11 @@ namespace SolarEclipse
 
         void OnGUI()
         {
-            using (NetState.Local()) DrawAll(); // clicks in menus are the local player's own actions
+            using (NetState.Local()) // clicks in menus are the local player's own actions
+            {
+                if (VRUI.Active) VRUI.OnGUI(DrawAll); // VR: into the world panel, clicked with the laser (VR/VRUI.cs)
+                else DrawAll();
+            }
         }
 
         void DrawAll()

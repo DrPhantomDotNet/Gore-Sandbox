@@ -31,7 +31,10 @@ namespace SolarEclipse
         bool crouching;
 
         public Vector3 EyePosition => Cam != null ? Cam.transform.position : transform.position + Vector3.up * EyeStand;
-        public Vector3 AimDirection => Cam != null ? Cam.transform.forward : transform.forward;
+        /// <summary>What weapons aim with: the camera, or in VR the weapon in your right hand (VR/VRRig.cs).</summary>
+        public Transform AimTransform => VRRig.I != null && VRRig.I.AimT != null ? VRRig.I.AimT : Cam != null ? Cam.transform : transform;
+        public Vector3 AimOrigin => VRRig.I != null && VRRig.I.AimT != null ? VRRig.I.AimT.position : EyePosition;
+        public Vector3 AimDirection => AimTransform.forward;
         public bool HoldingGun => Inventory != null && Inventory.Current is Firearm;
         public bool Crouching => crouching;
 
@@ -74,6 +77,7 @@ namespace SolarEclipse
             p.Inventory.Init(p);
             p.fovCurrent = Settings.Data.fov;
             Instance = p;
+            if (VRManager.Active) go.AddComponent<VRRig>(); // VR player (VR/VRRig.cs)
             return p;
         }
 
@@ -157,7 +161,8 @@ namespace SolarEclipse
             }
             deathTilt = Mathf.MoveTowards(deathTilt, 0f, dt * 4f);
 
-            if (!LockLook)
+            if (VRRig.I != null) yaw += VRRig.I.ConsumeTurn(); // VR: stick turning (head look is real)
+            else if (!LockLook)
             {
                 float sens = Inventory.Current != null && Inventory.Current.IsAiming ? Settings.Data.adsSensitivity : 1f;
                 yaw += f.Look.x * sens;
@@ -192,8 +197,9 @@ namespace SolarEclipse
                 CC.center = Vector3.up * CC.height / 2f;
             }
 
-            var fwd = Quaternion.Euler(0, yaw, 0) * Vector3.forward;
-            var right = Quaternion.Euler(0, yaw, 0) * Vector3.right;
+            float moveYaw = VRRig.I != null ? VRRig.I.MoveYaw : yaw; // VR: walk where you look
+            var fwd = Quaternion.Euler(0, moveYaw, 0) * Vector3.forward;
+            var right = Quaternion.Euler(0, moveYaw, 0) * Vector3.right;
             var wish = (fwd * f.Move.y + right * f.Move.x);
             bool aiming = Inventory.Current != null && Inventory.Current.IsAiming;
             bool sprint = f.Sprint && f.Move.y > 0.1f && !crouching && !aiming;
@@ -305,7 +311,7 @@ namespace SolarEclipse
 
         void Use()
         {
-            if (!Physics.Raycast(EyePosition, AimDirection, out var hit, 3.2f, Layers.ShootMask | (1 << Layers.Trigger), QueryTriggerInteraction.Collide)) return;
+            if (!Physics.Raycast(AimOrigin, AimDirection, out var hit, 3.2f, Layers.ShootMask | (1 << Layers.Trigger), QueryTriggerInteraction.Collide)) return;
             var part = hit.collider.GetComponent<BodyPart>();
             // Characters you can talk to (story NPCs) put an IInteractable on the Goredoll: talking wins over inspecting.
             var talk = part != null && part.Doll != null ? part.Doll.GetComponentInParent<IInteractable>() : null;
@@ -335,8 +341,8 @@ namespace SolarEclipse
         {
             LookHint = null;
             InteractTarget = null;
-            if (!Physics.Raycast(EyePosition, AimDirection, out var hit, 3.2f, Layers.ShootMask | (1 << Layers.Trigger), QueryTriggerInteraction.Collide)) return;
-            string key = Settings.TouchControlsActive ? "Tap INTERACT: " : "[E] ";
+            if (!Physics.Raycast(AimOrigin, AimDirection, out var hit, 3.2f, Layers.ShootMask | (1 << Layers.Trigger), QueryTriggerInteraction.Collide)) return;
+            string key = VRManager.Active ? "Left trigger: " : Settings.TouchControlsActive ? "Tap INTERACT: " : "[E] ";
             var part = hit.collider.GetComponent<BodyPart>();
             var talk = part != null && part.Doll != null ? part.Doll.GetComponentInParent<IInteractable>() : null;
             if (talk != null) { InteractTarget = talk.Prompt; LookHint = key + talk.Prompt; return; }
@@ -386,6 +392,16 @@ namespace SolarEclipse
         void UpdateCamera(float dt, InputFrame f)
         {
             var d = Settings.Data;
+            if (VRRig.I != null)
+            {
+                // VR: the headset is the camera (VR/VRRig.cs). No bob, recoil kick, shake, roll or zoom.
+                transform.rotation = Quaternion.Euler(0, yaw, 0);
+                CameraFX.Kick = Vector2.zero;
+                CameraFX.Trauma = 0f;
+                Cam.farClipPlane = d.renderDistance;
+                ViewCam.enabled = false;
+                return;
+            }
             float targetEye = Health.Dead ? 0.35f : crouching ? EyeCrouch : EyeStand;
             eye = MathX.Damp(eye, targetEye, 12f, dt);
             float bobAmount = Grounded && !Noclip && d.headBob ? Mathf.Clamp01(Speed / 7f) : 0f;

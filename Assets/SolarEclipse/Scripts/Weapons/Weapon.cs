@@ -102,9 +102,10 @@ namespace SolarEclipse
 
         // ---- shared helpers
 
-        protected Vector3 Eye => Player.EyePosition;
+        // In VR these follow the weapon in your hand (PlayerController.AimTransform); otherwise the camera.
+        protected Vector3 Eye => Player.AimOrigin;
         protected Vector3 Aim => Player.AimDirection;
-        protected Transform CamT => Player.Cam.transform;
+        protected Transform CamT => Player.AimTransform;
 
         /// <summary>
         /// Camera-local socket position for aiming down the iron sights: with <see cref="AimRot"/> applied, the rear sight

@@ -23,6 +23,7 @@ namespace SolarEclipse.EditorTools
                 if (!string.IsNullOrEmpty(targetArg) && Enum.TryParse(targetArg, true, out BuildTarget parsed)) target = parsed;
                 if (Arg("-customBuildPath") == null && target == BuildTarget.Android) path = "build/Android/GoreSandbox.apk";
                 if (target == BuildTarget.StandaloneWindows64 && !path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) path += ".exe";
+                if (target == BuildTarget.StandaloneWindows64) VRSetup.Ensure(true); // OpenXR for SteamVR (Scripts/VR)
                 if (target == BuildTarget.Android)
                 {
                     if (!path.EndsWith(".apk", StringComparison.OrdinalIgnoreCase)) path += ".apk";

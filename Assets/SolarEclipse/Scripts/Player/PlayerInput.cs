@@ -36,6 +36,7 @@ namespace SolarEclipse
                 return;
             }
             var d = Settings.Data;
+            if (VRRig.I != null) { Frame = VRFrame(); ResetTouchEdges(); return; }
             // Movement
             float x = 0, y = 0;
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) y += 1;
@@ -86,6 +87,41 @@ namespace SolarEclipse
             f.Scroll = (useMouse ? Input.mouseScrollDelta.y : 0f) + TouchScroll;
             Frame = f;
             ResetTouchEdges();
+        }
+
+        /// <summary>
+        /// VR controllers (VR/VRRig.cs handles turning, grabbing, mags and melee itself):
+        /// L stick move · L stick click sprint · X crouch · A jump · R trigger fire · B reload (guns without manual mags)
+        /// · L trigger interact · R stick click kick. With the Spawn Gun: A spawns, B undoes, R stick click deletes.
+        /// </summary>
+        static InputFrame VRFrame()
+        {
+            var f = new InputFrame { Slot = -1 };
+            var L = VRManager.Left; var R = VRManager.Right; var rig = VRRig.I;
+            var mv = L.Stick;
+            f.Move = mv.magnitude < 0.15f ? Vector2.zero : Vector2.ClampMagnitude(mv, 1f);
+            bool spawnGun = PlayerController.Instance != null && PlayerController.Instance.Inventory != null && PlayerController.Instance.Inventory.Current is SpawnGun;
+            f.Sprint = rig.Sprint;
+            f.Crouch = rig.CrouchToggle;
+            f.Fire = R.TriggerDown; f.FireHeld = R.TriggerHeld; f.FireUp = R.TriggerUp;
+            f.Use = L.TriggerDown;
+            if (spawnGun)
+            {
+                f.Middle = R.PrimaryDown;
+                f.Undo = R.SecondaryDown;
+                f.Delete = R.StickClickDown;
+                float sy = R.Stick.y;
+                f.Scroll = Mathf.Abs(sy) > 0.3f ? sy * Time.deltaTime * 6f : 0f; // push / pull what you hold
+            }
+            else
+            {
+                f.Jump = R.PrimaryDown; f.JumpHeld = R.Primary;
+                var cur = PlayerController.Instance != null ? PlayerController.Instance.Inventory?.Current : null;
+                bool manualMag = cur is Firearm fa && fa.VRManualMag;
+                f.Reload = R.SecondaryDown && !manualMag;
+                f.Kick = R.StickClickDown;
+            }
+            return f;
         }
 
         static void ResetTouchEdges()

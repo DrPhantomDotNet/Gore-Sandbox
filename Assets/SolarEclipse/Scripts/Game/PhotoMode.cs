@@ -33,6 +33,7 @@ namespace SolarEclipse
             var gm = GameManager.I;
             var p = PlayerController.Instance;
             if (Active || gm == null || gm.State != GameState.Playing || p == null || p.Cam == null) return;
+            if (VRManager.Active) { GameEvents.ShowToast("Photo mode isn't available in VR."); return; }
             var go = new GameObject("PhotoModeCamera");
             go.tag = "MainCamera"; // billboards / weather follow Camera.main, which is now this one
             var c = go.AddComponent<Camera>();

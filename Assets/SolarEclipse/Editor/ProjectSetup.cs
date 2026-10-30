@@ -80,6 +80,7 @@ namespace SolarEclipse.EditorTools
             SetAndroid();
             SetInputHandling();
             SetLayers();
+            VRSetup.Ensure(verbose); // OpenXR (SteamVR) for Windows: Editor/VRSetup.cs
 
             AssetDatabase.SaveAssets();
             SessionState.SetBool(DoneKey, true);

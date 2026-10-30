@@ -46,7 +46,15 @@ namespace SolarEclipse
         public bool autoUpdate = true;          // check GitHub for a newer version on startup and install it
         // Startup
         public bool playIntro = true;
-        public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)           // ~20 s cinematic after the studio logo (UI/Screens/IntroScreen.cs); always skippable
+        public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)
+        // VR (Scripts/VR): Windows + SteamVR / OpenXR
+        public int vrMode = 0;                  // 0 auto (when SteamVR is running), 1 always try, 2 never
+        public bool vrSnapTurn = true;
+        public float vrSnapAngle = 30f, vrTurnSpeed = 140f;
+        public bool vrHandDirection = false;    // walk where the left hand points (off: where you look)
+        public bool vrManualReload = true;      // hip magazines + racking by hand
+        public float vrGunAngle = 0f;           // tilt of guns in the hand (degrees)
+        public float vrHeightOffset = 0f;       // metres added to your real height           // ~20 s cinematic after the studio logo (UI/Screens/IntroScreen.cs); always skippable
         // Chat
         public bool chatFilter = true;          // hide profanity in chat (forced on when ageGroup == 1)
         public int ageGroup = 0;                // 0 not set, 1 under 13, 2 13-17, 3 18+ (only stored on this device)
@@ -170,8 +178,11 @@ namespace SolarEclipse
             var d = Data;
             if (d.qualityLevel >= 0 && d.qualityLevel < QualitySettings.names.Length && QualitySettings.GetQualityLevel() != d.qualityLevel)
                 QualitySettings.SetQualityLevel(d.qualityLevel, true);
-            QualitySettings.vSyncCount = d.vsync ? 1 : 0;
-            Application.targetFrameRate = d.vsync ? -1 : d.targetFps;
+            if (!VRManager.Active) // VR: the headset paces the frames (VR/VRManager.cs)
+            {
+                QualitySettings.vSyncCount = d.vsync ? 1 : 0;
+                Application.targetFrameRate = d.vsync ? -1 : d.targetFps;
+            }
             if (Application.isMobilePlatform)
             {
                 // Phones ignore vSyncCount, and targetFrameRate -1 means 30 FPS there. Ask for a real frame rate.
