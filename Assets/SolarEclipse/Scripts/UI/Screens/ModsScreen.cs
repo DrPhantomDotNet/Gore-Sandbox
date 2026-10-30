@@ -76,10 +76,36 @@ namespace SolarEclipse
             return true;
         }
 
+        static List<ModPackage> examples;
+        static List<ModPackage> Examples
+        {
+            get
+            {
+                if (examples != null) return examples;
+                examples = new List<ModPackage>();
+                try
+                {
+                    foreach (var x in AdvancedExamples.All)
+                    {
+                        if (string.IsNullOrEmpty(x.authorGuid)) x.authorGuid = "goresandboxexamples";
+                        if (ModStore.Validate(x) == null) examples.Add(x);
+                        else Debug.LogWarning("[Mods] example '" + x.name + "' failed validation: " + ModStore.Validate(x));
+                    }
+                }
+                catch (System.Exception e) { Debug.LogWarning("[Mods] examples: " + e.Message); }
+                return examples;
+            }
+        }
+
         List<ModPackage> Items()
         {
             var list = new List<ModPackage>();
-            if (tab == 0) foreach (var e in ModBoard.Entries.Values) { if (InScope(e.Pkg)) list.Add(e.Pkg); }
+            if (tab == 0)
+            {
+                foreach (var e in ModBoard.Entries.Values) { if (InScope(e.Pkg)) list.Add(e.Pkg); }
+                // Built-in examples (Mods/AdvancedExamples.cs) so Advanced Modding is never empty.
+                if (advanced) foreach (var x in Examples) if (InScope(x) && !list.Exists(p => p.id == x.id)) list.Add(x);
+            }
             else foreach (var p in tab == 1 ? ModStore.Installed : ModStore.Created) if (InScope(p)) list.Add(p);
             if (sort == 0) list.Sort((a, b) => b.updated.CompareTo(a.updated));
             else list.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.OrdinalIgnoreCase));
