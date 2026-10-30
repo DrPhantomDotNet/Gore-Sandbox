@@ -5,7 +5,15 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.7.0 — STORY MODE</size></b>
+@"<b><size=30>v0.7.1 — THE SUBJECT</size></b>
+<color=#ff9a40>A new cinematic intro.</color>
+• New 20 second cinematic intro after the studio logo: a rainy alley, a flickering lamp, a red laser dot... and the GORE SANDBOX logo
+• Flows straight into the main menu without a cut
+• Tap twice to skip, or turn it off in Settings > Interface > Play intro on startup
+• It waits until you have finished the first-launch setup, so new players choose their gore level first
+• Coming next: new weapons, the Modding Hub and player profiles with badges
+
+<b><size=30>v0.7.0 — STORY MODE</size></b>
 <color=#ff9a40>Chapter 1 is here. Big Marcus has a job for you.</color>
 <b>STORY MODE</b>
 • New PLAY STORY button on the main menu

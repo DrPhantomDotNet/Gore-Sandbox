@@ -27,7 +27,9 @@ namespace SolarEclipse
         // Gameplay / gore
         public int goreLevel = 4; // 0 none, 1 minimum, 2 low, 3 medium, 4 high, 5 unreal
         public int goreScale = 2;  // 1 = old 4-step scale (migrated on load), 2 = current 6-step scale
-        public bool setupDone = false; // first-launch setup screen finished
+        public bool setupDone = false;
+        // Startup
+        public bool playIntro = true;           // ~20 s cinematic after the studio logo (UI/Screens/IntroScreen.cs); always skippable // first-launch setup screen finished
         public int bloodColor = 0;
         public float bloodAmount = 1f;
         public int maxDecals = 450, maxRagdolls = 40, maxCasings = 80, maxGibs = 120;
