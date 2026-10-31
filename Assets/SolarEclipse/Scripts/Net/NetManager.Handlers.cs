@@ -36,6 +36,7 @@ namespace SolarEclipse
                 case Msg.ModRules: case Msg.ModWeaponDef: case Msg.ModReject: ClientModMsg(type, rd); break;
                 case Msg.ThrowableFx: case Msg.C4Detonated: ClientExplosivesMsg(type, rd); break;
                 case Msg.ProfileData: case Msg.BadgeGrant: ClientProfileMsg(type, rd); break; // NetManager.Profile.cs
+                case Msg.OWState: case Msg.OWEvent: ClientOWMsg(type, rd); break; // OpenWorld/OWNet.cs
                 case Msg.PlayerList:
                 {
                     int n = rd.Byte();
@@ -338,6 +339,7 @@ namespace SolarEclipse
                     if (p.Avatar == null) EnsureAvatar(p);
                     break;
                 case Msg.Pong: p.PingMs = (int)((Now - rd.Float()) * 1000); break;
+                case Msg.ReqOW: case Msg.CarInput: HostOWMsg(p, type, rd); break; // OpenWorld/OWNet.cs
                 case Msg.Voice:
                 {
                     var data = rd.Bytes(rd.Remaining);

@@ -34,6 +34,8 @@ namespace SolarEclipse
         public string UnlockHint = "";
         /// <summary>Builds the level geometry, interactables and spawn points.</summary>
         public Action<MapBuilder> Build;
+        /// <summary>AI walk-grid cell size in metres (bigger = cheaper for huge maps like Port Eclipse).</summary>
+        public float NavCell = 0.5f;
         public Texture2D Thumbnail;
     }
 }

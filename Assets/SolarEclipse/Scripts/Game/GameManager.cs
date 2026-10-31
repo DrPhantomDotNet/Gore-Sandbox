@@ -150,7 +150,7 @@ namespace SolarEclipse
             if (!networkClient)
             {
                 ls.Status = "Mapping walkable ground for the AI...";
-                NavGrid.Current = new NavGrid(b.Playable, 0.5f);
+                NavGrid.Current = new NavGrid(b.Playable, Mathf.Max(0.25f, def.NavCell));
                 yield return NavGrid.Current.Build(b.Playable.max.y, b.Playable.min.y, p => ls.Progress = 0.25f + p * 0.5f);
             }
 

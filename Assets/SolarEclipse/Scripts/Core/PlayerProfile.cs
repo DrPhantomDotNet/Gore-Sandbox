@@ -20,6 +20,8 @@ namespace SolarEclipse
         public int Hat;
         public Color HatColor = new Color(0.15f, 0.15f, 0.17f);
         public string Look = "";
+        /// <summary>Open World outfit (OpenWorld/OWSave.cs OutfitCode): item ids, ';'-separated. Sent after the certificates.</summary>
+        public string Outfit = "";
         public byte[] Subject = new byte[32];
         public List<byte[]> Certs = new List<byte[]>();
         /// <summary>Bumped whenever the profile changes (avatars rebuild on change).</summary>
@@ -56,6 +58,7 @@ namespace SolarEclipse
             int n = Mathf.Min(Certs.Count, MaxCerts);
             w.Byte((byte)n);
             for (int i = 0; i < n; i++) w.BlockWithLength(Certs[i], 0, Certs[i].Length);
+            w.String(Outfit ?? ""); // older versions stop reading before this
         }
 
         public static ProfileData Read(NetReader r)
@@ -73,6 +76,7 @@ namespace SolarEclipse
                 var c = r.BlockWithLength();
                 if (c.Length > 0 && c.Length <= 1024) p.Certs.Add(c);
             }
+            if (r.Remaining > 0) p.Outfit = r.String();
             if (r.Overflow) return null;
             p.Sanitize();
             return p;
@@ -86,6 +90,7 @@ namespace SolarEclipse
             Icon = Mathf.Clamp(Icon, 0, PlayerProfile.IconGlyphs.Length - 1);
             Hat = Mathf.Clamp(Hat, 0, Hats.Count - 1);
             if (Look != null && (Look.Length > 120 || CustomLook.Decode(Look) == null)) Look = "";
+            if (Outfit == null || Outfit.Length > 200) Outfit = "";
             IconColor.a = 1f; HatColor.a = 1f;
             Changed();
         }
@@ -143,6 +148,7 @@ namespace SolarEclipse
         static void Load()
         {
             local = new ProfileData();
+            try { local.Outfit = OWSave.OutfitCode; } catch (Exception) { }
             try
             {
                 local.Icon = Mathf.Clamp(PlayerPrefs.GetInt(KIcon, UnityEngine.Random.Range(0, IconGlyphs.Length)), 0, IconGlyphs.Length - 1);

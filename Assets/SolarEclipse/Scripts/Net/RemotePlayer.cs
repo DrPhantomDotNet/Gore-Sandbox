@@ -56,6 +56,7 @@ namespace SolarEclipse
                 Random.state = st;
             }
             height = look.Height;
+            if (prof != null) OWOutfit.Apply(look, prof.Outfit); // Open World clothes (OpenWorld/OWOutfit.cs)
 
             parts.Clear();
             model = new GameObject("Model").transform;
@@ -75,7 +76,8 @@ namespace SolarEclipse
             }
             face = FaceRig.Build(parts[PartType.Head], look);
             if (custom != null && custom.Glasses) CustomDolls.AddGlasses(parts[PartType.Head], Layers.RemotePlayer);
-            if (prof != null) Hats.Attach(parts[PartType.Head], prof.Hat, prof.HatColor, Layers.RemotePlayer);
+            if (prof != null && !OWOutfit.HasHat(prof.Outfit)) Hats.Attach(parts[PartType.Head], prof.Hat, prof.HatColor, Layers.RemotePlayer);
+            if (prof != null) OWOutfit.Attach(parts[PartType.Head], parts[PartType.Chest], parts.TryGetValue(PartType.ForearmL, out var fa) ? fa : null, prof.Outfit, Layers.RemotePlayer);
             IconFactory.SetLayer(model.gameObject, Layers.RemotePlayer);
         }
 

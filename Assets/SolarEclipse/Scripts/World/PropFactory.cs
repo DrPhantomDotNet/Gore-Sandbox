@@ -55,6 +55,13 @@ namespace SolarEclipse
 
         public static Rigidbody Spawn(string id, Vector3 pos, Quaternion rot)
         {
+            if (id != null && id.StartsWith("car|")) // Open World cars (OpenWorld/OWCar.cs)
+            {
+                var car = OWCar.Create(id, pos, rot);
+                var sp = car.AddComponent<Spawned>(); sp.DefId = id; sp.DisplayName = car.name;
+                if (NetState.IsHost) NetManager.I.OnPropSpawned(car, id);
+                return car.GetComponent<Rigidbody>();
+            }
             foreach (var p in Props)
                 if (p.Id == id)
                 {

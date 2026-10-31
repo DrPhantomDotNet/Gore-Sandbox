@@ -35,6 +35,8 @@ namespace SolarEclipse
         ModRules = 200, ModWeaponDef = 201, ReqModWeapon = 202, ModReject = 203,
         // player profiles + badges (Net/NetManager.Profile.cs)
         ProfileUpdate = 220, ProfileData = 221, BadgeGrant = 222, ReqBadgeGrant = 223,
+        // Open World (OpenWorld/OWNet.cs): host -> clients state + events, client -> host requests + car input
+        OWState = 230, OWEvent = 231, ReqOW = 240, CarInput = 241,
     }
 
     public sealed class NetPlayer

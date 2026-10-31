@@ -211,6 +211,14 @@ namespace SolarEclipse
             Def("intro_shot", 1, (r, s, v) => RecipesIntro.Gunshot(r, s));
             Def("intro_logo", 1, (r, s, v) => RecipesIntro.LogoSlam(r, s));
             Def("intro_buzz", 1, (r, s, v) => RecipesIntro.LampBuzz(r, s), 22050);
+            // Open World (OpenWorld/*)
+            Def("car_engine", 1, (r, s, v) => RecipesCity.Engine(r, s), 22050);
+            Def("car_horn", 1, (r, s, v) => RecipesCity.Horn(r, s, false), 22050);
+            Def("air_horn", 1, (r, s, v) => RecipesCity.Horn(r, s, true), 22050);
+            Def("siren", 1, (r, s, v) => RecipesCity.Siren(r, s), 22050);
+            Def("cash", 1, (r, s, v) => RecipesCity.Cash(r, s), 22050);
+            Def("phone_ring", 1, (r, s, v) => RecipesCity.Ring(r, s), 22050);
+            Def("phone_ping", 1, (r, s, v) => RecipesCity.Ping(r, s), 22050);
             Def("noclip_on", 1, (r, s, v) => W.Whoosh(r, s, 0.4f, 400, 3000, 2f));
             Def("noclip_off", 1, (r, s, v) => W.Whoosh(r, s, 0.4f, 3000, 400, 2f));
             RecipesBoss.Define(Def); // "????" boss realm
