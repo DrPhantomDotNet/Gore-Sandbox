@@ -10,7 +10,7 @@ namespace SolarEclipse
     /// sends its stick input to the host (OWNet) and sees the synced result. Run Goredolls over: the body parts take
     /// impact damage from the collision like any other hit.
     /// </summary>
-    public sealed class OWCar : MonoBehaviour, IInteractable, IDamageable
+    public sealed class OWCar : MonoBehaviour, IInteractable, IDamageable, ILocalInteractable
     {
         public static readonly List<OWCar> All = new List<OWCar>();
         /// <summary>The car the local player is driving (null on foot).</summary>
@@ -214,6 +214,7 @@ namespace SolarEclipse
             proxy = rb.isKinematic;
             if (proxy || Wrecked) { if (Wrecked) foreach (var w in wheels) if (w != null) { w.motorTorque = 0; w.brakeTorque = 3000f; } return; }
             bool driven = DriverId != 255;
+            if (driven && Time.time - lastInput > 0.6f) { Throttle = 0f; Steer = 0f; Brake = true; } // driver's input stopped arriving (lag / left)
             float fwdSpeed = Vector3.Dot(rb.velocity, transform.forward);
             float cap = 30f * Model.Speed;
             float torque = 2200f * Model.Accel * Model.Mass;
@@ -285,15 +286,23 @@ namespace SolarEclipse
         public void Explode()
         {
             if (Wrecked) return;
-            Wrecked = true;
-            Health = 0f;
+            WreckVisual();
             Explosion.Create(transform.position + Vector3.up, 6f, 140f, this, 1.4f);
-            foreach (var r in GetComponentsInChildren<MeshRenderer>()) foreach (var m in r.materials) m.color = new Color(0.08f, 0.07f, 0.06f);
-            if (neon != null) neon.enabled = false;
             if (rb != null && !rb.isKinematic) rb.AddForce(Vector3.up * 6f, ForceMode.VelocityChange);
             OWDirector.OnCarWrecked(this);
             wreckAt = Time.time + 25f;
         }
+
+        /// <summary>Burnt-out look (host on explode; clients when the host says so).</summary>
+        public void WreckVisual()
+        {
+            if (Wrecked && Health <= 0f && burnt) return;
+            Wrecked = true; Health = 0f; burnt = true;
+            foreach (var r in GetComponentsInChildren<MeshRenderer>()) foreach (var m in r.materials) m.color = new Color(0.08f, 0.07f, 0.06f);
+            if (neon != null) neon.enabled = false;
+            if (engine != null) engine.volume = 0f;
+        }
+        bool burnt;
 
         // ------------------------------------------------------------------ driving (local player)
 
@@ -339,6 +348,8 @@ namespace SolarEclipse
         public void SetInput(float throttle, float steer, bool brake, bool boost)
         {
             Throttle = Mathf.Clamp(throttle, -1f, 1f); Steer = Mathf.Clamp(steer, -1f, 1f); Brake = brake; Boost = boost;
+            lastInput = Time.time;
         }
+        float lastInput;
     }
 }

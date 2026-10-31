@@ -4,7 +4,7 @@ using UnityEngine;
 namespace SolarEclipse
 {
     /// <summary>A thing in the city you can use (shop door, heist board, locker...). On the Trigger layer: E / INTERACT.</summary>
-    public sealed class OWPoint : MonoBehaviour, IInteractable
+    public sealed class OWPoint : MonoBehaviour, IInteractable, ILocalInteractable
     {
         public string Kind, Label;
         public string Prompt => Label;
@@ -394,7 +394,7 @@ namespace SolarEclipse
             m.Block("Lot", c + new Vector3(-23, 0.15f, -23), c + new Vector3(23, 0.18f, 23), MapBuilder.Tex(TextureFactory.Asphalt), SurfaceType.Concrete, new Color(0.35f, 0.35f, 0.38f), 0.3f, false);
             for (int k = 0; k < 8; k++) m.Box("Checker", c + new Vector3(-7 + k * 2, 0.19f, -20), Quaternion.identity, new Vector3(1f, 0.01f, 1f), Mats.Lit, SurfaceType.Concrete, k % 2 == 0 ? Color.white : Color.black, 1f, false);
             OWMap.Places[name] = c + new Vector3(0, 0.25f, -18);
-            OWPoint.Make(m.Root, "race", "Street race (needs a car)", c + new Vector3(0, 1f, -18), new Vector3(8f, 2f, 4f));
+            OWPoint.Make(m.Root, "race", "Street race (needs a car)", c + new Vector3(12f, 1.3f, -18), new Vector3(2f, 2.2f, 2f)); // beside the line, not on it (wheels)
             OWMap.CarSpawns.Add(c + new Vector3(-12, 0.5f, -10));
         }
 

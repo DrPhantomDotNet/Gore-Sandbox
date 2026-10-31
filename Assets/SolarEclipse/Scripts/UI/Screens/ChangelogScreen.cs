@@ -5,7 +5,43 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.10.0 — VR (BETA)</size></b>
+@"<b><size=30>v0.11.0 — OPEN WORLD</size></b>
+<color=#ff9a40>A new multiplayer mode: Port Eclipse, a whole city you share with other players. Your cash is saved.</color>
+<b>HOW TO PLAY</b>
+• Multiplayer > OPEN WORLD: host a Port Eclipse server, join one from the list, or PLAY SOLO
+• You start with $1,500 and a free Glock with unlimited ammo
+• PC: hold G for your guns, P for your phone, M for the map, J to emote, V to talk (when push-to-talk is G), E to use things
+• Phones: GUNS and PHONE buttons at the top of the screen
+<b>THE CITY</b>
+• 36 blocks in six districts: Downtown, Uptown, Southside, Midtown, Industrial and the Docks
+• Go inside the bank, the jewelry store, the gas station and your own penthouse
+• People walk the sidewalks; Big Marcus runs the heist board in Southside
+<b>HEISTS</b>
+• 5 heists: Gas Station Stickup, Diamond District Smash, Armored Truck, Docks Shipment and The Central Bank
+• Join a crew at the heist board (or on your phone) and press READY: a heist starts when 2 or more players are ready
+• The alarm brings wanted stars, police and armed guards. Grab the loot, then escape to the getaway point
+• Payouts up to $150,000, split with your crew (+10% for each extra member). Solo in singleplayer pays 60%
+<b>POLICE AND JOBS</b>
+• Hurting people brings wanted stars (up to 5) and police, then SWAT. Hide until they give up, or die and pay the hospital bill
+• Jobs: deliveries across town, street races (stop a car on the checkered line in Industrial) and gang boss bounties
+<b>CARS</b>
+• 12 drivable cars, from a hatchback to a supercar, a monster truck and a motorbike, plus parked cars to take
+• Eclipse Customs: paint, neon underglow, nitro, armour and an air horn
+• Call your car from your phone or the garage in your penthouse. Shoot a car enough and it blows up
+<b>100 NEW THINGS TO BUY</b>
+• Gun store (22 guns + 15 weapon skins), clothes, masks, hats, jewelry, glasses, emotes, cars and penthouse furniture
+• Change your outfit in the penthouse locker. Other players see what you wear
+<b>THE PHONE</b>
+• MAP: tap to drop a pin, see every player and every shop, or take a taxi to your pin
+• CALLS: voice calls with any player on the server. If they accept, you hear each other anywhere in the city
+• TEXTS: message other players. BANK: send them money
+• Also HEISTS, JOBS, GARAGE, EMOTES and STATS
+<b>ALSO</b>
+• Minimap with shops, heists, players and your pin, and an on-screen marker to follow
+• 7 new achievements
+• Dev panel: give yourself as much Open World cash as you want (needs the dev login)
+
+<b><size=30>v0.10.0 — VR (BETA)</size></b>
 <color=#ff9a40>Play Gore Sandbox in VR on PC (SteamVR, Meta Quest Link / Air Link, WMR).</color>
 <b>HOW TO PLAY IN VR</b>
 • Windows version only. Start SteamVR first, then the game: it starts in VR by itself

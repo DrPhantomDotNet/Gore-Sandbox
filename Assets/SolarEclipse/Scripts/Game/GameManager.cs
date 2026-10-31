@@ -293,7 +293,7 @@ namespace SolarEclipse
                     if (Input.GetKeyDown(KeyCode.F1)) UIRoot.Push(new HelpScreen());
                     if (Input.GetKeyDown(KeyCode.Q) && Input.GetKey(KeyCode.LeftControl)) UIRoot.Push(new SpawnMenuScreen());
                     BulletTime.HandleKeys(); // B / K bullet time
-                    if (Input.GetKeyDown(KeyCode.P)) PhotoMode.Toggle();
+                    if (Input.GetKeyDown(KeyCode.P)) { if (OWDirector.Active) PhoneScreen.Toggle(); else PhotoMode.Toggle(); } // Open World: P = phone
                 }
             }
 

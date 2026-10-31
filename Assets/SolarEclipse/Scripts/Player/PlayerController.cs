@@ -161,6 +161,15 @@ namespace SolarEclipse
             }
             deathTilt = Mathf.MoveTowards(deathTilt, 0f, dt * 4f);
 
+            // Open World: driving a car (OpenWorld/OWCar.cs) replaces walking, looking and weapons.
+            if (OWCar.LocalDriving != null)
+            {
+                OWCar.LocalDriving.DriveTick(this, f, dt);
+                ViewCam.enabled = false;
+                LookHint = null; InteractTarget = null;
+                return;
+            }
+
             if (VRRig.I != null) yaw += VRRig.I.ConsumeTurn(); // VR: stick turning (head look is real)
             else if (!LockLook)
             {
@@ -168,7 +177,7 @@ namespace SolarEclipse
                 yaw += f.Look.x * sens;
                 pitch = Mathf.Clamp(pitch - f.Look.y * sens, -88f, 88f);
             }
-            if (f.Noclip) SetNoclip(!Noclip);
+            if (f.Noclip && OWDirector.AllowNoclip) SetNoclip(!Noclip);
             if (Noclip) MoveNoclip(f, dt); else Move(f, dt);
 
             if (f.Use) Use();
@@ -326,7 +335,7 @@ namespace SolarEclipse
             var use = hit.collider.GetComponentInParent<IInteractable>();
             if (use == null) return;
             var ne = use is Component uc ? uc.GetComponentInParent<NetEntity>() : null;
-            if (NetState.IsClient && ne != null) { NetManager.I.RequestInteract(ne); AudioManager.Ui("ui_click", 0.4f); return; }
+            if (NetState.IsClient && ne != null && !(use is ILocalInteractable)) { NetManager.I.RequestInteract(ne); AudioManager.Ui("ui_click", 0.4f); return; }
             use.Interact(gameObject);
         }
 

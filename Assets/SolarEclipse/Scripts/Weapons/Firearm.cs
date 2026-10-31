@@ -11,6 +11,9 @@ namespace SolarEclipse
     public class Firearm : Weapon
     {
         public int Ammo;
+        /// <summary>Open World starter Glock: this gun never runs dry.</summary>
+        public bool FreeAmmo;
+        public bool InfAmmo => Rules.InfiniteAmmo || FreeAmmo;
         public bool Reloading => reloadT >= 0f;
         bool auto;
         bool burst; int burstLeft; // burst fire (Def.Burst > 1): B cycles AUTO / BURST / SEMI
@@ -50,7 +53,7 @@ namespace SolarEclipse
             Ballistics.Fire(origin, dir, ShotDef ?? Def, Player, muzzle, DamageType.Bullet, Def.Pellets == 1 || index % 3 == 0, authority);
         public override bool Busy => Reloading;
         public override bool IsAiming => PlayerInput.Frame.Aim && !Reloading && !Player.Sprinting && inspectT < 0f;
-        public override string AmmoText => Rules.InfiniteAmmo ? "INF" : Ammo + " / " + Capacity;
+        public override string AmmoText => InfAmmo ? "INF" : Ammo + " / " + Capacity;
         public override string ModeText => burst ? "BURST" : Def.Auto ? (auto ? "AUTO" : "SEMI") : Def.Pellets > 1 ? "SEMI · 12GA" : "SEMI";
 
         protected override void OnAttach()
@@ -86,7 +89,7 @@ namespace SolarEclipse
         // in, and pulling the slide / charging handle chambers a round (or clears the one in the chamber).
 
         public bool VRMagIn = true, VRChambered = true;
-        public bool VRManualMag => VRManager.Active && Settings.Data.vrManualReload && !Def.ShellReload && !OpenBolt && Model != null && Model.Mag != null && Model.MagMesh != null && !Rules.InfiniteAmmo;
+        public bool VRManualMag => VRManager.Active && Settings.Data.vrManualReload && !Def.ShellReload && !OpenBolt && Model != null && Model.Mag != null && Model.MagMesh != null && !InfAmmo;
         bool VRHasHandle => Model != null && (Model.Slide != null || Model.Charge != null);
 
         public void VREjectMag()
@@ -195,14 +198,14 @@ namespace SolarEclipse
             if (burst)
             {
                 if (f.Fire && burstLeft <= 0 && Time.time >= nextFire) burstLeft = Def.Burst;
-                if (Reloading || Player.Sprinting || Ammo <= 0 && !Rules.InfiniteAmmo) burstLeft = Mathf.Min(burstLeft, 0);
+                if (Reloading || Player.Sprinting || Ammo <= 0 && !InfAmmo) burstLeft = Mathf.Min(burstLeft, 0);
                 if (burstLeft > 0) wantsFire = true;
             }
             if (Reloading && Def.ShellReload && f.Fire && Ammo > 0) { reloadT = -1f; if (handMag != null) handMag.gameObject.SetActive(false); }
             if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot)
             {
                 bool vrDry = VRManualMag && !VRChambered;
-                if ((Ammo > 0 || Rules.InfiniteAmmo) && !vrDry) Shoot();
+                if ((Ammo > 0 || InfAmmo) && !vrDry) Shoot();
                 else if (f.Fire)
                 {
                     AudioManager.Play("dry_fire", Eye, 0.6f, 1f, 0f);
@@ -261,7 +264,7 @@ namespace SolarEclipse
 
         void Shoot()
         {
-            if (!Rules.InfiniteAmmo) Ammo--;
+            if (!InfAmmo) Ammo--;
             nextFire = Time.time + 60f / Def.Rpm;
             if (burstLeft > 0 && --burstLeft == 0) nextFire += 0.16f; // short pause between bursts
             Stats.Add(Stats.ShotsFired);
@@ -308,7 +311,7 @@ namespace SolarEclipse
             if (EjectOnFire) Casings.Eject(Model.Eject != null ? Model.Eject.position : muzzle, CamT.right, CamT.up, Player.CC.velocity, Def.CasingType);
 
             slideKick = 1f;
-            if (Ammo == 0 && Def.Id == "glock" && !Rules.InfiniteAmmo) slideLocked = true;
+            if (Ammo == 0 && Def.Id == "glock" && !InfAmmo) slideLocked = true;
             if (VRManualMag) VRChambered = Ammo > 0;
 
             // Recoil: viewmodel kick + camera punch (less when aiming).
@@ -324,7 +327,7 @@ namespace SolarEclipse
 
         void StartReload()
         {
-            if (Reloading || Rules.InfiniteAmmo && Ammo > 0) return;
+            if (Reloading || InfAmmo && Ammo > 0) return;
             int full = Capacity + (OpenBolt || Def.ShellReload ? 0 : 1);
             if (Ammo >= full) return;
             if (Def.ShellReload && Ammo >= Capacity) return;

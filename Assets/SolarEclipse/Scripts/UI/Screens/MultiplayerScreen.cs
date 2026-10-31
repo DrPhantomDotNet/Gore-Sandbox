@@ -11,7 +11,7 @@ namespace SolarEclipse
     public sealed class MultiplayerScreen : UIScreen
     {
         static int tab;
-        static readonly string[] Tabs = { "HOSTED SERVERS", "HOST A SERVER", "JOIN BY CODE / IP" };
+        static readonly string[] Tabs = { "OPEN WORLD", "HOSTED SERVERS", "HOST A SERVER", "JOIN BY CODE / IP" };
         static readonly string[] Visibility = { "Public (in the server list)", "Private (join by code only)" };
         static readonly string[] Loadouts = { "Fists only", "Fists + guns" };
         static string direct = "";
@@ -62,9 +62,10 @@ namespace SolarEclipse
             var body = new Rect(r.x + 24, r.y + 146, r.width - 48, r.height - 240);
             switch (tab)
             {
-                case 0: DrawServers(body); break;
-                case 1: DrawHost(body); break;
-                case 2: DrawDirect(body); break;
+                case 0: DrawOpenWorld(body); break;
+                case 1: DrawServers(body); break;
+                case 2: DrawHost(body); break;
+                case 3: DrawDirect(body); break;
             }
             if (UI.Button(new Rect(r.x + 24, r.yMax - 78, 220, 56), "BACK", ButtonKind.Normal, IconFactory.Get("arrow_left"))) OnBack();
             bool school = Settings.Data.restrictedNetwork;
@@ -118,6 +119,81 @@ namespace SolarEclipse
                 }
             }
             UI.EndScroll("servers", body, content);
+        }
+
+        // ------------------------------------------------------------------ open world (OpenWorld/)
+
+        static float owPlayers = 12;
+        static int owVisibility, owTime = 1;
+
+        void DrawOpenWorld(Rect body)
+        {
+            float colW = (body.width - 30) / 2f;
+            var left = new Rect(body.x, body.y, colW, body.height);
+            var right = new Rect(body.x + colW + 30, body.y, colW, body.height);
+
+            UI.Gradient(new Rect(left.x, left.y, left.width, 150), new Color(0.35f, 0.12f, 0.25f), new Color(0.9f, 0.45f, 0.15f));
+            UI.Label(new Rect(left.x + 20, left.y + 14, left.width - 40, 60), "PORT ECLIPSE", 44, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
+            UI.Label(new Rect(left.x + 20, left.y + 72, left.width - 40, 70), "A whole city in multiplayer. Do heists with your crew, earn cash (it's saved), buy cars, clothes, masks, guns and a penthouse.", 16, Color.white, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+            float y = left.y + 164;
+            UI.Label(new Rect(left.x, y, left.width, 110),
+                "- 5 heists (2+ players), street races, deliveries, bounties\n- Police and wanted stars, armed guards, a gang\n- 12 cars, 100 things to buy, a phone with calls, texts, money and a map\n- You start with $1,500 and a free Glock with unlimited ammo",
+                15, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+            y += 120;
+            host.Name = UI.TextField(new Rect(left.x, y, left.width, 52), host.Name, "mp_ow_name", false, "Server name"); y += 62;
+            UI.Slider(new Rect(left.x, y, colW / 2f - 8, 56), "Max players", ref owPlayers, 2, 16, "0");
+            UI.Selector(new Rect(left.x + colW / 2f + 8, y, colW / 2f - 8, 56), "Time", ref owTime, MapOptions.Times); y += 66;
+            UI.Selector(new Rect(left.x, y, colW / 2f - 8, 56), "Visibility", ref owVisibility, Visibility);
+            UI.Toggle(new Rect(left.x + colW / 2f + 8, y, colW / 2f - 8, 56), "PvP damage", ref host.PvP); y += 66;
+            var def = MapCatalog.All.Find(m => m.Id == OWMap.MapId);
+            float bw = (left.width - 16) / 2f;
+            if (UI.Button(new Rect(left.x, left.yMax - 70, bw, 70), "HOST OPEN WORLD", ButtonKind.Primary, IconFactory.Get("globe"), 22, def != null && !string.IsNullOrWhiteSpace(host.Name)))
+            {
+                Settings.Save();
+                host.MaxPlayers = Mathf.RoundToInt(owPlayers);
+                host.Public = owVisibility == 0;
+                host.Loadout = 0;
+                host.CreativeForAll = false;
+                var options = new MapOptions { Time = (TimeOfDay)owTime, StartingNpcs = 0, Loadout = 0, Nextbots = false, AiIgnore = false };
+                if (!NetManager.I.StartHost(host, def, options)) UIRoot.Push(new MessageDialog("COULDN'T HOST", NetManager.I.Status));
+            }
+            if (UI.Button(new Rect(left.x + bw + 16, left.yMax - 70, bw, 70), "PLAY SOLO", ButtonKind.Normal, IconFactory.Get("person"), 22, def != null, "Singleplayer Port Eclipse. Same saved cash; heists pay 60% when you go alone."))
+            {
+                NetManager.I.StopBrowsing();
+                GameManager.I.StartMap(def, new MapOptions { Time = (TimeOfDay)owTime, StartingNpcs = 0, Loadout = 0 });
+            }
+
+            // Right: Port Eclipse servers
+            UI.Label(new Rect(right.x, right.y, right.width, 40), "OPEN WORLD SERVERS", 22, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
+            UI.Label(new Rect(right.x, right.y + 40, right.width, 26), "Your cash: $" + OWSave.Cash.ToString("N0") + "  ·  it goes with you to every Open World server", 15, new Color(0.45f, 1f, 0.5f));
+            var list = NetManager.I.Servers().FindAll(sv => sv.MapId == OWMap.MapId || sv.MapName == "Port Eclipse");
+            var view = new Rect(right.x, right.y + 76, right.width, right.height - 76);
+            if (list.Count == 0)
+            {
+                UI.Rounded(new Rect(view.x, view.y, view.width, 160), UI.PanelLight, false);
+                UI.Label(new Rect(view.x + 24, view.y + 16, view.width - 48, 130), "No Open World servers right now. Host one and it shows up here for everyone (friends can also join with your server code from JOIN BY CODE / IP).", 18, UI.Muted, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+                return;
+            }
+            const float rowH = 86f;
+            float content = list.Count * (rowH + 10);
+            float sc = UI.BeginScroll("ow_servers", view, content);
+            for (int i = 0; i < list.Count; i++)
+            {
+                var sv = list[i];
+                var rr = new Rect(0, i * (rowH + 10) - sc, view.width - 16, rowH);
+                if (rr.yMax < 0 || rr.y > view.height) continue;
+                bool compatible = sv.GameVersion == GameInfo.Version && (!Settings.Data.restrictedNetwork || sv.Relay);
+                bool full = sv.Players >= sv.MaxPlayers;
+                UI.Rounded(rr, UI.Hover(rr) ? new Color(1, 1, 1, 0.1f) : UI.PanelLight, false);
+                UI.Label(new Rect(rr.x + 16, rr.y + 6, rr.width - 230, 40), sv.Name, 22, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
+                UI.Label(new Rect(rr.x + 16, rr.y + 44, rr.width - 230, 32), sv.Players + " / " + sv.MaxPlayers + " players  ·  host " + sv.HostName + (compatible ? "" : "  ·  needs v" + sv.GameVersion), 15, compatible ? UI.Muted : UI.Bad);
+                if (UI.Button(new Rect(rr.xMax - 190, rr.y + 14, 174, 58), full ? "FULL" : "JOIN", ButtonKind.Primary, IconFactory.Get("play"), 21, compatible && !full))
+                {
+                    if (sv.Password) UIRoot.Push(new PasswordDialog(pw => Connect(sv, null, pw)));
+                    else Connect(sv, null, "");
+                }
+            }
+            UI.EndScroll("ow_servers", view, content);
         }
 
         // ------------------------------------------------------------------ host

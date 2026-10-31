@@ -132,7 +132,7 @@ namespace SolarEclipse
                 {
                     var icon = WeaponIcon(w.Def);
                     if (icon != null) UI.Tex(new Rect(r.x + 8, r.y + 10, slot - 16, slot - 22), icon, new Color(1, 1, 1, alpha), ScaleMode.ScaleToFit);
-                    if (w is Firearm fa && !Rules.InfiniteAmmo)
+                    if (w is Firearm fa && !fa.InfAmmo)
                     {
                         float frac = fa.Ammo / (float)Mathf.Max(1, fa.Capacity);
                         UI.Fill(new Rect(r.x + 6, r.yMax - 7, (slot - 12) * Mathf.Clamp01(frac), 3), frac < 0.25f ? UI.Bad : new Color(1, 1, 1, 0.7f * alpha));
@@ -415,7 +415,7 @@ namespace SolarEclipse
             var icon = WeaponIcon(cur.Def);
             if (icon != null) UI.Tex(new Rect(r.x + 10, r.y + 8, 110, 64), icon, Color.white, ScaleMode.ScaleToFit);
             string ammo = cur.AmmoText;
-            bool low = cur is Firearm fa && !Rules.InfiniteAmmo && fa.Ammo <= Mathf.Max(1, fa.Capacity / 4);
+            bool low = cur is Firearm fa && !fa.InfAmmo && fa.Ammo <= Mathf.Max(1, fa.Capacity / 4);
             if (cur is Firearm f2 && f2.Reloading) ammo = "RELOADING";
             UI.Label(new Rect(r.x + 120, r.y + 4, 210, 44), ammo, ammo.Length > 10 ? 22 : 34, low ? UI.Bad : Color.white, TextAnchor.MiddleRight, FontStyle.Normal, true, false, UI.HeavyFont);
             UI.Label(new Rect(r.x + 120, r.y + 46, 210, 26), cur.ModeText, 15, UI.Accent2, TextAnchor.MiddleRight);

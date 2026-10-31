@@ -134,7 +134,11 @@ namespace SolarEclipse
             if (Rules.SlowMoOnKill) GameManager.I.SlowMo(0.25f, 1.2f);
             Ragdoll.State = RagdollState.Limp;
             Zombies.OnDollDied(this);
+            Died?.Invoke(this, lastAttacker); // Open World: wanted stars, bounties (OpenWorld/OWDirector.cs)
         }
+
+        /// <summary>Any Goredoll died (doll, last attacker: a player, weapon, Goredoll or null).</summary>
+        public static event System.Action<Goredoll, object> Died;
 
         public void Launch(Vector3 velocity)
         {

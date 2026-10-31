@@ -61,12 +61,15 @@ namespace SolarEclipse
             }
         }
 
+        /// <summary>Push-to-talk key. In Open World G opens the gun menu, so G becomes V there.</summary>
+        public static KeyCode PttKey { get { var k = (KeyCode)Settings.Data.pushToTalkKey; return OWDirector.Active && k == KeyCode.G ? KeyCode.V : k; } }
+
         public static string KeyHint
         {
             get
             {
                 var d = Settings.Data;
-                return d.voiceMode == 2 ? "voice chat off (Settings > Voice)" : d.voiceMode == 1 ? "voice: open mic" : "hold " + ((KeyCode)d.pushToTalkKey) + " to talk";
+                return d.voiceMode == 2 ? "voice chat off (Settings > Voice)" : d.voiceMode == 1 ? "voice: open mic" : "hold " + PttKey + " to talk";
             }
         }
 
@@ -179,14 +182,15 @@ namespace SolarEclipse
 
             var d = Settings.Data;
             bool talk;
-            if (TestMode && !NetState.Active) talk = rms > d.voiceThreshold || Input.GetKey((KeyCode)d.pushToTalkKey);
-            else if (d.voiceMode == 0) talk = Input.GetKey((KeyCode)d.pushToTalkKey) && !UIRoot.DevPanelCapturing && !UIRoot.Contains<ChatScreen>();
+            if (TestMode && !NetState.Active) talk = rms > d.voiceThreshold || Input.GetKey(PttKey);
+            else if (d.voiceMode == 0) talk = Input.GetKey(PttKey) && !UIRoot.DevPanelCapturing && !UIRoot.Contains<ChatScreen>();
             else if (d.voiceMode == 1)
             {
                 if (rms > d.voiceThreshold) holdOpen = 0.35f; else holdOpen -= 0.02f;
                 talk = holdOpen > 0f;
             }
             else talk = false;
+            if (OWPhone.Transmit && d.voiceMode != 2) talk = true; // on a phone call (Open World): mic stays open
             Transmitting = talk;
             if (!talk) { FlushPacket(); return; }
 

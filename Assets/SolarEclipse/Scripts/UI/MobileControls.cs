@@ -102,10 +102,14 @@ namespace SolarEclipse
                     case Kind.Inspect: b.Rect = new Rect(W - s * 1.6f - 50 - s * 0.8f, 130, s * 0.8f, s * 0.6f); break;
                     case Kind.Weapon: b.Rect = new Rect(W - s * 2.4f - 60 - s * 0.8f, 130, s * 0.8f, s * 0.6f); break;
                     case Kind.Menu: b.Rect = new Rect(30, 120, s * 0.9f, s * 0.6f); break;
-                    case Kind.Noclip: b.Rect = new Rect(40 + s * 0.9f + g, 120, s * 0.9f, s * 0.6f); break;
+                    case Kind.Noclip: b.Rect = new Rect(40 + s * 0.9f + g, 120, s * 0.9f, s * 0.6f); b.Visible = OWDirector.AllowNoclip; break;
                     case Kind.Chat: b.Rect = new Rect(50 + (s * 0.9f + g) * 2, 120, s * 0.9f, s * 0.6f); break;
-                    case Kind.SlowMo: b.Rect = new Rect(60 + (s * 0.9f + g) * 3, 120, s * 0.9f, s * 0.6f); b.Visible = !NetState.Active; break;
-                    case Kind.Photo: b.Rect = new Rect(70 + (s * 0.9f + g) * 4, 120, s * 0.9f, s * 0.6f); break;
+                    case Kind.SlowMo: b.Rect = new Rect(60 + (s * 0.9f + g) * 3, 120, s * 0.9f, s * 0.6f); b.Visible = !NetState.Active || OWDirector.Active; b.Label = OWDirector.Active ? "GUNS" : "SLOW-MO"; break;
+                    case Kind.Photo:
+                        b.Rect = new Rect(70 + (s * 0.9f + g) * 4, 120, s * 0.9f, s * 0.6f);
+                        b.Label = OWDirector.Active ? (OWPhone.Call == OWPhone.CallState.Incoming ? "ANSWER" : OWPhone.TotalUnread > 0 ? "PHONE (" + OWPhone.TotalUnread + ")" : "PHONE") : "PHOTO";
+                        b.On = OWDirector.Active && OWPhone.Call == OWPhone.CallState.Incoming && Mathf.Repeat(Time.unscaledTime, 0.8f) < 0.4f;
+                        break;
                 }
             }
             ApplySafeArea(buttons);
@@ -226,8 +230,8 @@ namespace SolarEclipse
             if (Get(Kind.Noclip).Pressed) PlayerController.Instance.SetNoclip(!PlayerController.Instance.Noclip);
             if (Get(Kind.Menu).Pressed) GameManager.I.Back();
             if (Get(Kind.Chat).Pressed && !UIRoot.Contains<ChatScreen>()) UIRoot.Push(new ChatScreen());
-            if (Get(Kind.SlowMo).Pressed) BulletTime.Toggle();
-            if (Get(Kind.Photo).Pressed) PhotoMode.Toggle();
+            if (Get(Kind.SlowMo).Pressed) { if (OWDirector.Active) UIRoot.Push(new GunMenuScreen(false)); else BulletTime.Toggle(); }
+            if (Get(Kind.Photo).Pressed) { if (OWDirector.Active) PhoneScreen.Toggle(); else PhotoMode.Toggle(); }
         }
 
         Button Get(Kind k) { foreach (var b in buttons) if (b.Kind == k) return b; return null; }

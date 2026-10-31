@@ -179,6 +179,8 @@ namespace SolarEclipse
             R("give_all", "Player", "Gives every weapon.", a => P.Inventory.GiveAll(), "");
             R("strip", "Player", "Removes all weapons except fists and the Spawn Gun.", a => { for (int i = 2; i < Inventory.SlotCount; i++) P.Inventory.Remove(i); }, "");
             R("ammo", "Player", "Infinite ammo.", a => Flip(ref Rules.InfiniteAmmo, "Infinite ammo", a), "[on|off]");
+            R("cash", "Open World", "Sets your Open World cash (needs the dev login).", a => { long.TryParse(S(a, 0, "0"), out var v); OWSave.DevSetCash(v); Log("Open World cash: $" + OWSave.Cash.ToString("N0")); }, "<amount>");
+            R("cash_add", "Open World", "Adds Open World cash (needs the dev login).", a => { long.TryParse(S(a, 0, "100000"), out var v); OWSave.DevSetCash(OWSave.Cash + v); Log("Open World cash: $" + OWSave.Cash.ToString("N0")); }, "<amount>");
             R("fast_reload", "Player", "Instant reloads.", a => Flip(ref Rules.NoReload, "Instant reload", a), "[on|off]");
             R("refill", "Player", "Refills every gun.", a => { foreach (var w in P.Inventory.Slots) if (w is Firearm f) f.Refill(); else if (w is IRefillable rf) rf.Refill(); }, "");
             R("weapons", "Player", "Lists weapons.", a => Log(string.Join("\n", WeaponCatalog.All.Select(w => w.Id + " — " + w.Name + ": " + w.Description))), "");

@@ -79,7 +79,24 @@ namespace SolarEclipse
             if (amount < 0 || D.cash < amount) return false;
             D.cash -= amount;
             Save();
+            if (amount > 0) Stats.Add(OWDirector.StatSpent, amount);
             return true;
+        }
+
+        /// <summary>Money another player sent you (the host checked the amount; they paid for it).</summary>
+        public static void Receive(long amount)
+        {
+            if (amount <= 0 || amount > OWPhone.MaxTransfer) return;
+            D.cash += amount;
+            Save();
+        }
+
+        /// <summary>Dev panel only (needs the dev login): set your cash.</summary>
+        public static void DevSetCash(long amount)
+        {
+            if (!DevPanel.LoggedIn) { Debug.Log("Log in to the dev panel first."); return; }
+            D.cash = Math.Max(0, Math.Min(amount, 999999999999L));
+            Save();
         }
 
         /// <summary>Hospital bill / lost cash on death (small).</summary>
@@ -97,6 +114,7 @@ namespace SolarEclipse
             if (!Spend(it.Price)) { AudioManager.Ui("ui_error"); GameEvents.ShowToast("Not enough cash."); return false; }
             D.owned.Add(it.Id);
             Save();
+            if (it.Cat != OWCat.Gun) Stats.Add(OWDirector.StatItems);
             AudioManager.Ui("ui_success");
             GameEvents.ShowToast("Bought: " + it.Name);
             return true;

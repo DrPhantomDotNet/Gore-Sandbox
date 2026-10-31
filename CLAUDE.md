@@ -45,6 +45,14 @@ Whenever a change is made, release it — don't leave it unpushed:
   single-pass-instanced support). Runtime code only uses UnityEngine.XR (XRModule/VRModule/SubsystemsModule; the strict
   compile checks reference those) and reflection. `Scripts/VR`: VRManager (start/stop, input), VRRig (player), VRUI (panel).
 
+## Open World (Port Eclipse)
+
+- `Scripts/OpenWorld`: map (`PortEclipseMap`), `OWDirector` (loadout, keys, host world: cars, people, police, wanted,
+  bounties), `OWHeists`, `OWJobs`, `OWPhone` + `PhoneScreen`, `OWHud` (minimap), shops/locker/garage (`OWScreens`),
+  items (`OWItems`, ids are saved: never rename), cash save (`OWSave`, local + capped), cars (`OWCar`, networked props "car|...").
+- Network: Msg 230-241 in `OWNet.cs` (requests and events share one layout). Interactables that act locally implement
+  `ILocalInteractable` so clients don't relay them to the host.
+
 ## Conventions
 
 - UI is IMGUI through the `UI` static class (`UI/UIKit.cs`) on a virtual canvas 1080 units high.

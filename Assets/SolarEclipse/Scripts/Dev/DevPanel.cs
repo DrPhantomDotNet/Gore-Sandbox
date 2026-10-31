@@ -60,7 +60,7 @@ namespace SolarEclipse
         static readonly (string label, string cmd)[] Quick =
         {
             ("God mode", "god"), ("Noclip", "noclip"), ("No fall damage", "nofall"), ("AI ignore me", "ai_ignore"), ("Freeze AI", "ai_freeze"),
-            ("AI thoughts", "ai_thoughts"), ("Infinite ammo", "ammo"), ("Instant reload", "fast_reload"), ("Give all weapons", "give_all"), ("Refill ammo", "refill"),
+            ("AI thoughts", "ai_thoughts"), ("Infinite ammo", "ammo"), ("Instant reload", "fast_reload"), ("Give all weapons", "give_all"), ("Refill ammo", "refill"), ("OW cash +$100K", "cash_add 100000"), ("OW cash +$1M", "cash_add 1000000"), ("OW cash +$100M", "cash_add 100000000"),
             ("Heal me", "heal"), ("Respawn", "respawn"), ("TP to aim", "tp_aim"), ("TP to spawn", "tp_spawn"), ("Launch me", "launch_me"),
             ("Spawn Goredoll", "goredoll"), ("Spawn 5 cowards", "goredoll coward 5"), ("Spawn 5 aggressive", "goredoll aggressive 5"), ("Horde (10)", "horde 10"), ("Horde (25)", "horde 25 12"),
             ("Kill all", "kill_all"), ("Revive all", "revive_all"), ("Gib all heads", "gib_all"), ("Decapitate all", "decap_all"), ("Disarm all", "disarm_all"),

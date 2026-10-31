@@ -138,6 +138,8 @@ namespace SolarEclipse
         int pathIndex;
 
         const float PlayerDamageScale = 0.6f;
+        /// <summary>Optional: may this armed doll go after this player? (Open World police only chase wanted players.)</summary>
+        public static System.Func<Goredoll, IPlayerTarget, bool> PlayerFilter;
 
         public bool HasGun => !dropped && gun != null;
         bool HasTarget => targetPlayer != null ? !targetPlayer.IsDead : targetDoll != null && targetDoll.Vitals.Alive;
@@ -317,6 +319,7 @@ namespace SolarEclipse
                     foreach (var p in PlayerTargets.All)
                     {
                         if (p == null || (p is Object o && o == null) || p.IsDead) continue;
+                        if (PlayerFilter != null && p != hurtByPlayer && !PlayerFilter(doll, p)) continue;
                         float d = Vector3.Distance(eye, p.EyePosition);
                         if (!CanSee(p.EyePosition + Vector3.down * 0.3f, d)) continue;
                         if (p == hurtByPlayer && Time.time - hurtByPlayerTime < 15f) d *= 0.5f;

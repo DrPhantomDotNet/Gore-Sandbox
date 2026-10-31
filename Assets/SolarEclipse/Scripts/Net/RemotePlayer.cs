@@ -12,6 +12,10 @@ namespace SolarEclipse
     {
         public NetPlayer Player;
         public AudioSource VoiceSource;
+        /// <summary>Open World: emote being played (OWEmotes) and hiding the body while driving.</summary>
+        public int EmoteId = -1;
+        public float EmoteUntil;
+        public bool HiddenInCar;
         readonly Dictionary<PartType, Transform> parts = new Dictionary<PartType, Transform>();
         Transform model, socket;
         WeaponModel weapon;
@@ -136,7 +140,7 @@ namespace SolarEclipse
             if (cam != null && model != null)
             {
                 var local = transform.InverseTransformPoint(cam.transform.position);
-                bool inside = new Vector2(local.x, local.z).magnitude < 0.45f && local.y > -0.2f && local.y < height * 1.95f;
+                bool inside = (new Vector2(local.x, local.z).magnitude < 0.45f && local.y > -0.2f && local.y < height * 1.95f) || HiddenInCar;
                 if (model.gameObject.activeSelf == inside) model.gameObject.SetActive(!inside);
             }
             // Follow the network position smoothly.
@@ -150,7 +154,7 @@ namespace SolarEclipse
             bool noclip = (Player.Flags & NetPlayer.FNoclip) != 0;
             deadBlend = Mathf.MoveTowards(deadBlend, dead ? 1f : 0f, dt * 2.5f);
             crouchBlend = Mathf.MoveTowards(crouchBlend, crouch ? 1f : 0f, dt * 6f);
-            capsule.enabled = !dead && !noclip;
+            capsule.enabled = !dead && !noclip && !HiddenInCar; // a driver's body sits inside the car: don't shove it
             capsule.height = Mathf.Lerp(1.8f, 1.2f, crouchBlend);
             capsule.center = Vector3.up * capsule.height * 0.5f;
 
@@ -182,6 +186,7 @@ namespace SolarEclipse
             parts[PartType.ForearmR].localRotation = Quaternion.Euler(armed ? -20f : -14f, 0, 0);
             parts[PartType.UpperArmL].localRotation = Quaternion.Euler(armed ? armX + 8f : -6f - 18f * s * swing, 0, armed ? 22f : -6f);
             parts[PartType.ForearmL].localRotation = Quaternion.Euler(armed ? -38f : -14f, 0, 0);
+            if (EmoteId >= 0 && Time.time < EmoteUntil && !dead) OWEmotes.Pose(parts, EmoteId, Time.time); else EmoteId = -1;
 
             // Crouch lowers the whole model so the feet stay planted; death lays it down.
             model.localPosition = Vector3.up * (-0.42f * crouchBlend * height);
@@ -199,7 +204,8 @@ namespace SolarEclipse
             recoil = Mathf.MoveTowards(recoil, 0f, dt * 6f);
             flash -= dt;
             muzzleLight.enabled = flash > 0f;
-            if (VoiceSource != null) VoiceSource.spatialBlend = Settings.Data.proximityVoice ? 1f : 0f;
+            // Phone call (Open World): hear them at full volume anywhere.
+            if (VoiceSource != null) VoiceSource.spatialBlend = Settings.Data.proximityVoice && !OWPhone.InCallWith(Player.Id) ? 1f : 0f;
         }
 
         void SetWeapon(int index)

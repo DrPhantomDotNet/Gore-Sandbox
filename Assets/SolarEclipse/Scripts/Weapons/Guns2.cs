@@ -404,7 +404,7 @@ namespace SolarEclipse
             base.Tick(f, dt);
             if (loaded != null)
             {
-                bool show = (Ammo > 0 || Rules.InfiniteAmmo) && Time.time - lastShot > (Rules.InfiniteAmmo ? 0.6f : 0f);
+                bool show = (Ammo > 0 || InfAmmo) && Time.time - lastShot > (InfAmmo ? 0.6f : 0f);
                 if (loaded.gameObject.activeSelf != show) loaded.gameObject.SetActive(show);
             }
         }
