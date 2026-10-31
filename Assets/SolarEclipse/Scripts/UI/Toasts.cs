@@ -48,8 +48,12 @@ namespace SolarEclipse
             AudioManager.Ui("ui_notify", 0.6f);
         }
 
+        /// <summary>Hide toasts (the trailer recording).</summary>
+        public static bool Hidden;
+
         public static void Draw()
         {
+            if (Hidden) return;
             float now = Time.unscaledTime;
             float y = 90;
             for (int i = items.Count - 1; i >= 0; i--)
