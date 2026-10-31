@@ -101,7 +101,7 @@ namespace SolarEclipse
             float tx = W - 30;
             tx -= 300; if (UI.Button(new Rect(tx, 26, 290, 54), "STATS & ACHIEVEMENTS", ButtonKind.Ghost, IconFactory.Get("trophy"), 20)) UIRoot.Push(new StatsScreen());
             tx -= 210; if (UI.Button(new Rect(tx, 26, 200, 54), "CHANGELOG", ButtonKind.Ghost, IconFactory.Get("book"), 20)) UIRoot.Push(new ChangelogScreen());
-            if (GoreContent.HasExtras) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "EXTRAS", ButtonKind.Ghost, IconFactory.Get("star"), 20, true, "Stories and screens made in the Unity editor")) UIRoot.Push(new ExtrasScreen()); }
+            { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "EXTRAS", ButtonKind.Primary, IconFactory.Get("star"), 20, true, "The trailer (PLAY ANIMATION) plus stories and screens made in the Unity editor")) UIRoot.Push(new ExtrasScreen()); } // trailer build: always shown
             tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "HOW TO", ButtonKind.Ghost, IconFactory.Get("hint"), 20)) UIRoot.Push(new HelpScreen());
             if (!string.IsNullOrEmpty(GameInfo.DiscordUrl)) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "DISCORD", ButtonKind.Ghost, IconFactory.Get("chat"), 20, true, "Join the community: feedback, bug reports, updates")) Application.OpenURL(GameInfo.DiscordUrl); }
             if (!string.IsNullOrEmpty(GameInfo.ItchUrl)) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "ITCH.IO", ButtonKind.Ghost, IconFactory.Get("globe"), 20, true, "The game's itch.io page")) Application.OpenURL(GameInfo.ItchUrl); }
