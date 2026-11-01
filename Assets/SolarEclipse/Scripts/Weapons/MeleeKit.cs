@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SolarEclipse
 {
-    public enum MeleeHead { Bat, SpikedBat, Crowbar, Pipe, Pan, Machete, Cleaver, CombatKnife, FireAxe, Chainsaw }
+    public enum MeleeHead { Bat, SpikedBat, Crowbar, Pipe, Pan, Machete, Cleaver, CombatKnife, FireAxe, Chainsaw, Flail, Scythe, NailBoard, GiantHammer, Spear }
 
     /// <summary>
     /// Data for one melee weapon: the model (handle + head shape) and how <see cref="MeleeWeapon"/> swings it.
@@ -57,6 +57,12 @@ namespace SolarEclipse
                 case MeleeHead.Pan: tipZ = Pan(m, s); break;
                 case MeleeHead.FireAxe: tipZ = Axe(m, s); break;
                 case MeleeHead.Chainsaw: tipZ = Chainsaw(m, s); break;
+                // Content Update heads (Weapons/ContentPack.cs)
+                case MeleeHead.Flail: tipZ = ContentModels.Flail(m, s); break;
+                case MeleeHead.Scythe: tipZ = ContentModels.Scythe(m, s); break;
+                case MeleeHead.NailBoard: tipZ = ContentModels.NailBoard(m, s); break;
+                case MeleeHead.GiantHammer: tipZ = ContentModels.GiantHammer(m, s); break;
+                case MeleeHead.Spear: tipZ = ContentModels.Spear(m, s); break;
                 default: tipZ = Blade(m, s); break;
             }
             m.GripR = m.Anchor("GripR", new Vector3(0.02f, 0f, 0f), Quaternion.Euler(0, 0, -90f));

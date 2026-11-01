@@ -115,6 +115,7 @@ namespace SolarEclipse
         {
             if (d == null) return "Tools";
             Define();
+            var cc = ContentPack.Category(d); if (cc != null) return cc;
             if (guns.TryGetValue(d.Id, out var g)) return g.Extra.Category;
             if (melee.ContainsKey(d.Id)) return "Melee";
             switch (d.Id)

@@ -27,6 +27,7 @@ namespace SolarEclipse
 
         static PropFactory()
         {
+            Add("turret", "Sentry Turret", "Automatic minigun turret: shreds every Goredoll it sees.", "target", (p, r) => Turret.Create(p, r));
             Add("crate", "Wooden Crate", "Breakable shipping crate.", "box", (p, r) => Crate(p, r, 0.8f));
             Add("small_crate", "Small Crate", "A smaller, breakable crate.", "box", (p, r) => Crate(p, r, 0.5f));
             Add("barrel", "Oil Drum", "Heavy steel drum.", "barrel", (p, r) => Drum(p, r, new Color(0.2f, 0.4f, 0.65f), false));

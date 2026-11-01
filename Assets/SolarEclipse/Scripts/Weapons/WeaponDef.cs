@@ -144,7 +144,7 @@ namespace SolarEclipse
         };
 
         // Arsenal pack (Weapons/ArsenalPack.cs: 20 guns + 10 melee) is appended after the list above, before any modded weapon.
-        static WeaponCatalog() { ArsenalPack.AppendDefs(All); }
+        static WeaponCatalog() { ArsenalPack.AppendDefs(All); ContentPack.AppendDefs(All); } // Content Update weapons last (Weapons/ContentPack.cs)
 
         public static WeaponDef Get(string id) => All.Find(w => w.Id == id);
     }

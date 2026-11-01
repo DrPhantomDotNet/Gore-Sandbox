@@ -457,6 +457,9 @@ namespace SolarEclipse
                         case 4: foreach (var part in d.Parts.Values) if (part != null && (part.Type == pt || IsDistal(part.Type, pt))) foreach (var wnd in part.Wounds) { wnd.BleedRate = 0; wnd.Arterial = false; } break;
                         case 5: d.Vitals.Adrenaline = 1f; d.Vitals.Consciousness = Mathf.Max(d.Vitals.Consciousness, 0.7f); if (d.Vitals.State == LifeState.Unconscious) d.Vitals.State = LifeState.Alive; break;
                         case 6: if (CreativeOk(p)) d.Brain.ForceDance = true; break;
+                        case 20: ContentFx.Sedate(d); break;      // Content Update weapons (Weapons/ContentPack.cs)
+                        case 21: ContentFx.Freeze(d); break;
+                        case 22: ContentFx.Ignite(d, src); break;
                     }
                     break;
                 }

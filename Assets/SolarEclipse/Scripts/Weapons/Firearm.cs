@@ -44,6 +44,8 @@ namespace SolarEclipse
         protected virtual bool CanShoot => true;
         /// <summary>Whether a casing flies out on every shot (revolvers keep theirs).</summary>
         protected virtual bool EjectOnFire => true;
+        /// <summary>False: the gun plays its own sounds (flamethrower, beams).</summary>
+        protected virtual bool PlaysFireSound => true;
         /// <summary>Reload timeline 0..1, or -1 when not reloading.</summary>
         protected float ReloadProgress => reloadT;
         /// <summary>Called after every shot.</summary>
@@ -271,7 +273,8 @@ namespace SolarEclipse
             inspectT = -1f;
 
             var muzzle = Model.Muzzle.position;
-            if (Mods.Suppressed)
+            if (!PlaysFireSound) { } // continuous weapons play their own looping sound (Weapons/ContentPack.cs)
+            else if (Mods.Suppressed)
                 AudioManager.Play("gun_suppressed", Eye, 0.85f, Random.Range(0.96f, 1.06f) * (Def.Caliber > 7f ? 0.82f : 1f), 0f, 1.5f, 40f, AudioBus.Sfx);
             else
             {

@@ -126,6 +126,9 @@ namespace SolarEclipse
             else hypoxiaTimer = 0f;
         }
 
+        /// <summary>Knock out for a while (tranquilizer darts).</summary>
+        public void Sedate(float seconds) { faintTimer = Mathf.Max(faintTimer, seconds); Consciousness = Mathf.Min(Consciousness, 0.2f); }
+
         public void AddPain(float amount)
         {
             if (Rules.NoPain) return;

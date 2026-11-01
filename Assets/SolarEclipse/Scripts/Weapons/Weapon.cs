@@ -40,6 +40,8 @@ namespace SolarEclipse
             if (extra != null) return extra;
             var extra3 = Guns3.Create(def); // Weapons/Mac11.cs: MAC-11, dual katanas
             if (extra3 != null) return extra3;
+            var content = ContentPack.Create(def); // Weapons/ContentPack.cs: Content Update weapons
+            if (content != null) return content;
             var arsenal = ArsenalPack.Create(def); // Weapons/ArsenalPack.cs: 20 data-driven guns + 10 melee weapons
             if (arsenal != null) return arsenal;
             var boom = Explosives.CreateWeapon(def); // Weapons/Explosives.cs: rocket launcher, frag, C4, katana, sledgehammer

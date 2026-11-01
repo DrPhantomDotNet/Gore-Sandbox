@@ -217,6 +217,22 @@ namespace SolarEclipse
             Def("air_horn", 1, (r, s, v) => RecipesCity.Horn(r, s, true), 22050);
             Def("siren", 1, (r, s, v) => RecipesCity.Siren(r, s), 22050);
             Def("cash", 1, (r, s, v) => RecipesCity.Cash(r, s), 22050);
+            // Content Update (Audio/RecipesContent.cs)
+            Def("flamer", 3, (r, s, v) => RecipesContent.Flamer(r, s), 22050);
+            Def("laser_zap", 3, (r, s, v) => RecipesContent.Laser(r, s), 22050);
+            Def("freeze_ray", 3, (r, s, v) => RecipesContent.Freeze(r, s), 22050);
+            Def("crossbow", 2, (r, s, v) => RecipesContent.Twang(r, s), 22050);
+            Def("nailgun", 3, (r, s, v) => RecipesContent.Nail(r, s), 22050);
+            Def("tranq", 2, (r, s, v) => RecipesContent.Puff(r, s), 22050);
+            Def("thump_heavy", 2, (r, s, v) => RecipesContent.Thump(r, s, 0.7f + v * 0.2f), 22050);
+            Def("thump_light", 2, (r, s, v) => RecipesContent.Thump(r, s, 1.4f + v * 0.2f), 22050);
+            Def("zap", 3, (r, s, v) => RecipesContent.Zap(r, s), 22050);
+            Def("grind", 1, (r, s, v) => RecipesContent.Grind(r, s), 22050);
+            Def("train_horn", 1, (r, s, v) => RecipesContent.TrainHorn(r, s), 22050);
+            Def("bark", 3, (r, s, v) => RecipesContent.Bark(r, s), 22050);
+            Def("oink", 3, (r, s, v) => RecipesContent.Oink(r, s), 22050);
+            Def("moo", 2, (r, s, v) => RecipesContent.Moo(r, s), 22050);
+            Def("chime", 3, (r, s, v) => RecipesContent.Bell(r, s, 880f + v * 220f), 22050);
             Def("phone_ring", 1, (r, s, v) => RecipesCity.Ring(r, s), 22050);
             Def("phone_ping", 1, (r, s, v) => RecipesCity.Ping(r, s), 22050);
             Def("noclip_on", 1, (r, s, v) => W.Whoosh(r, s, 0.4f, 400, 3000, 2f));
