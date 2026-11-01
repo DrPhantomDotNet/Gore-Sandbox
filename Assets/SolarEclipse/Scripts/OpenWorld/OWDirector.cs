@@ -471,6 +471,7 @@ namespace SolarEclipse
                     break;
                 }
                 case OWEv.Toast: Toasts.Show("PORT ECLIPSE", s, new Color(1f, 0.78f, 0.16f)); break;
+                case OWEv.ModeEvent: GameModes.OnEvent(s, n, v); break;
                 case OWEv.Heist:
                     Toasts.Show("HEIST", s, new Color(1f, 0.4f, 0.25f));
                     AudioManager.Ui(n == 1 ? "ui_success" : n == 2 ? "ui_error" : "phone_ping");
@@ -520,6 +521,7 @@ namespace SolarEclipse
 
         public static void HostRequest(byte pid, OWReq kind, byte target, string s, long n, Vector3 v, ushort e)
         {
+            if (kind == OWReq.ModeReq) { if (!NetState.IsClient) GameModes.HostRequest(pid, s, n, v); return; }
             if (!Active || NetState.IsClient) return;
             var nm = NetManager.I;
             switch (kind)

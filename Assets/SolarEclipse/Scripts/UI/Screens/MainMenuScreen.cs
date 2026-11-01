@@ -93,6 +93,9 @@ namespace SolarEclipse
                 {
                     if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 440, 60), "PLAY STORY", ButtonKind.Normal, IconFactory.Get("book"), 26, true, "Chapter 1: The East Side - 4 missions")) UIRoot.Push(new StoryMenuScreen());
                     yy += 68;
+                    if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 215, 60), "MODES", ButtonKind.Normal, IconFactory.Get("flag"), 24, true, "Zombie Survival, Gore Golf, Tournament, Hide & Seek")) UIRoot.Push(new ModesScreen());
+                    if (UI.Button(new Rect(315 - (1 - a) * 220, yy, 215, 60), "DAILY", ButtonKind.Normal, IconFactory.Get("clock"), 24, true, "Three new challenges every day")) UIRoot.Push(new DailyScreen());
+                    yy += 68;
                 }
                 GUI.color = old;
             }

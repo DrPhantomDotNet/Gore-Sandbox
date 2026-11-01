@@ -8,12 +8,14 @@ namespace SolarEclipse
     {
         HeistJoin = 1, HeistLeave = 2, HeistReady = 3, HeistUse = 4, CallCar = 5, Drive = 6, ExitCar = 7, Emote = 8,
         Text = 9, Money = 10, Call = 11, Bounty = 12, Crime = 13, Delivery = 14,
+        ModeReq = 15, // game modes (Game/GameModes.cs)
     }
 
     /// <summary>Host -> client Open World events (OWEvent).</summary>
     public enum OWEv : byte
     {
         Reward = 1, Text = 2, Money = 3, Call = 4, Emote = 5, CarDriver = 6, Toast = 7, CarWreck = 8, Heist = 9,
+        ModeEvent = 10, // game modes (Game/GameModes.cs)
     }
 
     /// <summary>

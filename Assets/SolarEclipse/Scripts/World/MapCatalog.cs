@@ -50,6 +50,7 @@ namespace SolarEclipse
                     AlleywayMap.CreateDef(), // night alley + courtyard; story mode chapter 1 (World/AlleywayMap.cs, World/StoryMode.cs)
                 };
                 all.AddRange(ContentMaps.Defs()); // Content Update maps (World/ContentMaps.cs)
+                all.AddRange(GameModes.Defs()); // Content Update game modes (Game/GameModes.cs)
                 all.AddRange(new[]
                 {
                     PortEclipseMap.CreateDef(), // Open World city: heists, cars, shops, saved cash (OpenWorld/)
