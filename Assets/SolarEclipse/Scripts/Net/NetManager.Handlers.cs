@@ -460,6 +460,17 @@ namespace SolarEclipse
                         case 20: ContentFx.Sedate(d); break;      // Content Update weapons (Weapons/ContentPack.cs)
                         case 21: ContentFx.Freeze(d); break;
                         case 22: ContentFx.Ignite(d, src); break;
+                        case 23: FightNet.HostChoke(p.Id, d, (int)pt); break; // headlock choke (Weapons/FightingStyles.cs)
+                        case 26: // grab / headlock with bare hands: no Creative mode needed, but you have to be close
+                            if (d.Parts.TryGetValue(pt, out var gp) && gp != null && !gp.Severed && !gp.Gibbed && gp.Body != null && Vector3.Distance(gp.Body.position, p.Pos + Vector3.up) < 4f)
+                            {
+                                ReleaseRemoteGrab(p, Vector3.zero);
+                                p.GrabBody = gp.Body; p.GrabLocal = Vector3.zero; p.GrabTarget = gp.Body.position; p.GrabRot = gp.Body.rotation;
+                                p.GrabIsDoll = true; p.GrabRotating = false; p.LastGrabMsg = Time.time;
+                                d.Ragdoll.Fall(3f);
+                                FightHost.Ensure();
+                            }
+                            break;
                     }
                     break;
                 }

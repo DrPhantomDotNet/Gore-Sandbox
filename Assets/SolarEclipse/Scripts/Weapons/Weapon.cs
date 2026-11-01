@@ -23,6 +23,10 @@ namespace SolarEclipse
         protected virtual float AimDistance => Def.AimDistance;
         public virtual bool ConsumesKick => false;
         public virtual bool ConsumesScroll => false;
+        /// <summary>Third-person camera and your own animated body while held (Fighting Styles).</summary>
+        public virtual bool ThirdPerson => false;
+        /// <summary>E (interact) goes to the weapon instead (e.g. a headlock).</summary>
+        public virtual bool ConsumesUse => false;
         public virtual bool Busy => false;
         /// <summary>Text shown on the HUD (ammo etc.).</summary>
         public virtual string AmmoText => "";
@@ -40,6 +44,8 @@ namespace SolarEclipse
             if (extra != null) return extra;
             var extra3 = Guns3.Create(def); // Weapons/Mac11.cs: MAC-11, dual katanas
             if (extra3 != null) return extra3;
+            var style = FightingStyles.Create(def); // Weapons/FightingStyles.cs: Boxing (third person)
+            if (style != null) return style;
             var content = ContentPack.Create(def); // Weapons/ContentPack.cs: Content Update weapons
             if (content != null) return content;
             var arsenal = ArsenalPack.Create(def); // Weapons/ArsenalPack.cs: 20 data-driven guns + 10 melee weapons

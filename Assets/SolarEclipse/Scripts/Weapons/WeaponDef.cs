@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolarEclipse
 {
-    public enum WeaponKind { Fists, Knife, Firearm, Admin, SpawnGun, Explosive, Melee, RopeTool, GravityGun }
+    public enum WeaponKind { Fists, Knife, Firearm, Admin, SpawnGun, Explosive, Melee, RopeTool, GravityGun, FightingStyle }
 
     /// <summary>Data for one weapon (add new guns here without touching weapon code).</summary>
     public sealed class WeaponDef
@@ -144,7 +144,7 @@ namespace SolarEclipse
         };
 
         // Arsenal pack (Weapons/ArsenalPack.cs: 20 guns + 10 melee) is appended after the list above, before any modded weapon.
-        static WeaponCatalog() { ArsenalPack.AppendDefs(All); ContentPack.AppendDefs(All); } // Content Update weapons last (Weapons/ContentPack.cs)
+        static WeaponCatalog() { ArsenalPack.AppendDefs(All); ContentPack.AppendDefs(All); FightingStyles.AppendDefs(All); } // Content Update weapons last (Weapons/ContentPack.cs)
 
         public static WeaponDef Get(string id) => All.Find(w => w.Id == id);
     }

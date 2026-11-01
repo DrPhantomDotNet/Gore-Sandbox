@@ -5,7 +5,28 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.12.0 — THE CONTENT UPDATE</size></b>
+@"<b><size=30>v0.13.0 — THE FIGHT UPDATE</size></b>
+<color=#ff9a40>A new weapon category, FIGHTING STYLES, starting with Boxing: fight in third person with your own animated body. Plus grab and throw Goredolls with your bare hands.</color>
+<b>BOXING (Spawn menu > Weapons > FIGHTING STYLES)</b>
+• The camera moves behind you and you see yourself: boxer stance, footwork, red gloves, every move animated
+• LMB: jab, cross, left hook, uppercut combo. Crouch + LMB: body shot. Sprint + LMB: overhand
+• F: roundhouse kick. Crouch + F: low kick. Sprint + F: push kick. Jump + F: flying kick
+• R: spinning back kick. Q: axe kick. Hold RMB: guard (you take much less damage)
+• Head and neck shots do less damage, so it takes a lot of punches to finish a Goredoll off. Big hits knock them down, and the hardest ones can knock teeth out
+• Other players see your moves in multiplayer
+<b>HEADLOCK</b>
+• Get close to a Goredoll and press E (HEADLOCK button on phones)
+• A counter above its head shows its consciousness, alert state, pain and oxygen
+• LMB punch, F knee, hold RMB to choke harder (oxygen drops until they pass out), R throw, E let go
+• Conscious Goredolls kick and struggle to get free
+<b>GRAB AND THROW</b>
+• With Fists or Boxing, press MMB (GRAB on phones) to grab a Goredoll and carry it
+• LMB throws it, RMB or MMB drops it. Works in multiplayer without Creative mode
+<b>ALSO</b>
+• The weapons list in the spawn menu is now split into categories
+• Phones: the buttons change to PUNCH, GUARD, KICK, SPIN KICK, AXE KICK, HEADLOCK and GRAB while you hold Boxing
+
+<b><size=30>v0.12.0 — THE CONTENT UPDATE</size></b>
 <color=#ff9a40>The biggest update yet: 5 maps, 16 weapons, new Goredolls and animals, 20 machines, vehicles, 4 game modes, story chapter 2 and much more.</color>
 <b>5 NEW MAPS</b>
 • St. Mercy Hospital: wards, an operating theatre, a morgue and a lift to the second floor

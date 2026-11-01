@@ -34,7 +34,7 @@ namespace SolarEclipse
         static readonly Dictionary<string, MeleeEntry> melee = new Dictionary<string, MeleeEntry>();
         static readonly List<string> order = new List<string>();
 
-        public static readonly string[] Categories = { "All", "Pistols", "SMGs", "Rifles", "Shotguns", "Heavy", "Melee", "Explosives", "Tools" };
+        public static readonly string[] Categories = { "All", "Fighting Styles", "Pistols", "SMGs", "Rifles", "Shotguns", "Heavy", "Melee", "Explosives", "Tools" };
 
         // ------------------------------------------------------------------ registration
 
@@ -114,6 +114,7 @@ namespace SolarEclipse
         public static string Category(WeaponDef d)
         {
             if (d == null) return "Tools";
+            if (d.Kind == WeaponKind.FightingStyle) return "Fighting Styles";
             Define();
             var cc = ContentPack.Category(d); if (cc != null) return cc;
             if (guns.TryGetValue(d.Id, out var g)) return g.Extra.Category;

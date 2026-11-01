@@ -30,7 +30,10 @@ namespace SolarEclipse
         float spawnYaw;
         bool crouching;
 
-        public Vector3 EyePosition => Cam != null ? Cam.transform.position : transform.position + Vector3.up * EyeStand;
+        public Vector3 EyePosition => Cam != null ? (ThirdPersonBlend > 0f && CamPivot != null ? CamPivot.position : Cam.transform.position) : transform.position + Vector3.up * EyeStand;
+        /// <summary>0 = first person, 1 = third person (Fighting Styles: Weapons/FightingStyles.cs).</summary>
+        public float ThirdPersonBlend { get; private set; }
+        bool tpWasOn;
         /// <summary>What weapons aim with: the camera, or in VR the weapon in your right hand (VR/VRRig.cs).</summary>
         public Transform AimTransform => VRRig.I != null && VRRig.I.AimT != null ? VRRig.I.AimT : Cam != null ? Cam.transform : transform;
         public Vector3 AimOrigin => VRRig.I != null && VRRig.I.AimT != null ? VRRig.I.AimT.position : EyePosition;
@@ -194,7 +197,7 @@ namespace SolarEclipse
             if (f.Noclip && OWDirector.AllowNoclip) SetNoclip(!Noclip);
             if (Noclip) MoveNoclip(f, dt); else Move(f, dt);
 
-            if (f.Use) Use();
+            if (f.Use && !(Inventory.Current != null && Inventory.Current.ConsumesUse)) Use();
             if (f.Kick && !Inventory.ConsumesKick) Kick();
             kickCooldown -= dt;
             Inventory.Tick(f, dt);
@@ -455,6 +458,22 @@ namespace SolarEclipse
             Cam.farClipPlane = d.renderDistance;
             ViewCam.fieldOfView = d.viewmodelFov * Mathf.Lerp(1f, 0.85f, Inventory.Current != null ? Inventory.Current.AimWeight : 0f);
             ViewCam.enabled = d.viewmodel && !Health.Dead;
+
+            // Third person (Fighting Styles): the camera slides back over the right shoulder and stops at walls.
+            bool tp = Inventory.Current != null && Inventory.Current.ThirdPerson && !Health.Dead;
+            ThirdPersonBlend = Mathf.MoveTowards(ThirdPersonBlend, tp ? 1f : 0f, dt * 3.5f);
+            if (ThirdPersonBlend > 0f || tpWasOn)
+            {
+                float k = ThirdPersonBlend * ThirdPersonBlend * (3f - 2f * ThirdPersonBlend);
+                var local = new Vector3(0.55f, 0.2f, -2.7f) * k;
+                var dir = CamPivot.rotation * local;
+                float len = dir.magnitude;
+                if (len > 0.01f && Physics.SphereCast(CamPivot.position, 0.2f, dir / len, out var hit, len, Layers.WorldMask, QueryTriggerInteraction.Ignore))
+                    local *= Mathf.Clamp01((hit.distance - 0.05f) / len);
+                Cam.transform.localPosition = local;
+                if (ThirdPersonBlend > 0.05f) ViewCam.enabled = false;
+                tpWasOn = ThirdPersonBlend > 0f;
+            }
         }
 
         public Vector2 LookDelta => PlayerInput.Frame.Look;

@@ -61,6 +61,8 @@ namespace SolarEclipse
             var cur = PlayerController.Instance != null && PlayerController.Instance.Inventory != null ? PlayerController.Instance.Inventory.Current : null;
             bool spawnGun = cur is SpawnGun;
             bool holding = spawnGun && ((SpawnGun)cur).Holding;
+            var boxing = cur as Boxing; var fists = cur as Fists; // Fighting Styles + bare-hand grabbing (Weapons/FightingStyles.cs)
+            bool handHold = (boxing != null && boxing.Holding) || (fists != null && fists.Holding);
             bool aiming = Get(Kind.Aim).On || Get(Kind.Aim).Held;
             float fireSize = s * (aiming ? 1.95f : 1.6f); // bigger while aiming so it's easy to hit
             foreach (var b in buttons)
@@ -68,7 +70,10 @@ namespace SolarEclipse
                 b.Visible = true;
                 switch (b.Kind)
                 {
-                    case Kind.Fire: b.Rect = new Rect(W - fireSize - 40, H - fireSize - 60, fireSize, fireSize); break;
+                    case Kind.Fire:
+                        b.Rect = new Rect(W - fireSize - 40, H - fireSize - 60, fireSize, fireSize);
+                        b.Label = handHold ? "THROW" : boxing != null ? "PUNCH" : "FIRE";
+                        break;
                     case Kind.Fire2:
                         b.Rect = new Rect(40, H - 340 - s - g - s * 1.25f, s * 1.25f, s * 1.25f);
                         b.Visible = Settings.Data.touchLeftFire && cur is Firearm;
@@ -76,12 +81,12 @@ namespace SolarEclipse
                     case Kind.Aim:
                         b.Rect = new Rect(W - s * 1.6f - 40 - s - g, H - s - 60, s, s);
                         b.Toggle = !Settings.Data.touchAimHold;
-                        b.Label = aiming ? "AIMING" : "AIM";
+                        b.Label = boxing != null ? (boxing.Locking ? "CHOKE" : "GUARD") : aiming ? "AIMING" : "AIM";
                         break;
                     case Kind.Jump: b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - s - g, s, s); break;
-                    case Kind.Reload: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : "RELOAD"; break;
+                    case Kind.Reload: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : boxing != null ? (boxing.Locking ? "THROW" : "SPIN KICK") : "RELOAD"; break;
                     case Kind.Crouch: b.Rect = new Rect(W - s * 1.6f - 40 - (s + g) * 2, H - s - 60, s, s); break;
-                    case Kind.Kick: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - s - g, s, s); b.Label = holding ? "FREEZE" : "KICK"; break;
+                    case Kind.Kick: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - s - g, s, s); b.Label = holding ? "FREEZE" : boxing != null && boxing.Locking ? "KNEE" : "KICK"; break;
                     case Kind.Use:
                     {
                         // INTERACT sits next to JUMP (right thumb); it grows and glows when there's something to use.
@@ -91,15 +96,23 @@ namespace SolarEclipse
                         float cx = W - s * 2 - 40 - g + s * 0.5f, cy = H - s * 1.6f - 60 - s - g + s * 0.5f;
                         b.Rect = new Rect(cx - us * 0.5f, cy - us * 0.5f, us, us);
                         b.Label = can && pc.InteractTarget != null && pc.InteractTarget.StartsWith("Talk") ? "TALK" : "INTERACT";
+                        if (boxing != null && (boxing.Locking || boxing.HasTarget)) { b.Label = boxing.Locking ? "RELEASE" : "HEADLOCK"; b.Rect = new Rect(cx - s * 0.59f, cy - s * 0.59f, s * 1.18f, s * 1.18f); }
                         break;
                     }
                     case Kind.Sprint: b.Rect = new Rect(40, H - s - 340, s, s); break;
-                    case Kind.Spawn: b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = spawnGun; break;
+                    case Kind.Spawn:
+                        b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - (s + g) * 2, s, s);
+                        b.Visible = spawnGun || boxing != null || fists != null;
+                        b.Label = spawnGun ? "SPAWN" : handHold ? "DROP" : "GRAB";
+                        break;
                     case Kind.Rotate: b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = holding; break;
                     case Kind.Closer: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = holding; break;
                     case Kind.Further: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = holding; break;
                     case Kind.Mode: b.Rect = new Rect(W - s * 0.8f - 40, 130, s * 0.8f, s * 0.6f); b.Visible = cur != null && (cur.Def.Auto || cur.Def.Kind == WeaponKind.Admin); break;
-                    case Kind.Inspect: b.Rect = new Rect(W - s * 1.6f - 50 - s * 0.8f, 130, s * 0.8f, s * 0.6f); break;
+                    case Kind.Inspect:
+                        if (boxing != null) { b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Label = "AXE KICK"; }
+                        else { b.Rect = new Rect(W - s * 1.6f - 50 - s * 0.8f, 130, s * 0.8f, s * 0.6f); b.Label = "INSPECT"; }
+                        break;
                     case Kind.Weapon: b.Rect = new Rect(W - s * 2.4f - 60 - s * 0.8f, 130, s * 0.8f, s * 0.6f); break;
                     case Kind.Menu: b.Rect = new Rect(30, 120, s * 0.9f, s * 0.6f); break;
                     case Kind.Noclip: b.Rect = new Rect(40 + s * 0.9f + g, 120, s * 0.9f, s * 0.6f); b.Visible = OWDirector.AllowNoclip; break;

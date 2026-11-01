@@ -22,6 +22,7 @@ namespace SolarEclipse
             if (Dead || info.Amount <= 0) return;
             if (Rules.Invincible) { DamageFlash = Mathf.Max(DamageFlash, 0.15f); return; }
             if (info.Type == DamageType.Fall && Rules.NoFallDamage) return;
+            if (info.Type == DamageType.Blunt || info.Type == DamageType.Slash || info.Type == DamageType.Stab) info.Amount *= Boxing.GuardMul; // boxing guard (RMB)
             Current -= info.Amount;
             DamageFlash = Mathf.Clamp01(DamageFlash + 0.25f + info.Amount / 60f);
             LastDamageDir = info.Direction;

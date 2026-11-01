@@ -62,6 +62,14 @@ Whenever a change is made, release it — don't leave it unpushed:
 - `Game/Creations.cs`: share codes (`GSMAP1:` maps, `GSBOX1:` sandbox saves), sandbox saves (only `Spawned.ByPlayer`
   objects), Prop Editor props whose id `cprop:<base64>` carries the whole definition (clients rebuild from the id), photo gallery.
 
+## Fighting Styles (v0.13.0)
+
+- `Weapons/FightingStyles.cs`: WeaponKind.FightingStyle ("boxing"), moves table, `FightAnim` (procedural poses on the
+  Anatomy rig, shared by your own `FighterRig` and `RemotePlayer`), `HandGrab` (MMB grab/throw, also in Fists), headlock +
+  vitals HUD, `FightNet` (OWReq.Fight / OWEv.Fight; doll commands 23 = choke, 26 = bare-hand grab without Creative).
+- Weapons with `ThirdPerson` move the camera behind the player (`PlayerController.ThirdPersonBlend`; EyePosition stays at
+  the head). `Physiology.Choke` lowers SpO2. Head/neck hits from fighting styles use `FightingStyles.HeadMul`.
+
 ## Conventions
 
 - UI is IMGUI through the `UI` static class (`UI/UIKit.cs`) on a virtual canvas 1080 units high.

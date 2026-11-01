@@ -17,8 +17,11 @@ namespace SolarEclipse
         float punchT = 1f, block, charge, idle;
         bool punchRight = true, hitDone, heavy;
 
+        readonly HandGrab grab = new HandGrab(); // MMB: grab a Goredoll, LMB throws it (Weapons/FightingStyles.cs)
+        public bool Holding => grab.Holding;
+        public override float MoveSpeedMul => grab.Holding ? 0.8f : 1f;
         public override string AmmoText => "";
-        public override string ModeText => heavy ? "HAYMAKER" : "";
+        public override string ModeText => grab.Holding ? "CARRYING" : heavy ? "HAYMAKER" : "";
         public override bool Busy => punchT < 1f;
 
         protected override void OnEquip()
@@ -32,6 +35,7 @@ namespace SolarEclipse
 
         protected override void OnHolster()
         {
+            grab.Release(Vector3.zero);
             Vm.Right.SetPose(HandPose.Relaxed);
             Vm.Left.SetPose(HandPose.Relaxed);
         }
@@ -41,6 +45,18 @@ namespace SolarEclipse
         public override void Tick(InputFrame f, float dt)
         {
             idle += dt;
+            if (f.Middle && punchT >= 1f) { if (grab.Holding) grab.Release(Vector3.zero); else grab.TryGrab(Player, 2.3f); }
+            if (grab.Holding)
+            {
+                grab.Tick(Eye + Aim * 1.3f + Vector3.down * 0.15f, dt);
+                if (f.Fire) { grab.Release(Aim * 14f + Vector3.up * 3f); Swing("whoosh_big", 0.8f); CameraFX.Punch(-0.8f, 0f); }
+                else if (f.AimPressed) grab.Release(Vector3.zero);
+                // Both hands out in front, holding on.
+                Vm.RightPos = new Vector3(0.14f, -0.12f, 0.5f); Vm.RightRot = Quaternion.Euler(-20f, -15f, -80f);
+                Vm.LeftPos = new Vector3(-0.14f, -0.12f, 0.5f); Vm.LeftRot = Quaternion.Euler(-20f, 15f, 80f);
+                Vm.AimWeight = 0f;
+                return;
+            }
             block = MathX.Damp(block, f.Aim && punchT >= 1f ? 1f : 0f, 14f, dt);
 
             if (f.FireHeld && punchT >= 1f && block < 0.3f) charge += dt;

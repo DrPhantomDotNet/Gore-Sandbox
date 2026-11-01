@@ -24,6 +24,8 @@ namespace SolarEclipse
         public float LungDamage;       // 0..2
         public float AirwayBlood;      // 0..1 (neck/trachea injury → choking)
         public float HeadTrauma;       // 0..1
+        /// <summary>Airway squeezed shut (headlock choke, Weapons/FightingStyles.cs): 0..1, ends at ChokeUntil.</summary>
+        public float Choke, ChokeUntil;
         public bool HeartDestroyed, BrainDestroyed, Decapitated;
         public Paralysis Paralysis;
         public int HitsWhileParalyzed;
@@ -101,8 +103,10 @@ namespace SolarEclipse
             if (Paralysis == Paralysis.Total) rrTarget += 4f + HitsWhileParalyzed * 3f;
             RespRate = MathX.Damp(RespRate, Mathf.Clamp(rrTarget, 6f, 48f), 0.7f, dt);
 
-            float spoTarget = 98f - LungDamage * 9f - AirwayBlood * 30f - Mathf.Max(0, f - 0.3f) * 80f;
-            SpO2 = MathX.Damp(SpO2, Mathf.Clamp(spoTarget, 30f, 99f), 0.25f, dt);
+            if (Time.time > ChokeUntil) Choke = Mathf.MoveTowards(Choke, 0f, dt * 2f);
+            float spoTarget = 98f - LungDamage * 9f - AirwayBlood * 30f - Mathf.Max(0, f - 0.3f) * 80f - Choke * 72f;
+            SpO2 = MathX.Damp(SpO2, Mathf.Clamp(spoTarget, 25f, 99f), Choke > 0.01f ? 0.12f + Choke * 0.18f : 0.25f, dt);
+            if (Choke > 0.5f) Pain = Mathf.Min(100f, Pain + dt * 4f * Choke);
             AirwayBlood = Mathf.MoveTowards(AirwayBlood, 0f, dt * 0.004f);
 
             // Consciousness

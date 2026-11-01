@@ -16,6 +16,11 @@ namespace SolarEclipse
         public int EmoteId = -1;
         public float EmoteUntil;
         public bool HiddenInCar;
+        /// <summary>Fighting styles (Weapons/FightingStyles.cs): last move and when it started, and 1 = headlock, 2 = carrying.</summary>
+        public byte FightMove;
+        public float FightStart;
+        public int FightFlags;
+        GameObject[] gloves;
         readonly Dictionary<PartType, Transform> parts = new Dictionary<PartType, Transform>();
         Transform model, socket;
         WeaponModel weapon;
@@ -187,11 +192,28 @@ namespace SolarEclipse
             parts[PartType.UpperArmL].localRotation = Quaternion.Euler(armed ? armX + 8f : -6f - 18f * s * swing, 0, armed ? 22f : -6f);
             parts[PartType.ForearmL].localRotation = Quaternion.Euler(armed ? -38f : -14f, 0, 0);
             if (EmoteId >= 0 && Time.time < EmoteUntil && !dead) OWEmotes.Pose(parts, EmoteId, Time.time); else EmoteId = -1;
+            bool fighting = FightingStyles.IsStyle(weaponIndex) && !dead && !HiddenInCar;
 
             // Crouch lowers the whole model so the feet stay planted; death lays it down.
             model.localPosition = Vector3.up * (-0.42f * crouchBlend * height);
             model.localRotation = Quaternion.Euler(-88f * Mathf.SmoothStep(0, 1, deadBlend), 0, 0);
             if (face != null) face.Expression = dead ? Expression.Dead : (Player.Flags & NetPlayer.FFiring) != 0 ? Expression.Angry : Expression.Neutral;
+            if (fighting)
+            {
+                var fm = (SolarEclipse.FightMove)FightMove;
+                var spec = FightingStyles.Spec(fm);
+                float ft = spec != null ? (Time.time - FightStart) / spec.Dur : 1f;
+                if (spec == null || ft >= 1f) { fm = SolarEclipse.FightMove.None; ft = 0f; }
+                FightAnim.Apply(parts, model, height, new FightPose
+                {
+                    Move = fm, T = ft, Guard = (Player.Flags & NetPlayer.FAim) != 0 ? 1f : 0f, Speed = speed, Phase = phase, Crouch = crouchBlend,
+                    Pitch = pitch, Time = Time.time + Player.Id, Headlock = (FightFlags & 1) != 0, Holding = (FightFlags & 2) != 0,
+                    Airborne = (Player.Flags & NetPlayer.FGrounded) == 0 && !noclip,
+                });
+                if (face != null && fm != SolarEclipse.FightMove.None) face.Expression = Expression.Angry;
+            }
+            if (fighting && (gloves == null || gloves[0] == null && gloves[1] == null)) gloves = FightAnim.Gloves(parts, Layers.RemotePlayer);
+            if (gloves != null) foreach (var gl in gloves) if (gl != null && gl.activeSelf != fighting) gl.SetActive(fighting);
 
             // Weapon in hand
             if (Player.Weapon != netWeapon) { netWeapon = Player.Weapon; SetWeapon(Mods.ModNet.LocalIndex(Player.Weapon)); } // modded weapons: host session index -> local catalog
@@ -214,6 +236,7 @@ namespace SolarEclipse
             if (weapon != null) Destroy(weapon.gameObject);
             weapon = null;
             if (index <= 0 || index >= WeaponCatalog.All.Count) return; // fists
+            if (WeaponCatalog.All[index].Kind == WeaponKind.FightingStyle) return; // boxing: gloves on the hands, nothing in them
             weapon = WeaponModels.Build(WeaponCatalog.All[index].Id, Layers.RemotePlayer);
             weapon.transform.SetParent(socket, false);
             IconFactory.SetLayer(weapon.gameObject, Layers.RemotePlayer);

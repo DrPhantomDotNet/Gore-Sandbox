@@ -199,13 +199,35 @@ namespace SolarEclipse
             var p = PlayerController.Instance;
             var list = WeaponCatalog.All.FindAll(w => w.Kind != WeaponKind.Fists && Mods.ModWeapons.Listed(w)); // installed mods only (hidden in MP unless the host allows them)
             list.AddRange(SolarEclipse.Mods.ScriptedWeaponMods.MenuDefs); // Advanced Modding scripted weapons (not in the catalog)
-            const float rowH = 110;
-            float content = list.Count * (rowH + 12) + 70;
+            // Grouped by category with a header above each group (Fighting Styles first).
+            var cats = ArsenalPack.Categories;
+            string CatOf(WeaponDef d) => Mods.ModWeapons.IsMod(d) || !WeaponCatalog.All.Contains(d) ? "Mods" : ArsenalPack.Category(d);
+            int Order(WeaponDef d) { int k = System.Array.IndexOf(cats, CatOf(d)); return k < 0 ? 99 : k; }
+            var order = new System.Collections.Generic.Dictionary<WeaponDef, int>();
+            for (int i = 0; i < list.Count; i++) order[list[i]] = i;
+            list.Sort((x, y) => Order(x) != Order(y) ? Order(x).CompareTo(Order(y)) : order[x].CompareTo(order[y]));
+            const float rowH = 110, headH = 50;
+            var rowY = new float[list.Count];
+            var heads = new System.Collections.Generic.List<(float y, string name)>();
+            float yy = 0; string lastCat = null;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var c = CatOf(list[i]);
+                if (c != lastCat) { heads.Add((yy, c)); yy += headH; lastCat = c; }
+                rowY[i] = yy; yy += rowH + 12;
+            }
+            float content = yy + 70;
             float s = UI.BeginScroll("guns", view, content);
+            foreach (var h in heads)
+            {
+                var hr = new Rect(0, h.y - s, view.width - 16, headH - 8);
+                UI.Label(hr, h.name.ToUpperInvariant(), 26, h.name == "Fighting Styles" ? new Color(1f, 0.78f, 0.16f) : UI.Accent2, TextAnchor.LowerLeft, FontStyle.Normal, true, false, UI.HeavyFont);
+                UI.Fill(new Rect(0, h.y - s + headH - 8, view.width - 16, 2), new Color(1f, 1f, 1f, 0.12f));
+            }
             for (int i = 0; i < list.Count; i++)
             {
                 var w = list[i];
-                var r = new Rect(0, i * (rowH + 12) - s, view.width - 16, rowH);
+                var r = new Rect(0, rowY[i] - s, view.width - 16, rowH);
                 UI.Rounded(r, UI.Hover(r) ? new Color(1, 1, 1, 0.1f) : UI.PanelLight, false);
                 UI.Tex(new Rect(r.x + 16, r.y + 10, 200, rowH - 20), Hud.WeaponIcon(w), Color.white, ScaleMode.ScaleToFit);
                 UI.Label(new Rect(r.x + 240, r.y + 12, 500, 36), w.Name.ToUpperInvariant(), 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
@@ -231,7 +253,7 @@ namespace SolarEclipse
                     if (w.Kind != WeaponKind.SpawnGun) OnBack();
                 }
             }
-            var all = new Rect(0, list.Count * (rowH + 12) - s, 320, 54);
+            var all = new Rect(0, yy - s, 320, 54);
             if (p != null && UI.Button(all, "GIVE ALL WEAPONS", ButtonKind.Ghost, IconFactory.Get("plus"), 18)) { p.Inventory.GiveAll(); AudioManager.Ui("ui_success"); }
             UI.EndScroll("guns", view, content);
         }
