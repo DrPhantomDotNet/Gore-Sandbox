@@ -27,6 +27,7 @@ namespace SolarEclipse
             if (mods.Custom == null) ArmedDolls.Dress(look, preset);
             var zombieKind = Zombies.KindOf(preset);
             if (zombieKind.HasValue) Zombies.Zombify(look, zombieKind.Value);
+            NpcTypes.ApplyLook(look, netPreset); // Content Update: skeleton / giant (Goredoll/NpcTypes.cs)
             Random.state = randomState;
             var root = new GameObject("Goredoll " + look.Name);
             root.layer = Layers.Ragdoll;
@@ -58,6 +59,7 @@ namespace SolarEclipse
             root.AddComponent<Spawned>().DisplayName = "Goredoll " + look.Name;
             if (zombieKind.HasValue) Zombies.Attach(doll, zombieKind.Value, seed);
             NpcMods.Attach(doll, preset, mods);
+            NpcTypes.Attach(doll, netPreset);
 
             Stats.Add(Stats.Spawned);
             if (!NetState.IsClient) EnforceLimit();

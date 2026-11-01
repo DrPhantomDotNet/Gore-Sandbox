@@ -25,6 +25,8 @@ namespace SolarEclipse
         public bool ZombieArms;
         /// <summary>Armed Goredolls (ArmedBrain): 0..1 blend into a gun-aiming arm pose, pitch in degrees (+ = up).</summary>
         public float AimWeight, AimPitch;
+        /// <summary>Muscle multiplier (Giant Goredolls are much heavier: Goredoll/NpcTypes.cs).</summary>
+        public float StrengthMul = 1f;
         public bool AimRifle;
 
         Goredoll doll;
@@ -267,7 +269,7 @@ namespace SolarEclipse
                 if (spasm)
                     e += new Vector3(Mathf.PerlinNoise(Time.time * 6f, spasmSeed + (int)p.Type) - 0.5f, 0, Mathf.PerlinNoise(spasmSeed, Time.time * 6f + (int)p.Type) - 0.5f) * 60f;
                 j.targetRotation = Quaternion.Inverse(Quaternion.Euler(e));
-                float spring = p.Spec.Muscle * s;
+                float spring = p.Spec.Muscle * s * StrengthMul;
                 // Damping near critical for the limb's own inertia keeps limbs from oscillating.
                 j.slerpDrive = new JointDrive { positionSpring = spring, positionDamper = spring * 0.08f + 3f, maximumForce = float.MaxValue };
             }

@@ -30,6 +30,8 @@ namespace SolarEclipse
             });
             Zombies.RegisterSpawnables(AI); // 5 zombie types (Goredoll/Zombies.cs)
             ArmedDolls.RegisterSpawnables(AI); // Gunman, Soldier (Goredoll/ArmedBrain.cs)
+            NpcTypes.RegisterSpawnables(AI); // Content Update types, giant, skeleton (Goredoll/NpcTypes.cs)
+            Animals.RegisterSpawnables(AI); // dog, pig, cow (Goredoll/Animals.cs)
             foreach (var nb in Nextbots.Defs)
             {
                 var id = nb.Id;
