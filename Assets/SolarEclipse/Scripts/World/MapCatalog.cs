@@ -48,9 +48,13 @@ namespace SolarEclipse
                     RooftopsMap.CreateDef(), // city rooftops at night (World/RooftopsMap.cs)
                     DocksMap.CreateDef(), // night harbour; story chapter 1 mission 2 (World/DocksMap.cs, Story/Chapter1.cs)
                     AlleywayMap.CreateDef(), // night alley + courtyard; story mode chapter 1 (World/AlleywayMap.cs, World/StoryMode.cs)
+                };
+                all.AddRange(ContentMaps.Defs()); // Content Update maps (World/ContentMaps.cs)
+                all.AddRange(new[]
+                {
                     PortEclipseMap.CreateDef(), // Open World city: heists, cars, shops, saved cash (OpenWorld/)
                     BossRealm.CreateDef(), // "????" boss fight (singleplayer only, gated by Orbie in MapSelectScreen)
-                };
+                });
                 return all;
             }
         }
