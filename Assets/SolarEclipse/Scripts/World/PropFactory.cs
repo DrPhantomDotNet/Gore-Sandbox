@@ -27,6 +27,8 @@ namespace SolarEclipse
 
         static PropFactory()
         {
+            Machines.Register(Add); // Content Update machines (World/Machines.cs)
+            Vehicles.Register(Add); // drivable cars, tank, bulldozer, go-kart, cart, helicopter (World/Vehicles.cs)
             Add("turret", "Sentry Turret", "Automatic minigun turret: shreds every Goredoll it sees.", "target", (p, r) => Turret.Create(p, r));
             Add("crate", "Wooden Crate", "Breakable shipping crate.", "box", (p, r) => Crate(p, r, 0.8f));
             Add("small_crate", "Small Crate", "A smaller, breakable crate.", "box", (p, r) => Crate(p, r, 0.5f));

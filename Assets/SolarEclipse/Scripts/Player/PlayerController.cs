@@ -162,6 +162,13 @@ namespace SolarEclipse
             deathTilt = Mathf.MoveTowards(deathTilt, 0f, dt * 4f);
 
             // Open World: driving a car (OpenWorld/OWCar.cs) replaces walking, looking and weapons.
+            if (Heli.Local != null)
+            {
+                Heli.Local.DriveTick(this, f, dt);
+                ViewCam.enabled = false;
+                LookHint = null; InteractTarget = null;
+                return;
+            }
             if (OWCar.LocalDriving != null)
             {
                 OWCar.LocalDriving.DriveTick(this, f, dt);

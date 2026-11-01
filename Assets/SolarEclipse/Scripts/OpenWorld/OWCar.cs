@@ -39,6 +39,8 @@ namespace SolarEclipse
         public Vector3 Seat => seat != null ? seat.position : transform.position + Vector3.up;
         public float Speed => rb != null && !rb.isKinematic ? rb.velocity.magnitude : (transform.position - lastPos).magnitude / Mathf.Max(Time.deltaTime, 0.001f);
         public bool IsPolice => Model != null && Model.Variant == 6;
+        public bool IsTank => Model != null && Model.Variant == 14;
+        float cannonReady;
         public string Prompt => Wrecked ? "" : DriverId != 255 ? "" : "Drive the " + (Model != null ? Model.Name : "car");
         public bool IsAlive => !Wrecked;
 
@@ -57,6 +59,10 @@ namespace SolarEclipse
             { 5.0f, 2.0f, 1.5f, 1.2f, 0.4f, 1.6f, 0.38f, 0.3f },    // van
             { 4.8f, 2.4f, 1.0f, 2.2f, 0.7f, -0.3f, 0.9f, 0.6f },    // monster
             { 2.1f, 0.5f, 0.55f, 0f, 0f, 0f, 0.32f, 0.25f },        // bike
+            { 1.8f, 1.1f, 0.25f, 0f, 0f, 0f, 0.16f, 0.06f },        // go-kart
+            { 4.2f, 2.4f, 1.0f, 1.5f, 1.0f, -0.6f, 0.5f, 0.2f },    // bulldozer
+            { 6.2f, 3.0f, 0.9f, 2.4f, 0.7f, -0.2f, 0.45f, 0.2f },   // tank (turret instead of a cabin)
+            { 1.0f, 0.6f, 0.6f, 0f, 0f, 0f, 0.08f, 0.25f },         // shopping cart
         };
 
         // ------------------------------------------------------------------ building
@@ -87,7 +93,8 @@ namespace SolarEclipse
 
             float bodyY = RH + WR + Hb / 2f;
             var mb = new MeshBuilder { Color = col, Gloss = paint != null && (paint.Id.Contains("chrome") || paint.Id.Contains("gold")) ? 0.95f : 0.6f };
-            if (body == 11)
+            if (body >= 12) BuildSpecial(mb, body, L, Wd, Hb, CL, CH, CO, WR, RH, bodyY, col);
+            else if (body == 11)
             {
                 mb.BevelBox(new Vector3(0, bodyY, 0), new Vector3(0.35f, 0.4f, 1.4f), 0.08f);
                 mb.SetColor(new Color(0.1f, 0.1f, 0.1f), 0.3f);
@@ -123,6 +130,7 @@ namespace SolarEclipse
             var bc = go.AddComponent<BoxCollider>();
             bc.center = new Vector3(0, bodyY + (body == 11 ? 0.1f : CH * 0.3f), 0);
             bc.size = new Vector3(Mathf.Max(Wd, 0.5f), Hb + (body == 11 ? 0.4f : CH * 0.8f), L);
+            if (body == 13) { var blade = go.AddComponent<BoxCollider>(); blade.center = new Vector3(0, RH + WR * 0.9f + 0.3f, L * 0.5f + 0.35f); blade.size = new Vector3(Wd * 1.15f, 1.1f, 0.2f); }
 
             if (body == 6)
             {
@@ -153,7 +161,7 @@ namespace SolarEclipse
                 var ff = wc.forwardFriction; ff.stiffness = 1.6f * model.Grip; wc.forwardFriction = ff;
                 var sf = wc.sidewaysFriction; sf.stiffness = 1.8f * model.Grip; wc.sidewaysFriction = sf;
                 car.wheels[i] = wc;
-                if (body == 11 && !left) continue; // a bike shows one front and one back wheel
+                if ((body == 11 && !left) || body == 13 || body == 14) continue; // bike: one front + one back wheel; dozer/tank: treads
                 var vis = new GameObject("WheelMesh" + i);
                 vis.layer = Layers.Props;
                 vis.transform.SetParent(go.transform, false);
@@ -188,6 +196,74 @@ namespace SolarEclipse
             car.engine.loop = true; car.engine.spatialBlend = 1f; car.engine.minDistance = 4f; car.engine.maxDistance = 60f; car.engine.volume = 0f;
             if (car.engine.clip != null) car.engine.Play();
             return go;
+        }
+
+        /// <summary>Content Update bodies: go-kart, bulldozer, tank, shopping cart.</summary>
+        static void BuildSpecial(MeshBuilder mb, int body, float L, float Wd, float Hb, float CL, float CH, float CO, float WR, float RH, float bodyY, Color col)
+        {
+            var dark = new Color(0.08f, 0.08f, 0.09f);
+            switch (body)
+            {
+                case 12: // go-kart: low tube frame, seat, steering wheel, bumpers
+                    mb.Box(new Vector3(0, RH + WR, 0), new Vector3(Wd * 0.7f, 0.06f, L * 0.9f));
+                    mb.SetColor(dark, 0.3f);
+                    mb.Box(new Vector3(0, RH + WR + 0.2f, -0.25f), new Vector3(0.45f, 0.35f, 0.08f));
+                    mb.Box(new Vector3(0, RH + WR + 0.06f, -0.12f), new Vector3(0.45f, 0.08f, 0.4f));
+                    mb.Torus(new Vector3(0, RH + WR + 0.35f, 0.35f), 0.13f, 0.015f, 12, 3, new Vector3(0, 0.6f, -0.8f));
+                    mb.SetColor(col, 0.6f);
+                    mb.Box(new Vector3(0, RH + WR, L * 0.5f), new Vector3(Wd, 0.12f, 0.12f));
+                    mb.Box(new Vector3(0, RH + WR, -L * 0.5f), new Vector3(Wd, 0.12f, 0.12f));
+                    break;
+                case 13: // bulldozer: body, cab, exhaust, front blade
+                    mb.BevelBox(new Vector3(0, bodyY, -0.3f), new Vector3(Wd * 0.8f, Hb, L * 0.7f), 0.08f);
+                    mb.SetColor(new Color(0.08f, 0.1f, 0.13f), 0.95f);
+                    mb.BevelBox(new Vector3(0, bodyY + Hb / 2f + CH / 2f, CO), new Vector3(Wd * 0.6f, CH, CL), 0.06f);
+                    mb.SetColor(col, 0.6f);
+                    mb.Box(new Vector3(0, bodyY + Hb / 2f + CH + 0.03f, CO), new Vector3(Wd * 0.62f, 0.06f, CL * 1.05f));
+                    mb.SetColor(dark, 0.4f);
+                    mb.Cylinder(new Vector3(0.4f, bodyY + Hb / 2f, 0.6f), new Vector3(0.4f, bodyY + Hb / 2f + 1.2f, 0.6f), 0.06f, 0.06f, 8);
+                    mb.SetColor(new Color(0.55f, 0.55f, 0.58f), 0.7f);
+                    mb.Box(new Vector3(0, RH + WR * 0.9f + 0.3f, L * 0.5f + 0.35f), new Vector3(Wd * 1.15f, 1.1f, 0.12f));
+                    mb.Box(new Vector3(Wd * 0.4f, RH + WR + 0.2f, L * 0.4f), new Vector3(0.12f, 0.12f, 0.8f));
+                    mb.Box(new Vector3(-Wd * 0.4f, RH + WR + 0.2f, L * 0.4f), new Vector3(0.12f, 0.12f, 0.8f));
+                    Treads(mb, L, Wd, WR, RH, dark);
+                    break;
+                case 14: // tank: hull, turret, cannon, treads
+                    mb.BevelBox(new Vector3(0, bodyY, 0), new Vector3(Wd * 0.85f, Hb, L * 0.95f), 0.15f);
+                    mb.SetColor(col * 0.85f, 0.5f);
+                    mb.BevelBox(new Vector3(0, bodyY + Hb / 2f + 0.35f, -0.3f), new Vector3(Wd * 0.6f, 0.7f, CL), 0.15f);
+                    mb.SetColor(dark, 0.5f);
+                    mb.Cylinder(new Vector3(0, bodyY + Hb / 2f + 0.4f, CL * 0.5f - 0.3f), new Vector3(0, bodyY + Hb / 2f + 0.45f, CL * 0.5f + 2.6f), 0.11f, 0.09f, 12);
+                    mb.Cylinder(new Vector3(0, bodyY + Hb / 2f + 0.45f, CL * 0.5f + 2.4f), new Vector3(0, bodyY + Hb / 2f + 0.45f, CL * 0.5f + 2.7f), 0.15f, 0.15f, 12);
+                    mb.Cylinder(new Vector3(0.3f, bodyY + Hb / 2f + 0.7f, -0.6f), new Vector3(0.3f, bodyY + Hb / 2f + 0.85f, -0.6f), 0.25f, 0.25f, 12);
+                    Treads(mb, L, Wd, WR, RH, dark);
+                    break;
+                case 15: // shopping cart: wire basket on a frame, child seat, handle
+                {
+                    var wire = new Color(0.78f, 0.79f, 0.82f);
+                    mb.SetColor(wire, 0.9f);
+                    float y0 = RH + WR + 0.35f, y1 = y0 + 0.5f;
+                    for (int i = 0; i <= 6; i++) { float z = -L * 0.5f + i * L / 6f; mb.Box(new Vector3(Wd * 0.5f, (y0 + y1) / 2f, z), new Vector3(0.012f, 0.5f, 0.012f)); mb.Box(new Vector3(-Wd * 0.5f, (y0 + y1) / 2f, z), new Vector3(0.012f, 0.5f, 0.012f)); }
+                    for (int i = 0; i <= 4; i++) { float x = -Wd * 0.5f + i * Wd / 4f; mb.Box(new Vector3(x, (y0 + y1) / 2f, L * 0.5f), new Vector3(0.012f, 0.5f, 0.012f)); mb.Box(new Vector3(x, (y0 + y1) / 2f, -L * 0.5f), new Vector3(0.012f, 0.5f, 0.012f)); }
+                    foreach (float y in new[] { y0, y0 + 0.25f, y1 }) { mb.Box(new Vector3(Wd * 0.5f, y, 0), new Vector3(0.012f, 0.012f, L)); mb.Box(new Vector3(-Wd * 0.5f, y, 0), new Vector3(0.012f, 0.012f, L)); mb.Box(new Vector3(0, y, L * 0.5f), new Vector3(Wd, 0.012f, 0.012f)); mb.Box(new Vector3(0, y, -L * 0.5f), new Vector3(Wd, 0.012f, 0.012f)); }
+                    mb.Box(new Vector3(0, y0, 0), new Vector3(Wd, 0.012f, L));
+                    mb.Box(new Vector3(0, RH + WR, 0), new Vector3(Wd * 0.8f, 0.03f, L * 0.9f));
+                    mb.SetColor(new Color(0.85f, 0.1f, 0.1f), 0.5f);
+                    mb.Cylinder(new Vector3(-Wd * 0.55f, y1 + 0.08f, -L * 0.55f), new Vector3(Wd * 0.55f, y1 + 0.08f, -L * 0.55f), 0.025f, 0.025f, 8);
+                    break;
+                }
+            }
+        }
+
+        static void Treads(MeshBuilder mb, float L, float Wd, float WR, float RH, Color dark)
+        {
+            mb.SetColor(dark, 0.2f);
+            foreach (float side in new[] { -1f, 1f })
+            {
+                float x = side * (Wd * 0.5f - 0.15f);
+                mb.Box(new Vector3(x, RH + WR, 0), new Vector3(0.45f, WR * 2.1f, L * 0.98f));
+                for (int i = 0; i < 12; i++) mb.Box(new Vector3(x, RH + WR * 2.08f, -L * 0.47f + i * L / 12f), new Vector3(0.47f, 0.04f, 0.08f));
+            }
         }
 
         static Transform Light(Transform parent, string name, Vector3 pos, Color c)
@@ -315,6 +391,20 @@ namespace SolarEclipse
             bool brake = f.JumpHeld, boost = f.Sprint;
             OWDirector.SendCarInput(this, throttle, steer, brake, boost);
             if (f.Use) { OWDirector.LeaveCar(); return; }
+            // Tank: LMB fires the cannon.
+            if (IsTank && f.Fire && Time.time > cannonReady)
+            {
+                cannonReady = Time.time + 2.2f;
+                var muzzle = transform.TransformPoint(new Vector3(0, Dim[14, 7] + Dim[14, 6] + Dim[14, 2] + 0.45f, Dim[14, 3] * 0.5f + 2.75f));
+                var dir = transform.forward;
+                var hitPos = Physics.Raycast(muzzle, dir, out var hh, 250f, Layers.ShootMask, QueryTriggerInteraction.Ignore) ? hh.point : muzzle + dir * 250f;
+                FX.Flash(muzzle, new Color(1f, 0.6f, 0.2f), 14f, 8f, 0.15f);
+                FX.Smoke(muzzle, dir * 4f, 2f, new Color(0.5f, 0.5f, 0.5f, 0.8f), 3f);
+                AudioManager.Play("explosion_far", muzzle, 1f, 1.3f, 0.6f, 5f, 300f);
+                CameraFX.Shake(0.4f);
+                Explosion.Create(hitPos, 7f, 320f, this, 2f);
+                if (rb != null && !rb.isKinematic) rb.AddForce(-dir * 4f, ForceMode.VelocityChange);
+            }
             if ((Input.GetKeyDown(KeyCode.H) || f.Kick) && !Settings.TouchControlsActive || (Settings.TouchControlsActive && f.Kick)) Honk();
             // Sit in the seat.
             if (p.CC.enabled) p.CC.enabled = false;
@@ -323,7 +413,7 @@ namespace SolarEclipse
             // Chase camera (mouse / right side of the screen orbits a little).
             orbit = Mathf.Lerp(orbit, 0f, dt * 1.5f) + f.Look.x * 0.4f;
             orbit = Mathf.Clamp(orbit, -120f, 120f);
-            float len = Dim[Mathf.Clamp(Model.Variant, 0, 11), 0];
+            float len = Dim[Mathf.Clamp(Model.Variant, 0, Dim.GetLength(0) - 1), 0];
             var yawRot = Quaternion.Euler(12f, transform.eulerAngles.y + orbit, 0f);
             var target = transform.position + Vector3.up * 1.3f;
             var camPos = target - yawRot * Vector3.forward * (len + 4.5f) + Vector3.up * 1.2f;

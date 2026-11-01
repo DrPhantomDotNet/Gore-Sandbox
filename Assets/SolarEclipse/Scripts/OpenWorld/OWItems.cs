@@ -83,6 +83,11 @@ namespace SolarEclipse
             Car("c_van", "Getaway Van", 12000, 9, "#dfe6e9", 0.85f, 0.85f, 0.9f, 1.4f, 1.3f, "Room for the whole crew and the loot.");
             Car("c_monster", "Mauler Monster Truck", 90000, 10, "#27ae60", 1f, 1.1f, 1.1f, 2.2f, 2f, "Huge wheels. Crushes cars and Goredolls.");
             Car("c_bike", "Viper Motorbike", 18000, 11, "#e67e22", 1.35f, 1.5f, 1.1f, 0.35f, 0.6f, "Two wheels, no doors, no fear.");
+            // Content Update vehicles (also in the sandbox spawn menu)
+            Car("c_kart", "Go-Kart", 6000, 12, "#e74c3c", 1.0f, 1.4f, 1.4f, 0.3f, 0.5f, "Tiny, twitchy, hilarious.");
+            Car("c_dozer", "Bulldozer", 70000, 13, "#f39c12", 0.45f, 0.9f, 1.3f, 4f, 3f, "Slow. Unstoppable. Pushes cars and bodies out of the way with its blade.");
+            Car("c_tank", "Tank", 400000, 14, "#4b5320", 0.6f, 1.0f, 1.4f, 6f, 6f, "Armoured tank with a cannon: LMB fires a high-explosive shell.");
+            Car("c_cart", "Shopping Cart", 500, 15, "#bdc3c7", 0.55f, 0.7f, 0.8f, 0.15f, 0.3f, "Someone stuck a motor on a shopping cart. Why not.");
 
             // ---------------- 10 car upgrades (Eclipse Customs). variant: 0 paint, 1 neon, 2 nitro, 3 armour, 4 horn
             Wear(OWCat.CarUpgrade, "u_paint_red", "Paint: Candy Red", 1500, "#e3001b", null, 0, false, "Glossy red paint for your car.");
