@@ -91,6 +91,8 @@ namespace SolarEclipse
             { "cars", ("car", new Color(1f, 0.78f, 0.16f)) }, { "customs", ("wrench", new Color(0.3f, 1f, 0.5f)) },
             { "heists", ("flag", new Color(1f, 0.3f, 0.25f)) }, { "apartment", ("home", new Color(1f, 0.85f, 0.5f)) },
             { "race", ("stopwatch", new Color(0.9f, 0.9f, 0.9f)) },
+            { "casino", ("dice", new Color(1f, 0.8f, 0.2f)) }, { "club", ("music", new Color(1f, 0.3f, 0.85f)) },
+            { "marina", ("anchor", new Color(0.3f, 0.7f, 1f)) }, { "heliport", ("wind", new Color(0.4f, 0.8f, 1f)) },
         };
 
         public static List<OWBlip> Blips(bool everything)

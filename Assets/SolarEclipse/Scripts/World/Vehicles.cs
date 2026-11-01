@@ -16,6 +16,7 @@ namespace SolarEclipse
                 var id = it.Id;
                 add("veh_" + id.Substring(2), it.Name, it.Desc + " Press E to drive.", "car", (p, r) => OWCar.Create(OWCar.DefFor(id, "", "", id == "c_super", id == "c_tank", false), p + Vector3.up * 0.6f, r));
             }
+            add("veh_boat", "Speedboat", "Press E to drive. Floats on water (the sea in Port Eclipse) - host / singleplayer.", "anchor", (p, r) => Boat.Create(p + Vector3.up * 0.3f, r));
             add("veh_heli", "Helicopter", "Press E to fly. Space up, Ctrl/C down, W/S forward/back, A/D turn. The rotor blades cut through Goredolls (host / singleplayer).", "wind", (p, r) => Heli.Create(p + Vector3.up * 0.2f, r));
         }
     }

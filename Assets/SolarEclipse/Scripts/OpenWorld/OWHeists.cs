@@ -63,6 +63,25 @@ namespace SolarEclipse
                 Desc = "Downtown. The big one: drill the vault door, load the gold, and get across town alive with SWAT on your tail.",
                 Steps = new[] { new OWHeistStep { Place = "Bank Vault", Label = "Drill the vault door", Seconds = 40f }, new OWHeistStep { Place = "Bank Loot", Label = "Load the gold", Seconds = 15f } },
             },
+            // ---------------- Content Update heists (places: OpenWorld/OWContent.cs)
+            new OWHeistDef
+            {
+                Id = "casino", Name = "The Lucky Eclipse Casino", Payout = 120000, Stars = 3, Guards = 4, GuardPreset = "Soldier", Start = "Casino", Escape = "Marina",
+                Desc = "Midtown. Empty the cashier cage, crack the vault under the casino floor and escape by boat from the marina.",
+                Steps = new[] { new OWHeistStep { Place = "Casino Cage", Label = "Empty the cashier cage", Seconds = 12f }, new OWHeistStep { Place = "Casino Vault", Label = "Crack the casino vault", Seconds = 28f } },
+            },
+            new OWHeistDef
+            {
+                Id = "museum", Name = "The Eclipse Diamond", Payout = 95000, Stars = 3, Guards = 3, Start = "Museum", Escape = "Heliport",
+                Desc = "Downtown. Cut the glass around the world's biggest black diamond in the museum, then fly out from the heliport.",
+                Steps = new[] { new OWHeistStep { Place = "Museum Display", Label = "Cut the display glass", Seconds = 16f } },
+            },
+            new OWHeistDef
+            {
+                Id = "train", Name = "Gold Train Robbery", Payout = 110000, Stars = 4, Guards = 5, GuardPreset = "Soldier", Start = "Rail Yard", Escape = "Gang Hideout",
+                Desc = "The Docks rail yard. Blow the armoured train car doors and load the gold bars before the army arrives.",
+                Steps = new[] { new OWHeistStep { Place = "Train Doors", Label = "Blow the train car doors", Seconds = 10f }, new OWHeistStep { Place = "Train Gold", Label = "Load the gold bars", Seconds = 18f } },
+            },
         };
 
         // Shared state (host writes, clients read).

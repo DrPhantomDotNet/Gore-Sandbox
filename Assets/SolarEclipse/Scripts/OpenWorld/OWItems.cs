@@ -179,9 +179,58 @@ namespace SolarEclipse
             Wear(OWCat.Apartment, "a_sofa", "Leather Sofa", 3500, "#3b2416", null, 8, false, "Comfy.");
             Wear(OWCat.Apartment, "a_cash", "Pile of Cash", 50000, "#2ecc71", null, 9, false, "A big pile of money. Literally.");
 
-            // ---------------- 8 emotes (phone > EMOTES). variant = emote id
-            string[] emotes = { "Wave", "Dance", "Salute", "Flex", "Clap", "Point", "Taunt", "Money Rain" };
-            int[] emotePrices = { 0, 1500, 500, 800, 500, 300, 1200, 25000 };
+
+            // ---------------- Content Update: 51 more items
+            Wear(OWCat.Top, "t_hawaiian", "Hawaiian Shirt", 400, "#ff7f50", null, 0, false, "Vacation mode.");
+            Wear(OWCat.Top, "t_varsity", "Varsity Jacket", 1600, "#8e1b1b", "#f5f5f5", 0, true);
+            Wear(OWCat.Top, "t_camo", "Camo Jacket", 900, "#4b5320", null, 0, true);
+            Wear(OWCat.Top, "t_trench", "Trench Coat", 3200, "#5c4a32", null, 0, true, "Detective vibes.");
+            Wear(OWCat.Top, "t_neon_hoodie", "Neon Hoodie", 2500, "#39ff14", null, 0, true);
+            Wear(OWCat.Top, "t_tactical", "Tactical Vest", 3500, "#2d3436", null, 0, true, "Looks bulletproof. Isn't.");
+            Wear(OWCat.Top, "t_tux_red", "Red Tuxedo", 8000, "#8b0000", "#111111", 0, true);
+            Wear(OWCat.Top, "t_jersey", "Eclipse FC Jersey", 700, "#6c5ce7", "#fdcb6e", 0, false);
+            Wear(OWCat.Top, "t_labcoat", "Lab Coat", 1200, "#f5f6fa", null, 0, true);
+            Wear(OWCat.Top, "t_diamond_jacket", "Diamond Jacket", 75000, "#dff9fb", "#a5f3ff", 0, true, "Covered in crystals. Absurd.");
+            Wear(OWCat.Pants, "p_leather", "Leather Pants", 1800, "#1e1e1e");
+            Wear(OWCat.Pants, "p_gold", "Gold Pants", 12000, "#d4af37");
+            Wear(OWCat.Pants, "p_tactical", "Tactical Pants", 900, "#3d3d29");
+            Wear(OWCat.Pants, "p_red", "Red Trousers", 700, "#a4161a");
+            Wear(OWCat.Shoes, "s_red", "Red Sneakers", 600, "#d63031");
+            Wear(OWCat.Shoes, "s_neon", "Neon Runners", 1500, "#00ff9d");
+            Wear(OWCat.Shoes, "s_diamond", "Diamond Kicks", 45000, "#dff9fb");
+            Wear(OWCat.Jewelry, "j_chain_platinum", "Platinum Chain", 22000, "#e5e4e2", null, 0, false, "Cold and heavy.");
+            Wear(OWCat.Jewelry, "j_watch_platinum", "Platinum Watch", 18000, "#e5e4e2", null, 2, false);
+            Wear(OWCat.Jewelry, "j_grill_diamond", "Diamond Grill", 35000, "#dff9fb", null, 4, false, "Blinding smile.");
+            Wear(OWCat.Glasses, "e_neon", "Neon Shades", 2200, "#ff2fa8", "#00a8ff");
+            Wear(OWCat.Glasses, "e_round", "Round Specs", 400, "#2d3436", "#dfe6e9");
+            Wear(OWCat.Glasses, "e_visor", "Cyber Visor", 9000, "#00d2ff", "#00d2ff");
+            Wear(OWCat.Mask, "m_skull_gold", "Gold Skull", 18000, "#d4af37", "#111111", 0);
+            Wear(OWCat.Mask, "m_clown_evil", "Evil Clown", 3000, "#dfe6e9", "#2d3436", 1);
+            Wear(OWCat.Mask, "m_hockey_blood", "Bloody Hockey Mask", 2500, "#f0f0e0", "#b30000", 2);
+            Wear(OWCat.Mask, "m_ski_white", "White Ski Mask", 600, "#f5f6fa", "#2d3436", 4);
+            Wear(OWCat.Mask, "m_hazmat", "Hazmat Mask", 3500, "#f1c40f", "#2d3436", 5);
+            Wear(OWCat.Mask, "m_robot_gold", "Gold Robot", 15000, "#d4af37", "#ff2fa8", 7);
+            Wear(OWCat.Hat, "h_party", "Party Hat", 300, "#e84393", null, 9);
+            Wear(OWCat.Hat, "h_halo", "Halo", 20000, "#ffeaa7", null, 12);
+            Wear(OWCat.Hat, "h_horns", "Devil Horns", 6000, "#c0392b", null, 13);
+            Wear(OWCat.Hat, "h_army", "Army Helmet", 1500, "#4b5320", null, 7);
+            Wear(OWCat.Hat, "h_headband", "Headband", 250, "#d63031", null, 10);
+            Wear(OWCat.WeaponSkin, "w_lava", "Lava", 12000, "#ff4500", null, 2);
+            Wear(OWCat.WeaponSkin, "w_ice", "Ice", 9000, "#a5f3ff", "#ffffff", 1);
+            Wear(OWCat.WeaponSkin, "w_tiger", "Tiger", 7000, "#f39c12", "#111111", 1);
+            Wear(OWCat.WeaponSkin, "w_zebra", "Zebra", 5000, "#f5f6fa", "#111111", 1);
+            Wear(OWCat.WeaponSkin, "w_money", "Money", 30000, "#27ae60", "#a3e4a1", 1);
+            Wear(OWCat.WeaponSkin, "w_plasma", "Plasma", 14000, "#9b59ff", null, 2);
+            Wear(OWCat.WeaponSkin, "w_obsidian", "Obsidian", 11000, "#0b0b0f", "#2e1a47", 1);
+            Wear(OWCat.WeaponSkin, "w_candy", "Candy", 6000, "#ff9ff3", "#48dbfb", 1);
+            Wear(OWCat.Apartment, "a_cinema", "Home Cinema", 15000, "#111111", null, 10, false, "A projector wall and a row of seats.");
+            Wear(OWCat.Apartment, "a_bar", "Home Bar", 12000, "#5a3a22", null, 11, false, "Bottles, stools and neon.");
+            Wear(OWCat.Apartment, "a_goldbath", "Gold Bathtub", 40000, "#f1c40f", null, 12, false, "A solid gold bathtub. Obviously.");
+            Wear(OWCat.Apartment, "a_dj", "DJ Booth", 9000, "#6c5ce7", null, 13, false, "Decks, speakers and lights.");
+            Wear(OWCat.Apartment, "a_safe", "Gold Safe", 25000, "#d4af37", null, 14, false, "A walk-in safe full of gold bars.");
+            // ---------------- 12 emotes (phone > EMOTES). variant = emote id
+            string[] emotes = { "Wave", "Dance", "Salute", "Flex", "Clap", "Point", "Taunt", "Money Rain", "Bow", "Cheer", "Facepalm", "Robot" };
+            int[] emotePrices = { 0, 1500, 500, 800, 500, 300, 1200, 25000, 400, 600, 300, 2000 };
             for (int i = 0; i < emotes.Length; i++)
                 Add(new OWItem { Id = "x_" + emotes[i].ToLowerInvariant().Replace(" ", ""), Name = emotes[i], Cat = OWCat.Emote, Price = emotePrices[i], Variant = i, Starter = i == 0, Desc = i == 7 ? "Throw money in the air. Everyone sees it." : "Everyone around you sees it." });
         }

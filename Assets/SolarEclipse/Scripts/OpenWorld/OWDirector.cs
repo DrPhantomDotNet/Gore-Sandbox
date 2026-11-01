@@ -276,6 +276,7 @@ namespace SolarEclipse
                 case "exit": if (p != null) p.Teleport(OWMap.ApartmentOutside, 180f); AudioManager.Ui("ui_open"); break;
                 case "locker": UIRoot.Push(new LockerScreen()); break;
                 case "garage": UIRoot.Push(new GarageScreen()); break;
+                default: OWContent.Use(pt); break; // casino, club, bar, marina, heliport (OpenWorld/OWContent.cs)
                 case "race": GameEvents.ShowToast(OWCar.LocalDriving != null ? "Stop on the checkered line to start." : "Bring a car and stop on the checkered line to start a street race."); break;
             }
         }
@@ -532,7 +533,7 @@ namespace SolarEclipse
                 case OWReq.CallCar: HostCallCar(pid, s, v, n); break;
                 case OWReq.Drive: { var ne = NetEntity.Get(e); var car = ne != null ? ne.GetComponent<OWCar>() : null; if (car != null) HostDrive(pid, car); break; }
                 case OWReq.ExitCar: { var ne = NetEntity.Get(e); var car = ne != null ? ne.GetComponent<OWCar>() : null; if (car != null) HostExit(pid, car); break; }
-                case OWReq.Emote: if (n >= 0 && n < 8) nm.OWEvent(255, OWEv.Emote, pid, "", n); break;
+                case OWReq.Emote: if (n >= 0 && n < 12) nm.OWEvent(255, OWEv.Emote, pid, "", n); break;
                 case OWReq.Text:
                     if (!nm.OWHasPlayer(target) || target == pid || string.IsNullOrWhiteSpace(s)) break;
                     if (lastText.TryGetValue(pid, out var lt) && Time.time - lt < 0.4f) break;

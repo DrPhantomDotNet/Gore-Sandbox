@@ -62,7 +62,11 @@ namespace SolarEclipse
         public static void Send(byte to, string s, long n = 0, Vector3 v = default) => NetManager.I.OWEvent(to, OWEv.ModeEvent, 255, s, n, v);
         public static void Request(string s, long n = 0, Vector3 v = default) => NetManager.I.OWRequest(OWReq.ModeReq, s, n, v);
         public static void HostRequest(byte pid, string s, long n, Vector3 v) { if (ModeBase.Current != null) ModeBase.Current.HostRequest(pid, s, n, v); }
-        public static void OnEvent(string s, long n, Vector3 v) { if (ModeBase.Current != null) ModeBase.Current.OnEvent(s, n, v); }
+        public static void OnEvent(string s, long n, Vector3 v)
+        {
+            if (s.StartsWith("turf:")) { OWTerritories.OnKill(s.Substring(5)); return; } // Open World gang territories
+            if (ModeBase.Current != null) ModeBase.Current.OnEvent(s, n, v);
+        }
     }
 
     /// <summary>Shared bits: current mode, banner, HUD hook, local loadout.</summary>

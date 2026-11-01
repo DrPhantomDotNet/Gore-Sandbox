@@ -117,7 +117,8 @@ namespace SolarEclipse
 
             // ---------------- edges: sea to the east, a wall elsewhere
             m.Box("Sea", new Vector3(260, -0.6f, 0), Quaternion.identity, new Vector3(150, 0.05f, 420), Mats.Lit, SurfaceType.Glass, new Color(0.04f, 0.12f, 0.2f), 1f, false);
-            m.Boundaries(new Bounds(new Vector3(0, 30, 0), new Vector3(OWMap.Half * 2f, 60, OWMap.Half * 2f)));
+            // The east edge opens onto the sea (boats from the marina); walk off the quay and you fall in.
+            m.Boundaries(new Bounds(new Vector3(72f, 30, 0), new Vector3(OWMap.Half * 2f + 144f, 60, OWMap.Half * 2f)));
 
             Apartment(m);
 
@@ -127,6 +128,7 @@ namespace SolarEclipse
             m.Playable = new Bounds(new Vector3(0, 3f, 0), new Vector3(OWMap.Half * 2f, 10f, OWMap.Half * 2f));
             m.KillY = -90f;
             m.Root.gameObject.AddComponent<OWDirector>();
+            m.Root.gameObject.AddComponent<OWTerritories>(); // gang turf (OpenWorld/OWContent.cs)
         }
 
         static bool Near(float t) { foreach (var l in Lines) if (Mathf.Abs(t - l) < 8f) return true; return false; }
@@ -136,7 +138,7 @@ namespace SolarEclipse
         static readonly Color[] Tints = { new Color(0.75f, 0.72f, 0.66f), new Color(0.55f, 0.6f, 0.68f), new Color(0.7f, 0.55f, 0.45f), new Color(0.6f, 0.62f, 0.6f), new Color(0.45f, 0.5f, 0.58f), new Color(0.82f, 0.78f, 0.7f) };
 
         /// <summary>A solid building with glowing window strips (one object per floor and face, cheap on phones).</summary>
-        static void Tower(MapBuilder m, Vector3 min, Vector3 max, Texture2D tex, Color tint, bool lit = true)
+        internal static void Tower(MapBuilder m, Vector3 min, Vector3 max, Texture2D tex, Color tint, bool lit = true)
         {
             m.Block("Building", min, max, MapBuilder.Tex(tex), SurfaceType.Concrete, tint, 0.25f);
             m.Block("Roof", new Vector3(min.x - 0.25f, max.y, min.z - 0.25f), new Vector3(max.x + 0.25f, max.y + 0.5f, max.z + 0.25f), MapBuilder.Tex(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.5f, 0.5f, 0.52f), 0.5f, false);
@@ -159,7 +161,7 @@ namespace SolarEclipse
         }
 
         /// <summary>A shop front: a building with a lit sign and an interactable door on the street side (facing -Z unless flipped).</summary>
-        static void Shop(MapBuilder m, Vector3 c, string kind, string sign, Color signCol, float height = 9f, bool facePlusZ = false)
+        internal static void Shop(MapBuilder m, Vector3 c, string kind, string sign, Color signCol, float height = 9f, bool facePlusZ = false)
         {
             var min = c + new Vector3(-16, 0.15f, -14); var max = c + new Vector3(16, height, 14);
             Tower(m, min, max, TextureFactory.Plaster, new Color(0.85f, 0.82f, 0.78f), false);
@@ -175,7 +177,7 @@ namespace SolarEclipse
         }
 
         /// <summary>A hollow building: floor, ceiling, walls, a doorway on the -Z side. Returns the inside bounds.</summary>
-        static Bounds Room(MapBuilder m, Vector3 min, Vector3 max, Texture2D wallTex, Color tint, float doorX, float doorW = 3f)
+        internal static Bounds Room(MapBuilder m, Vector3 min, Vector3 max, Texture2D wallTex, Color tint, float doorX, float doorW = 3f)
         {
             var wall = MapBuilder.Tex(wallTex);
             const float t = 0.4f;
@@ -259,9 +261,15 @@ namespace SolarEclipse
                 // ---------------- Docks
                 case 50: DocksYard(m, c, true); break;
                 case 51: DocksYard(m, c, false); break;
-                case 40: case 41: Tower(m, c + new Vector3(-20, 0.15f, -20), c + new Vector3(20, 10f, 20), TextureFactory.Metal, new Color(0.4f, 0.45f, 0.5f), false); Parked(m, c + new Vector3(-27f, 0, 5f), 0f); break;
+                case 40: OWContentMap.RailYard(m, c); break;
+                case 41: Tower(m, c + new Vector3(-20, 0.15f, -20), c + new Vector3(20, 10f, 20), TextureFactory.Metal, new Color(0.4f, 0.45f, 0.5f), false); Parked(m, c + new Vector3(-27f, 0, 5f), 0f); break;
                 // ---------------- tall Downtown / Midtown edges
-                case 24: case 34: case 25: case 35: Generic(m, c, i, j, 30f, 70f); break;
+                // ---------------- Content Update: casino, museum, nightclub, heliport, rail yard, marina (OpenWorld/OWContent.cs)
+                case 24: OWContentMap.Casino(m, c); break;
+                case 34: OWContentMap.Museum(m, c); break;
+                case 25: OWContentMap.Nightclub(m, c); break;
+                case 35: OWContentMap.Heliport(m, c); break;
+                case 53: OWContentMap.Marina(m, c); break;
                 default: Generic(m, c, i, j, 10f, 28f); break;
             }
         }
@@ -449,6 +457,11 @@ namespace SolarEclipse
                 o + new Vector3(8f, 0.15f, 9.5f),    // 7 aquarium
                 o + new Vector3(6f, 0.15f, -2f),     // 8 sofa
                 o + new Vector3(-3f, 0.15f, 9f),     // 9 cash pile
+                o + new Vector3(-6f, 2.6f, -7.7f),   // 10 home cinema (screen)
+                o + new Vector3(9f, 0.15f, 0.5f),    // 11 home bar
+                o + new Vector3(-9f, 0.15f, 9f),     // 12 gold bathtub
+                o + new Vector3(3f, 0.15f, 10.5f),   // 13 DJ booth
+                o + new Vector3(10.5f, 0.15f, -6f),  // 14 gold safe
             };
         }
 
