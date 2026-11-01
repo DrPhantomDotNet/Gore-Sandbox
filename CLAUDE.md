@@ -53,6 +53,15 @@ Whenever a change is made, release it — don't leave it unpushed:
 - Network: Msg 230-241 in `OWNet.cs` (requests and events share one layout). Interactables that act locally implement
   `ILocalInteractable` so clients don't relay them to the host.
 
+## Content Update (v0.12.0)
+
+- Weapons `Weapons/ContentPack.cs`; NPC types/giants/skeletons `Goredoll/NpcTypes.cs` (preset tokens "~t", "~g", "~s"); animals
+  `Goredoll/Animals.cs`; machines `World/Machines.cs`; spawnable vehicles `World/Vehicles.cs`; maps `World/ContentMaps.cs`.
+- Game modes + daily challenges `Game/GameModes.cs` (mode net traffic: OWReq.ModeReq / OWEv.ModeEvent). Open World extras
+  `OpenWorld/OWContent.cs`. Story chapter 2 `Story/Chapter2.cs` (reads chapter 1 ending achievements).
+- `Game/Creations.cs`: share codes (`GSMAP1:` maps, `GSBOX1:` sandbox saves), sandbox saves (only `Spawned.ByPlayer`
+  objects), Prop Editor props whose id `cprop:<base64>` carries the whole definition (clients rebuild from the id), photo gallery.
+
 ## Conventions
 
 - UI is IMGUI through the `UI` static class (`UI/UIKit.cs`) on a virtual canvas 1080 units high.

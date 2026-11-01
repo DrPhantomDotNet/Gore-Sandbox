@@ -5,7 +5,46 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.11.0 — OPEN WORLD</size></b>
+@"<b><size=30>v0.12.0 — THE CONTENT UPDATE</size></b>
+<color=#ff9a40>The biggest update yet: 5 maps, 16 weapons, new Goredolls and animals, 20 machines, vehicles, 4 game modes, story chapter 2 and much more.</color>
+<b>5 NEW MAPS</b>
+• St. Mercy Hospital: wards, an operating theatre, a morgue and a lift to the second floor
+• Subway Station: two platforms, tunnels, a live third rail and trains that don't brake
+• Slaughterhouse: meat hooks, conveyors into the wood chipper and shredder, and a freezer
+• Construction Site: a five-floor steel frame, a crane swinging a girder, a cement mixer and beams falling from the top floor
+• Blackgate Prison: two-tier cell block, the yard, the cafeteria, the electric chair and a RIOT button
+<b>16 NEW WEAPONS</b>
+• Crossbow (pins bodies to walls), Flamethrower, Nail Gun, Tranquilizer, Laser Cutter, Freeze Ray (frozen bodies shatter) and the Harpoon Chain Gun
+• Sentry Turret you can place, Throwing Knives, Shuriken and a Boomerang Blade that comes back
+• Melee: flail, scythe, nail board, giant hammer and spear
+<b>NEW GOREDOLLS</b>
+• Doctor, prisoner, worker, chef, clown, astronaut, cop and ninja Goredolls
+• Giants (three times as tall and much stronger) and skeletons
+• Animals: dog, pig and cow. They walk around, bleed and lose legs like everyone else
+<b>20 MACHINES AND VEHICLES</b>
+• Wood chipper, shredder, piston crusher, conveyor belt, saw wall, tesla coil, electric chair, bear trap, guillotine, meat hook
+• Rocket chair, trampoline, catapult, wrecking ball, pinball flippers, wind tunnel, magnet crane, washing machine, microwave and can cannon
+• Spawn and drive every car, plus a tank (LMB fires the cannon), a bulldozer, a go-kart, a shopping cart, a boat and a helicopter
+<b>4 GAME MODES + DAILY CHALLENGES</b>
+• Main menu > MODES: Zombie Survival (waves, press B for the shop), Gore Golf, Tournament (1v1 duels) and Hide & Seek
+• Main menu > DAILY: three new challenges every day, with cash rewards for the Open World
+<b>STORY CHAPTER 2: COLD BLOOD</b>
+• 4 missions: St. Mercy, Last Train, Meat and Blackgate. Big Marcus is back, and the Surgeon is harvesting people
+• Your chapter 1 ending changes how it starts, and your choices carry through the chapter
+• New bosses (the Butcher and the Warden), cutscenes, 3 new endings and new credits
+• Pick the chapter with the tabs at the top of PLAY STORY
+<b>OPEN WORLD</b>
+• 3 new heists: The Lucky Eclipse Casino, The Eclipse Diamond (museum) and the Gold Train Robbery
+• Casino with slots, roulette and blackjack, a nightclub, a marina (rent a boat) and a heliport (rent a helicopter)
+• Gang territories: take over Southside, the Docks and Industrial for money every 10 minutes
+• 51 new items: clothes, skins and penthouse furniture, plus 4 new emotes
+<b>NEW TOOLS</b>
+• Pause > CREATIONS: save everything you spawned on a map, load it again later, or share it with a code
+• Prop Editor: make your own props (shape, size, colour, material, weight and a behaviour like explosive, bouncy, floaty or on fire). They show up in the spawn menu
+• Map editor: COPY SHARE CODE and IMPORT MAP CODE to share your maps
+• Photo mode 2.0: 8 new filters, cinema bars, a grid, a self-timer, Goredoll poses, action shots with time running, and a photo gallery
+
+<b><size=30>v0.11.0 — OPEN WORLD</size></b>
 <color=#ff9a40>A new multiplayer mode: Port Eclipse, a whole city you share with other players. Your cash is saved.</color>
 <b>HOW TO PLAY</b>
 • Multiplayer > OPEN WORLD: host a Port Eclipse server, join one from the list, or PLAY SOLO

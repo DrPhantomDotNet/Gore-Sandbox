@@ -18,6 +18,8 @@ namespace SolarEclipse
     {
         public string DefId;
         public string DisplayName;
+        /// <summary>Spawned by a player (spawn menu / Spawn Gun), not built by the map. Sandbox saves keep only these.</summary>
+        public bool ByPlayer;
     }
 
     /// <summary>Builds physics props from code. All props are dynamic rigidbodies on the Props layer.</summary>
@@ -64,6 +66,14 @@ namespace SolarEclipse
                 var sp = car.AddComponent<Spawned>(); sp.DefId = id; sp.DisplayName = car.name;
                 if (NetState.IsHost) NetManager.I.OnPropSpawned(car, id);
                 return car.GetComponent<Rigidbody>();
+            }
+            if (id != null && id.StartsWith(CustomProps.Prefix)) // Prop Editor props: the id holds the whole definition (Game/Creations.cs)
+            {
+                var cp = CustomProps.Build(id, pos, rot);
+                if (cp == null) return null;
+                var cs = cp.AddComponent<Spawned>(); cs.DefId = id; cs.DisplayName = cp.name;
+                if (NetState.IsHost) NetManager.I.OnPropSpawned(cp, id);
+                return cp.GetComponent<Rigidbody>();
             }
             foreach (var p in Props)
                 if (p.Id == id)

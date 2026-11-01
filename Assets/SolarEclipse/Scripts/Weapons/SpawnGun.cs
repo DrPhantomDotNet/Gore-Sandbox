@@ -56,6 +56,7 @@ namespace SolarEclipse
         {
             foreach (var l in new[] { AI, Items, Props, Entities })
                 foreach (var d in l) if (d.Id == id) return d;
+            if (id != null && id.StartsWith(CustomProps.Prefix)) return CustomProps.DefForId(id); // Prop Editor props (Game/Creations.cs)
             return CustomDolls.DefForId(id); // "custom:<code>" (Goredoll/CustomDolls.cs), also for client requests
 
         }
@@ -78,6 +79,7 @@ namespace SolarEclipse
             var s = go.GetComponent<Spawned>() ?? go.AddComponent<Spawned>();
             s.DefId = def.Id;
             s.DisplayName = def.Name;
+            s.ByPlayer = true;
             SpawnGun.UndoStack.Add(go);
             Stats.Add("spawned");
             if (SpawnFrozen && def.Category != "AI")

@@ -589,6 +589,11 @@ namespace SolarEclipse
                 if (UI.Button(new Rect(bx + (bw + 10) * 3, y, bw, 60), "DELETE", ButtonKind.Danger, IconFactory.Get("trash"), 22))
                     UIRoot.Push(new ConfirmDialog("Delete map?", "\"" + e.Data.Name + "\" will be gone for good.", () => CustomMaps.Delete(e), "DELETE", ButtonKind.Danger));
                 y += 76;
+                if (UI.Button(new Rect(bx + (bw + 10) * 2, y, bw * 2 + 10, 54), "COPY SHARE CODE", ButtonKind.Ghost, IconFactory.Get("copy"), 20))
+                {
+                    try { ShareCode.Copy(ShareCode.MapCode(e.Data), "Map"); }
+                    catch (System.Exception ex) { GameEvents.ShowToast("Couldn't make the code: " + ex.Message); }
+                }
                 if (UI.Button(new Rect(bx, y, bw * 2 + 10, 54), "DUPLICATE", ButtonKind.Ghost, IconFactory.Get("copy"), 20))
                 {
                     var copy = e.Data.Clone();
@@ -601,7 +606,9 @@ namespace SolarEclipse
             }
             else UI.Label(new Rect(d.x + 30, d.y + 30, d.width - 60, 80), "Create a map to get started.", 24, UI.Muted);
 
-            UI.Label(new Rect(330, H - 100, W - 400, 64), "Folder: " + CustomMaps.Dir, 15, UI.Muted.WithAlpha(0.7f));
+            if (UI.Button(new Rect(330, H - 100, 300, 64), "IMPORT MAP CODE", ButtonKind.Normal, IconFactory.Get("plus"), 20))
+                UIRoot.Push(new CodeImportDialog("Import map", "Paste a map code (starts with " + ShareCode.MapPrefix + "). It's saved as a new map you can play, host and edit.", c => { var err = ShareCode.ImportMap(c); if (err == null) { selected = 0; GameEvents.ShowToast("Map imported."); } return err; }));
+            UI.Label(new Rect(650, H - 100, W - 720, 64), "Folder: " + CustomMaps.Dir, 15, UI.Muted.WithAlpha(0.7f));
             if (UI.Button(new Rect(70, H - 100, 240, 64), "BACK", ButtonKind.Normal, IconFactory.Get("arrow_left"))) OnBack();
         }
     }

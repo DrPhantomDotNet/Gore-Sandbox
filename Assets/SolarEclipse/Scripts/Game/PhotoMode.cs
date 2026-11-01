@@ -10,7 +10,38 @@ namespace SolarEclipse
     /// </summary>
     public static class PhotoMode
     {
-        public static readonly string[] FilterNames = { "None", "Black & white", "Sepia", "High contrast", "Vignette" };
+        public static readonly string[] FilterNames = { "None", "Black & white", "Sepia", "High contrast", "Vignette", "Blood red", "Noir", "Neon", "Night vision", "Warm", "Cold", "Comic", "Film grain" };
+        public static readonly string[] TimerNames = { "Off", "3 seconds", "10 seconds" };
+        public static readonly string[] PoseNames = { "Wave", "Dance", "Hands up", "Cower", "Fight stance", "Punch", "Brace", "Look around", "Writhe" };
+        static readonly PoseMode[] Poses = { PoseMode.Wave, PoseMode.Dance, PoseMode.HandsUp, PoseMode.Cower, PoseMode.Guard, PoseMode.Punch, PoseMode.Brace, PoseMode.LookAround, PoseMode.Writhe };
+        public static bool Letterbox, Grid, LiveTime;
+        public static int Timer, PoseIndex;
+        /// <summary>Unscaled time the self-timer fires at (0 = no countdown).</summary>
+        public static float CountdownEnd;
+        /// <summary>Unscaled time until which singleplayer time runs so posed Goredolls can move into the pose.</summary>
+        public static float PoseRunUntil;
+        public static Vector3 CameraPosition => cam != null ? cam.transform.position : Vector3.zero;
+
+        /// <summary>Every standing Goredoll within 25 m of the photo camera takes the pose and turns to face the camera.</summary>
+        public static int PoseNearby()
+        {
+            if (!Active || NetState.IsClient) { if (NetState.IsClient) GameEvents.ShowToast("Only the host can pose Goredolls."); return 0; }
+            var at = CameraPosition; int n = 0;
+            foreach (var d in Goredoll.All)
+            {
+                if (d == null || d.Ragdoll == null || d.Vitals == null || d.Vitals.State == LifeState.Dead) continue;
+                var to = at - d.Position; to.y = 0f;
+                if (to.magnitude > 25f) continue;
+                d.Ragdoll.HoldPose = Poses[Mathf.Clamp(PoseIndex, 0, Poses.Length - 1)];
+                d.Ragdoll.HoldPoseT = 30f;
+                d.Ragdoll.HoldYaw = to.sqrMagnitude > 0.01f ? Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg : d.transform.eulerAngles.y;
+                n++;
+            }
+            if (n > 0) PoseRunUntil = Time.unscaledTime + 1.6f;
+            return n;
+        }
+
+        public static void ReleasePoses() { foreach (var d in Goredoll.All) if (d != null && d.Ragdoll != null) d.Ragdoll.HoldPoseT = 0f; }
 
         public static bool Active => cam != null;
         public static float Fov = 60f, Roll, Exposure;
@@ -60,6 +91,8 @@ namespace SolarEclipse
             Object.Destroy(cam.gameObject);
             cam = null;
             Capturing = false;
+            CountdownEnd = 0f; PoseRunUntil = 0f;
+            ReleasePoses();
             if (p != null) { if (p.Cam != null) p.Cam.enabled = true; if (p.ViewCam != null) p.ViewCam.enabled = Settings.Data.viewmodel; }
             if (GameManager.I != null) GameManager.I.HudHidden = savedHudHidden;
             AudioManager.Ui("ui_close", 0.6f);
@@ -67,8 +100,23 @@ namespace SolarEclipse
 
         public static void TakePhoto()
         {
-            if (!Active || Capturing || GameManager.I == null) return;
-            GameManager.I.StartCoroutine(Capture());
+            if (!Active || Capturing || GameManager.I == null || CountdownEnd > 0f) return;
+            if (Timer > 0) GameManager.I.StartCoroutine(Countdown(Timer == 1 ? 3f : 10f));
+            else GameManager.I.StartCoroutine(Capture());
+        }
+
+        static IEnumerator Countdown(float secs)
+        {
+            CountdownEnd = Time.unscaledTime + secs;
+            int last = -1;
+            while (Active && Time.unscaledTime < CountdownEnd)
+            {
+                int left = Mathf.CeilToInt(CountdownEnd - Time.unscaledTime);
+                if (left != last) { last = left; AudioManager.Ui("ui_tab"); }
+                yield return null;
+            }
+            CountdownEnd = 0f;
+            if (Active) yield return Capture();
         }
 
         static IEnumerator Capture()
@@ -99,15 +147,17 @@ namespace SolarEclipse
         /// <summary>Exposure, filter and vignette applied exactly to the saved image (the on-screen preview is an approximation).</summary>
         static void ApplyFilters(Texture2D tex)
         {
-            if (Mathf.Abs(Exposure) < 0.001f && Filter == 0) return;
+            if (Mathf.Abs(Exposure) < 0.001f && Filter == 0 && !Letterbox) return;
             var px = tex.GetPixels32();
             int w = tex.width, h = tex.height;
             float gain = Mathf.Pow(2f, Exposure);
             float cx = w * 0.5f, cy = h * 0.5f, inv = 1f / Mathf.Sqrt(cx * cx + cy * cy);
+            int bar = Letterbox ? Mathf.Max(0, Mathf.RoundToInt((h - w / 2.39f) * 0.5f)) : 0;
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                 {
                     int i = y * w + x;
+                    if (y < bar || y >= h - bar) { px[i] = new Color32(0, 0, 0, 255); continue; }
                     var c = px[i];
                     float r = c.r / 255f * gain, g = c.g / 255f * gain, b = c.b / 255f * gain;
                     switch (Filter)
@@ -131,12 +181,49 @@ namespace SolarEclipse
                             float v = 1f - 0.8f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((d - 0.35f) / 0.65f));
                             r *= v; g *= v; b *= v; break;
                         }
+                        case 5: { float l = r * 0.299f + g * 0.587f + b * 0.114f; r = Mathf.Max(r * 1.25f, l * 1.1f); g = l * 0.42f + g * 0.12f; b = l * 0.38f + b * 0.1f; break; }
+                        case 6:
+                        {
+                            float l = (r * 0.299f + g * 0.587f + b * 0.114f - 0.5f) * 1.8f + 0.45f;
+                            float dx = x - cx, dy = y - cy, d = Mathf.Sqrt(dx * dx + dy * dy) * inv;
+                            l *= 1f - 0.7f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((d - 0.3f) / 0.7f));
+                            r = g = b = l; break;
+                        }
+                        case 7:
+                        {
+                            float l = r * 0.299f + g * 0.587f + b * 0.114f;
+                            r = l + (r - l) * 1.9f; g = l + (g - l) * 1.9f; b = l + (b - l) * 1.9f;
+                            r = (r * 1.1f - 0.5f) * 1.2f + 0.5f; g = (g * 0.85f - 0.5f) * 1.2f + 0.5f; b = (b * 1.3f - 0.5f) * 1.2f + 0.5f; break;
+                        }
+                        case 8:
+                        {
+                            float l = (r * 0.299f + g * 0.587f + b * 0.114f) * 1.6f + 0.05f + (Hash(x, y) - 0.5f) * 0.18f;
+                            if (y % 3 == 0) l *= 0.78f;
+                            r = l * 0.25f; g = l * 1.15f; b = l * 0.3f; break;
+                        }
+                        case 9: r *= 1.12f; g *= 1.03f; b *= 0.84f; break;
+                        case 10: r *= 0.84f; g *= 1.0f; b *= 1.16f; break;
+                        case 11:
+                        {
+                            float l = r * 0.299f + g * 0.587f + b * 0.114f;
+                            r = l + (r - l) * 1.5f; g = l + (g - l) * 1.5f; b = l + (b - l) * 1.5f;
+                            r = Mathf.Round(Mathf.Clamp01(r) * 4f) / 4f; g = Mathf.Round(Mathf.Clamp01(g) * 4f) / 4f; b = Mathf.Round(Mathf.Clamp01(b) * 4f) / 4f; break;
+                        }
+                        case 12:
+                        {
+                            float l = r * 0.299f + g * 0.587f + b * 0.114f, n = (Hash(x, y) - 0.5f) * 0.16f;
+                            r = Mathf.Lerp(r, l * 1.08f, 0.35f) + n; g = Mathf.Lerp(g, l, 0.35f) + n; b = Mathf.Lerp(b, l * 0.85f, 0.35f) + n;
+                            float dx = x - cx, dy = y - cy, d = Mathf.Sqrt(dx * dx + dy * dy) * inv, v = 1f - 0.4f * Mathf.SmoothStep(0f, 1f, d);
+                            r *= v; g *= v; b *= v; break;
+                        }
                     }
                     px[i] = new Color32((byte)(Mathf.Clamp01(r) * 255f), (byte)(Mathf.Clamp01(g) * 255f), (byte)(Mathf.Clamp01(b) * 255f), 255);
                 }
             tex.SetPixels32(px);
             tex.Apply(false);
         }
+
+        static float Hash(int x, int y) { float v = Mathf.Sin(x * 12.9898f + y * 78.233f) * 43758.5453f; return v - Mathf.Floor(v); }
     }
 
     /// <summary>The free-fly photo camera: WASD, Q/E down/up, Shift faster, Ctrl slower; hold RMB (or hide the panel) to look.</summary>

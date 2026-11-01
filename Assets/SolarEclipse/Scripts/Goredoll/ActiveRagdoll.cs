@@ -27,6 +27,8 @@ namespace SolarEclipse
         public float AimWeight, AimPitch;
         /// <summary>Muscle multiplier (Giant Goredolls are much heavier: Goredoll/NpcTypes.cs).</summary>
         public float StrengthMul = 1f;
+        /// <summary>Photo mode poses: while HoldPoseT > 0 the body holds this pose and faces HoldYaw, whatever the brain wants.</summary>
+        public PoseMode HoldPose; public float HoldPoseT, HoldYaw;
         public bool AimRifle;
 
         Goredoll doll;
@@ -173,6 +175,7 @@ namespace SolarEclipse
             float strength = GlobalStrength();
             var pelvis = Rb(PartType.Pelvis);
             if (pelvis == null) return;
+            if (HoldPoseT > 0f) { HoldPoseT -= dt; Pose = HoldPose; DesiredVelocity = Vector3.zero; DesiredYaw = HoldYaw; }
 
             UpdateState(pelvis, strength, dt);
             ComputePose(dt, pelvis);
