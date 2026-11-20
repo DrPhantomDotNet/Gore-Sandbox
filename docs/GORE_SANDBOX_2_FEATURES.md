@@ -970,10 +970,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 917. Prop Hunt
 918. [x] Gun Game
 919. One in the Chamber
-920. Last Man Standing
+920. [x] Last Man Standing
 921. Horde defence with base building
-922. Escape the maze
-923. Parkour race
+922. [x] Escape the maze
+923. [x] Parkour race
 924. Car derby
 925. [x] Ragdoll Olympics (longest throw, highest fall)
 926. [x] Trap gauntlet (survive the traps)
@@ -985,7 +985,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 932. Police chase
 933. Zombie outbreak city
 934. Nextbot chase (improved)
-935. Boss rush
+935. [x] Boss rush
 936. [x] Wave survival with shop (improved)
 937. Daily challenges (more types)
 938. Weekly challenges

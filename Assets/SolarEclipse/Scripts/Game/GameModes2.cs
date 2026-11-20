@@ -34,6 +34,7 @@ namespace SolarEclipse
             yield return Mode("koth", "King of the Hill", "Mode - hill arena", "flag", TimeOfDay.BloodMoon,
                 "Stand on the hill. Angry Goredolls keep coming to knock you off it. Every second on top scores. 2 minute rounds.",
                 new[] { "Hill zone", "Endless brawlers", "Best score saved" }, new Color(0.25f, 0.02f, 0.02f), new Color(0.5f, 0.3f, 0.15f), new Color(1f, 0.85f, 0.3f), BuildHill);
+            foreach (var d in GameModes3.Defs()) yield return d; // Game/GameModes3.cs
         }
 
         // ------------------------------------------------------------------ maps
