@@ -89,6 +89,7 @@ namespace SolarEclipse
             bool repaint = Event.current.type == EventType.Repaint;
 
             FilmLook.Draw(W, H);
+            if (repaint) LensDrops.Draw(W, H, Weather.RainOnLens && p.ThirdPersonBlend < 0.5f);
             DrawDamageVignette(p, W, H);
             if (gm.HudHidden) { DrawDeath(p, W, H); return; }
 

@@ -230,6 +230,7 @@ namespace SolarEclipse
             light.type = LightType.Point; light.color = color; light.range = range; light.intensity = intensity; light.shadows = LightShadows.None;
             Lamps.Add(light);
             head.AddComponent<ShootableLight>().Init(light, head.GetComponent<MeshRenderer>());
+            FlickerLight.Maybe(light, head.GetComponent<MeshRenderer>(), 0.12f); // a few faulty tubes (Gore/GoreRework.cs)
             return light;
         }
 

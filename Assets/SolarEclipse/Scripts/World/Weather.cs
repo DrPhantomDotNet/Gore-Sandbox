@@ -13,6 +13,8 @@ namespace SolarEclipse
     {
         public static Weather Current { get; private set; }
         public WeatherKind Kind { get; private set; }
+        /// <summary>Rain is hitting the camera (wet weather and nothing overhead): lens drops in the HUD.</summary>
+        public static bool RainOnLens => Current != null && !Current.sheltered && (Current.Kind == WeatherKind.Rain || Current.Kind == WeatherKind.Thunderstorm || Current.Kind == WeatherKind.BloodRain);
 
         ParticleSystem drops, splashes, flakes;
         AudioSource rainLoop;

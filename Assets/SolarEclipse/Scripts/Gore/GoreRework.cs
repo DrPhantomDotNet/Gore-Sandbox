@@ -372,3 +372,59 @@ namespace SolarEclipse
         }
     }
 }
+
+namespace SolarEclipse
+{
+    /// <summary>A faulty fluorescent tube: mostly on, with random stutters and a buzz (a few ceiling lights per map).</summary>
+    public sealed class FlickerLight : MonoBehaviour
+    {
+        Light l; Renderer glow; float baseI, next, offUntil;
+        public static void Maybe(Light light, Renderer r, float chance)
+        {
+            if (light == null || Random.value > chance) return;
+            var f = light.gameObject.AddComponent<FlickerLight>(); f.l = light; f.glow = r; f.baseI = light.intensity;
+        }
+        void Update()
+        {
+            if (l == null || !l.enabled) return; // shot out
+            if (Time.time >= next)
+            {
+                next = Time.time + Random.Range(0.6f, 6f);
+                offUntil = Time.time + Random.Range(0.04f, 0.35f);
+                if (Random.value < 0.3f) AudioManager.Play("intro_buzz", transform.position, 0.25f, Random.Range(0.9f, 1.1f), 1f, 1f, 12f);
+            }
+            bool off = Time.time < offUntil && Mathf.PerlinNoise(Time.time * 40f, 0f) > 0.4f;
+            l.intensity = off ? baseI * 0.05f : baseI;
+            if (glow != null) glow.enabled = !off;
+        }
+    }
+
+    /// <summary>Raindrops that land on the camera lens and run down it while you're out in the rain (HUD layer).</summary>
+    public static class LensDrops
+    {
+        struct Drop { public Vector2 P; public float R, Born, Speed; }
+        static readonly System.Collections.Generic.List<Drop> drops = new System.Collections.Generic.List<Drop>();
+        static float acc;
+
+        public static void Draw(float W, float H, bool raining)
+        {
+            float dt = Time.deltaTime;
+            if (raining && drops.Count < 40)
+            {
+                acc += dt * 6f;
+                while (acc >= 1f) { acc -= 1f; drops.Add(new Drop { P = new Vector2(Random.Range(0f, W), Random.Range(0f, H * 0.8f)), R = Random.Range(6f, 22f), Born = Time.time, Speed = Random.value < 0.3f ? Random.Range(40f, 120f) : 0f }); }
+            }
+            for (int i = drops.Count - 1; i >= 0; i--)
+            {
+                var d = drops[i];
+                float age = Time.time - d.Born;
+                if (age > 4f || d.P.y > H) { drops.RemoveAt(i); continue; }
+                d.P.y += d.Speed * dt; drops[i] = d;
+                float a = Mathf.Clamp01(1f - age / 4f) * 0.55f;
+                UI.Tex(new Rect(d.P.x - d.R, d.P.y - d.R, d.R * 2f, d.R * 2f), TextureFactory.Ring, new Color(0.85f, 0.9f, 1f, a));
+                UI.Tex(new Rect(d.P.x - d.R * 0.4f, d.P.y - d.R * 0.6f, d.R * 0.5f, d.R * 0.5f), TextureFactory.Circle, new Color(1f, 1f, 1f, a * 0.6f));
+                if (d.Speed > 0f) UI.Fill(new Rect(d.P.x - 1f, d.P.y - d.R * 3f, 2f, d.R * 2.5f), new Color(0.85f, 0.9f, 1f, a * 0.4f));
+            }
+        }
+    }
+}

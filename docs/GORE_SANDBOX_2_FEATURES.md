@@ -113,8 +113,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 96. Puddle reflections (fake)
 97. Better skybox gradients per time of day
 98. Procedural clouds that move
-99. Stars and moon at night
-100. Lightning flashes lighting the map
+99. [x] Stars and moon at night
+100. [x] Lightning flashes lighting the map
 101. Higher-resolution procedural textures
 102. Concrete with cracks and stains
 103. Tiles with grout and dirt
@@ -128,7 +128,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 111. Distance-based texture blending to hide tiling
 112. Better window glass with reflections
 113. Emissive signs with flicker
-114. Flickering broken lights
+114. [x] Flickering broken lights
 115. Muzzle flash lights casting on walls
 116. Explosion light flashes
 117. Fire light flicker
@@ -136,15 +136,15 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 119. Light cookies for lamps (patterns)
 120. Glass shatter with sharp shards
 121. Bullet holes per material with depth look
-122. Sparks on metal impacts
-123. Wood splinters on wood impacts
-124. Concrete chunks and dust puffs
+122. [x] Sparks on metal impacts
+123. [x] Wood splinters on wood impacts
+124. [x] Concrete chunks and dust puffs
 125. [x] Screen-space blood on the lens (option)
-126. Rain droplets on the camera lens
+126. [x] Rain droplets on the camera lens
 127. Heat haze over fire and explosions
 128. Smoke that lingers and drifts
 129. Graphics presets Low/Medium/High/Ultra
-130. Auto-detect best preset on first launch
+130. [x] Auto-detect best preset on first launch
 131. Render scale slider
 132. [x] FPS limiter (30/60/90/120/unlimited)
 133. [x] V-sync toggle
@@ -154,7 +154,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 137. Particle quality slider
 138. LOD system for bodies and props
 139. Occlusion culling for indoor maps
-140. GPU instancing for repeated props
+140. [x] GPU instancing for repeated props
 
 ## 4. Human Models & Animation (50)
 141. Rebuilt human body meshes with smoother shapes
