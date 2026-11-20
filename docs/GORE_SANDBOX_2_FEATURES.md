@@ -1156,8 +1156,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1095. Mod version checks
 
 ## 26. Progression, Achievements & Customisation (35)
-1096. Player level and XP
-1097. XP from kills, survival, building and story
+1096. [x] Player level and XP
+1097. [x] XP from kills, survival, building and story
 1098. Level rewards: skins, hats, gloves, titles
 1099. Prestige levels
 1100. 200 new achievements
@@ -1165,7 +1165,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1102. Achievement rarity display
 1103. Hidden achievements
 1104. Badges reworked
-1105. Player titles
+1105. [x] Player titles
 1106. Player card backgrounds
 1107. Player outfits for sandbox
 1108. Gloves skins for fighting styles
@@ -1174,15 +1174,15 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1111. Blood colour unlocks
 1112. Death effect unlocks (fun)
 1113. Kill sounds unlocks
-1114. Statistics page (everything tracked)
+1114. [x] Statistics page (everything tracked)
 1115. Lifetime stats graphs
 1116. Daily login reward (no money)
 1117. Weekly goals
 1118. Seasonal events with rewards
 1119. Collection book (NPCs, weapons, maps seen)
 1120. Profile sharing as an image
-1121. No pay-to-win, no real-money purchases
-1122. Cosmetic-only unlocks
+1121. [x] No pay-to-win, no real-money purchases
+1122. [x] Cosmetic-only unlocks
 1123. Unlock everything option (sandbox)
 1124. Save backup and restore
 1125. Cloud-free save export/import code

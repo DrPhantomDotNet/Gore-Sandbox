@@ -73,6 +73,7 @@ namespace SolarEclipse
             float after = before + amount;
             cache[stat] = after;
             PlayerPrefs.SetFloat("stat_" + stat, after);
+            PlayerLevel.OnStat(stat, amount); // Gore Sandbox 2 XP (Core/PlayerLevel.cs)
             foreach (var a in Achievements)
                 if (a.Stat == stat && before < a.Target && after >= a.Target && !IsUnlocked(a)) Unlock(a);
         }

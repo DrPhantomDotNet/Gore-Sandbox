@@ -180,6 +180,10 @@ namespace SolarEclipse
             float x = r.x + r.height + 2;
             UI.Label(new Rect(x, r.y + 8, r.width - (x - r.x) - 130, 40), PlayerProfile.LocalName, 24, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold, true, false, UI.HeavyFont);
             BadgeChips.Draw(new Rect(x, r.y + 52, r.width - (x - r.x) - 12, 28), prof.BadgeMask, BadgeChips.Width(prof.BadgeMask, 28) > r.width - (x - r.x) - 12);
+            // Level and XP (Core/PlayerLevel.cs)
+            UI.Label(new Rect(r.xMax - 250, r.y + 52, 120, 30), "LV " + PlayerLevel.Level, 18, new Color(1f, 0.78f, 0.16f), TextAnchor.MiddleRight, FontStyle.Bold);
+            UI.Fill(new Rect(r.x + 12, r.yMax - 6, r.width - 24, 3), new Color(1f, 1f, 1f, 0.1f));
+            UI.Fill(new Rect(r.x + 12, r.yMax - 6, (r.width - 24) * PlayerLevel.Progress, 3), new Color(1f, 0.78f, 0.16f));
             UI.Rounded(new Rect(r.xMax - 124, r.y + 12, 112, 36), UI.Accent.WithAlpha(0.85f), true);
             UI.Label(new Rect(r.xMax - 124, r.y + 12, 112, 36), "PROFILE", 17, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
             if (UI.Hit(r)) { AudioManager.Ui("ui_click"); UIRoot.Push(new ProfileScreen()); }
