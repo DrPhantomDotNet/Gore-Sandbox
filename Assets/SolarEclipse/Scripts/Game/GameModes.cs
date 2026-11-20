@@ -43,6 +43,7 @@ namespace SolarEclipse
                 Features = new[] { "Seeker vs hiders", "Closets + rooms", "3 minute rounds", "Singleplayer hunt" }, Tags = new[] { "Game Mode" },
                 ThemeTop = new Color(0.1f, 0.06f, 0.15f), ThemeBottom = new Color(0.5f, 0.35f, 0.25f), Accent = new Color(0.8f, 0.6f, 1f), Build = b => ModeMaps.Mansion(b),
             };
+            foreach (var d in GameModes2.Defs()) yield return d; // Gore Sandbox 2 modes (Game/GameModes2.cs)
         }
 
         static bool ach;

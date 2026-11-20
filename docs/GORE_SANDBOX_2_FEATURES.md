@@ -962,31 +962,31 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 909. Hide & Seek (improved)
 910. Tournament (improved)
 911. Arena fights (fighting styles)
-912. King of the Hill
+912. [x] King of the Hill
 913. Team Deathmatch
 914. Free-for-all
 915. Capture the Flag
 916. Infection
 917. Prop Hunt
-918. Gun Game
+918. [x] Gun Game
 919. One in the Chamber
 920. Last Man Standing
 921. Horde defence with base building
 922. Escape the maze
 923. Parkour race
 924. Car derby
-925. Ragdoll Olympics (longest throw, highest fall)
-926. Trap gauntlet (survive the traps)
-927. Doctor mode (save patients)
+925. [x] Ragdoll Olympics (longest throw, highest fall)
+926. [x] Trap gauntlet (survive the traps)
+927. [x] Doctor mode (save patients)
 928. Surgeon simulator challenges
 929. Bodyguard (protect the VIP)
-930. Assassin (find the target in a crowd)
+930. [x] Assassin (find the target in a crowd)
 931. Heists (sandbox version)
 932. Police chase
 933. Zombie outbreak city
 934. Nextbot chase (improved)
 935. Boss rush
-936. Wave survival with shop (improved)
+936. [x] Wave survival with shop (improved)
 937. Daily challenges (more types)
 938. Weekly challenges
 939. Custom game rules editor
