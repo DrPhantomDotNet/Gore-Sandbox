@@ -237,3 +237,137 @@ namespace SolarEclipse
         }
     }
 }
+
+namespace SolarEclipse
+{
+    /// <summary>A freshly severed limb twitches for a few seconds (nerves still firing).</summary>
+    public sealed class LimbTwitch : MonoBehaviour
+    {
+        Rigidbody rb; float start, next;
+        public static void Begin(BodyPart p)
+        {
+            if (p == null || p.Body == null || p.GetComponent<LimbTwitch>() != null || !Machines.Authority) return;
+            var t = p.gameObject.AddComponent<LimbTwitch>(); t.rb = p.Body; t.start = Time.time;
+        }
+        void FixedUpdate()
+        {
+            if (rb == null) { Destroy(this); return; }
+            float age = Time.time - start;
+            if (age > 4.5f) { Destroy(this); return; }
+            if (Time.time < next) return;
+            next = Time.time + Random.Range(0.12f, 0.45f);
+            float k = 1f - age / 4.5f;
+            rb.AddTorque(Random.onUnitSphere * rb.mass * 6f * k, ForceMode.Impulse);
+            rb.AddForce(Random.onUnitSphere * rb.mass * 0.8f * k, ForceMode.Impulse);
+        }
+    }
+
+    /// <summary>
+    /// Body details for Gore Sandbox 2 (added to every Goredoll): nosebleeds after face hits, bleeding from the ears with
+    /// head trauma, blood drooling from the mouth with lung or airway blood, broken limbs that hang loose, and after
+    /// death rigor mortis (the body stiffens) and flies around a corpse that has lain there a while.
+    /// </summary>
+    public sealed class BodyDetails : MonoBehaviour
+    {
+        Goredoll doll;
+        float noseUntil, nextDrip, nextCheck, flyPhase;
+        bool stiff;
+        readonly HashSet<BodyPart> loosened = new HashSet<BodyPart>();
+        AudioSource buzz;
+
+        public static void Attach(Goredoll d) { if (d != null && d.GetComponent<BodyDetails>() == null) d.gameObject.AddComponent<BodyDetails>().doll = d; }
+        public static void NoseHit(Goredoll d) { var b = d != null ? d.GetComponent<BodyDetails>() : null; if (b != null) b.noseUntil = Time.time + Random.Range(15f, 40f); }
+
+        void Update()
+        {
+            if (doll == null || !Settings.GoreEnabled) return;
+            var v = doll.Vitals;
+            bool alive = v.State != LifeState.Dead;
+            if (!doll.Parts.TryGetValue(PartType.Head, out var head) || head == null || head.Severed || head.Gibbed) head = null;
+
+            if (head != null && Time.time > nextDrip && (alive || Time.time - v.TimeOfDeath < 30f))
+            {
+                nextDrip = Time.time + Random.Range(0.35f, 0.8f);
+                var t = head.transform;
+                if (Time.time < noseUntil) BloodFX.Drip(t.TransformPoint(new Vector3(0, HumanModel.HeadCenterY - 0.02f, 0.1f)), Vector3.zero);
+                if (v.HeadTrauma > 0.45f) BloodFX.Drip(t.TransformPoint(new Vector3(Random.value < 0.5f ? -0.08f : 0.08f, HumanModel.HeadCenterY, 0f)), Vector3.zero);
+                if (v.AirwayBlood > 0.25f || v.LungDamage > 0.6f) BloodFX.Drip(t.TransformPoint(new Vector3(0, HumanModel.HeadCenterY - 0.07f, 0.09f)), Vector3.zero);
+            }
+
+            if (Time.time < nextCheck || !Machines.Authority) return;
+            nextCheck = Time.time + 1f;
+            // Broken limbs: the joint gives, so the limb hangs at a wrong angle.
+            foreach (var p in doll.Parts.Values)
+            {
+                if (p == null || !p.Fractured || p.Joint == null || loosened.Contains(p) || !p.IsLimb) continue;
+                loosened.Add(p);
+                var j = p.Joint;
+                var lim = j.highAngularXLimit; lim.limit = Mathf.Min(177f, lim.limit + 60f); j.highAngularXLimit = lim;
+                var low = j.lowAngularXLimit; low.limit = Mathf.Max(-177f, low.limit - 60f); j.lowAngularXLimit = low;
+                var y = j.angularYLimit; y.limit = Mathf.Min(177f, y.limit + 50f); j.angularYLimit = y;
+                var z = j.angularZLimit; z.limit = Mathf.Min(177f, z.limit + 50f); j.angularZLimit = z;
+            }
+            if (alive) return;
+            float dead = Time.time - v.TimeOfDeath;
+            // Rigor mortis (sped up): the body goes stiff after a minute and a half.
+            if (!stiff && dead > 90f)
+            {
+                stiff = true;
+                foreach (var p in doll.Parts.Values) if (p != null && p.Body != null && !p.Severed) RB.SetDamping(p.Body, 0.4f, 8f);
+            }
+            // Flies after two minutes.
+            if (dead > 120f && head != null)
+            {
+                if (buzz == null) buzz = AudioManager.CreateLoop("intro_buzz", doll.transform, 0.08f, AudioBus.Sfx, 6f);
+                if (buzz != null) buzz.transform.position = doll.Position;
+            }
+        }
+
+        void LateUpdate()
+        {
+            if (doll == null || doll.Vitals.State != LifeState.Dead || Time.time - doll.Vitals.TimeOfDeath < 120f) return;
+            flyPhase += Time.deltaTime;
+            var c = doll.Position + Vector3.up * 0.25f;
+            for (int i = 0; i < 2; i++)
+            {
+                float a = flyPhase * (3f + i) + i * 2f;
+                var p = c + new Vector3(Mathf.Sin(a) * 0.35f, Mathf.Sin(a * 1.7f) * 0.15f + 0.15f, Mathf.Cos(a * 1.3f) * 0.35f);
+                if (Random.value < 0.25f) FX.Dust(p, 0.004f, new Color(0.05f, 0.05f, 0.05f, 0.9f), 1);
+            }
+        }
+    }
+
+    /// <summary>Seeing someone killed up close makes the squeamish throw up.</summary>
+    public static class Squeamish
+    {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        static void Hook() { Goredoll.Died -= OnDied; Goredoll.Died += OnDied; }
+
+        static void OnDied(Goredoll victim, object killer)
+        {
+            if (victim == null || !Machines.Authority || !Settings.GoreEnabled) return;
+            foreach (var d in Goredoll.All)
+            {
+                if (d == null || d == victim || d.Brain == null || !d.Vitals.Conscious || d.Zombie != null) continue;
+                if ((d.Position - victim.Position).sqrMagnitude > 7f * 7f || d.Brain.Bravery > 0.4f || Random.value > 0.45f) continue;
+                d.StartCoroutine(Vomit(d, Random.Range(0.6f, 2.2f)));
+            }
+        }
+
+        static System.Collections.IEnumerator Vomit(Goredoll d, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (d == null || !d.Vitals.Conscious || !d.Parts.TryGetValue(PartType.Head, out var head) || head == null || head.Severed) yield break;
+            d.Voice.Say("v_cough_wet", 1f, true);
+            if (d.Ragdoll != null) d.Ragdoll.Pose = PoseMode.ClutchTorso;
+            var col = new Color(0.55f, 0.5f, 0.2f);
+            for (int k = 0; k < 14; k++)
+            {
+                if (head == null) yield break;
+                var t = head.transform;
+                BloodFX.Burst(t.TransformPoint(new Vector3(0, HumanModel.HeadCenterY - 0.06f, 0.1f)), t.forward + Vector3.down * 0.6f, 0.12f, col);
+                yield return new WaitForSeconds(0.08f);
+            }
+        }
+    }
+}

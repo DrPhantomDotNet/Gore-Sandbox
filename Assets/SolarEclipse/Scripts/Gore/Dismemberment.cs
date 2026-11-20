@@ -30,6 +30,7 @@ namespace SolarEclipse
         static void MarkSevered(BodyPart p)
         {
             p.Severed = true;
+            LimbTwitch.Begin(p); // nerves still firing (Gore/GoreRework.cs)
             foreach (var c in p.Children) MarkSevered(c);
         }
 

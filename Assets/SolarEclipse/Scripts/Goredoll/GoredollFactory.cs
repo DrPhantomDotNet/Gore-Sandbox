@@ -62,6 +62,7 @@ namespace SolarEclipse
             NpcTypes.Attach(doll, netPreset);
             SkinTone.Attach(doll);       // pale / blue / waxy skin (Gore/GoreRework.cs)
             DollFootprints.Attach(doll); // bloody footprints
+            BodyDetails.Attach(doll);    // nosebleeds, broken limbs, rigor mortis, flies
 
             Stats.Add(Stats.Spawned);
             if (!NetState.IsClient) EnforceLimit();

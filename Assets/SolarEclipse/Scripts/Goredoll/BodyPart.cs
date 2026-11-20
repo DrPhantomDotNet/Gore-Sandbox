@@ -169,7 +169,7 @@ namespace SolarEclipse
             }
             if (Type == PartType.Neck && info.IsBallistic) Stats.Add(Stats.NeckShots);
             if (v.Paralysis == Paralysis.Total && info.Amount > 0) v.HitsWhileParalyzed++;
-            if (IsHead && info.Type == DamageType.Blunt) v.HeadTrauma = Mathf.Clamp01(v.HeadTrauma + info.Amount / 90f);
+            if (IsHead && info.Type == DamageType.Blunt) { v.HeadTrauma = Mathf.Clamp01(v.HeadTrauma + info.Amount / 90f); if (Random.value < 0.4f) BodyDetails.NoseHit(Doll); }
         }
 
         void PlayHitEffects(DamageInfo info, Wound w, float dmg)

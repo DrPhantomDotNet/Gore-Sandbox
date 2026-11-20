@@ -239,7 +239,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 218. Face peeling on extreme damage
 219. Ribcage exposed on chest destruction
 220. Spine visible on deep back wounds
-221. Broken bones bending limbs at wrong angles
+221. [x] Broken bones bending limbs at wrong angles
 222. Compound fractures with bone poking through
 223. [x] Bruises appearing over seconds
 224. [x] Bruises aging: red, purple, blue, yellow
@@ -264,7 +264,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 243. Cut in half at the waist
 244. Vertical slicing (head to toe) with sharp weapons
 245. Wounds persist on severed parts
-246. Severed limbs twitch for a few seconds
+246. [x] Severed limbs twitch for a few seconds
 247. Severed heads keep expression
 248. Clothes torn around wounds
 249. [x] Clothes soaked with blood spreading from wounds
@@ -277,8 +277,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 256. "Unreal gore" mode: exaggerated sprays
 257. "Realistic gore" mode: anatomically accurate
 258. Corpse decay over time (pale, stiff, bloated)
-259. Rigor mortis stiffening after a while
-260. Flies around old corpses
+259. [x] Rigor mortis stiffening after a while
+260. [x] Flies around old corpses
 261. Corpse limit with fade-out
 262. Gore persistence setting per map
 263. Body piles that settle realistically
@@ -287,7 +287,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 266. Bodies pinned to walls with bolts
 267. Bullet wounds bleed out of clothes holes
 268. [x] Arterial wounds spray in pulses
-269. Venous wounds ooze steadily
+269. [x] Venous wounds ooze steadily
 270. Capillary wounds bead and drip
 
 ## 6. Blood & Fluids (40)
@@ -313,10 +313,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 290. Blood on water surfaces spreads
 291. Blood in rain gets washed thin
 292. Coughing blood spray
-293. Vomiting (poison, gut wounds)
-294. Drooling blood from mouth
-295. Nosebleeds from face hits
-296. Bleeding from ears on head trauma
+293. [x] Vomiting (poison, gut wounds)
+294. [x] Drooling blood from mouth
+295. [x] Nosebleeds from face hits
+296. [x] Bleeding from ears on head trauma
 297. Eye bleeding (extreme)
 298. Bubbling blood from lung wounds
 299. Blood bubbles at mouth when breathing
@@ -493,7 +493,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 462. Reacting to gunshots by distance
 463. Reacting to screams
 464. Reacting to seeing corpses
-465. Vomiting when seeing gore
+465. [x] Vomiting when seeing gore
 466. Fainting when seeing gore (sensitive ones)
 467. Investigating sounds
 468. Looking at the player when spoken to
