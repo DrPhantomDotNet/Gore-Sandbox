@@ -2,7 +2,9 @@ using UnityEngine;
 
 namespace SolarEclipse
 {
-    public enum MeleeHead { Bat, SpikedBat, Crowbar, Pipe, Pan, Machete, Cleaver, CombatKnife, FireAxe, Chainsaw, Flail, Scythe, NailBoard, GiantHammer, Spear }
+    public enum MeleeHead { Bat, SpikedBat, Crowbar, Pipe, Pan, Machete, Cleaver, CombatKnife, FireAxe, Chainsaw, Flail, Scythe, NailBoard, GiantHammer, Spear,
+        // Gore Sandbox 2 (Weapons/MeleePack2.cs)
+        GolfClub, Wrench, Shovel, Pickaxe, Hatchet, Kukri, Sword, Mace, MorningStar, WarHammer, Halberd, Trident, Screwdriver, Scalpel, BoneSaw, Bottle, Baton, Extinguisher }
 
     /// <summary>
     /// Data for one melee weapon: the model (handle + head shape) and how <see cref="MeleeWeapon"/> swings it.
@@ -63,7 +65,7 @@ namespace SolarEclipse
                 case MeleeHead.NailBoard: tipZ = ContentModels.NailBoard(m, s); break;
                 case MeleeHead.GiantHammer: tipZ = ContentModels.GiantHammer(m, s); break;
                 case MeleeHead.Spear: tipZ = ContentModels.Spear(m, s); break;
-                default: tipZ = Blade(m, s); break;
+                default: tipZ = s.Head >= MeleeHead.GolfClub ? MeleePack2.Model(m, s) : Blade(m, s); break;
             }
             m.GripR = m.Anchor("GripR", new Vector3(0.02f, 0f, 0f), Quaternion.Euler(0, 0, -90f));
             if (s.TwoHanded && s.Head != MeleeHead.Chainsaw) m.SupportL = m.Anchor("SupportL", new Vector3(-0.02f, 0f, -0.11f), Quaternion.Euler(0, 0, 90f));

@@ -115,6 +115,7 @@ namespace SolarEclipse
         {
             if (d == null) return "Tools";
             if (d.Kind == WeaponKind.FightingStyle) return "Fighting Styles";
+            if (MeleePack2.Has(d.Id)) return "Melee";
             Define();
             var cc = ContentPack.Category(d); if (cc != null) return cc;
             if (guns.TryGetValue(d.Id, out var g)) return g.Extra.Category;

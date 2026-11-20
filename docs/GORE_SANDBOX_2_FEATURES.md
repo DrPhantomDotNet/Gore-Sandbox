@@ -667,43 +667,43 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 630. Water gun (washes blood)
 
 ## 14. Weapons — Melee & Tools (40)
-631. Machete
-632. Crowbar
-633. Baseball bat (wood and metal)
-634. Nail bat
-635. Golf club
-636. Frying pan
-637. Wrench
-638. Shovel
-639. Pickaxe
-640. Fire axe
-641. Hatchet
+631. [x] Machete
+632. [x] Crowbar
+633. [x] Baseball bat (wood and metal)
+634. [x] Nail bat
+635. [x] Golf club
+636. [x] Frying pan
+637. [x] Wrench
+638. [x] Shovel
+639. [x] Pickaxe
+640. [x] Fire axe
+641. [x] Hatchet
 642. Chainsaw (improved, with fuel)
-643. Kukri
-644. Cleaver (improved)
-645. Butterfly knife
+643. [x] Kukri
+644. [x] Cleaver (improved)
+645. [x] Butterfly knife
 646. Bayonet
-647. Rapier
-648. Longsword
-649. Claymore (two-handed)
-650. Mace
-651. Morning star
-652. Warhammer
-653. Halberd
-654. Trident
+647. [x] Rapier
+648. [x] Longsword
+649. [x] Claymore (two-handed)
+650. [x] Mace
+651. [x] Morning star
+652. [x] Warhammer
+653. [x] Halberd
+654. [x] Trident
 655. Whip
 656. Nunchucks
 657. Brass knuckles
-658. Taser baton
+658. [x] Taser baton
 659. Riot shield (bash)
-660. Broken bottle
-661. Screwdriver
-662. Scalpel
-663. Bone saw
+660. [x] Broken bottle
+661. [x] Screwdriver
+662. [x] Scalpel
+663. [x] Bone saw
 664. Drill
 665. Angle grinder
 666. Nail gun melee bash
-667. Fire extinguisher (spray + bash)
+667. [x] Fire extinguisher (spray + bash)
 668. Hose (water push)
 669. Leaf blower
 670. Vacuum cleaner (sucks gibs)

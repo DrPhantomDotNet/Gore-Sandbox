@@ -44,6 +44,8 @@ namespace SolarEclipse
             if (extra != null) return extra;
             var extra3 = Guns3.Create(def); // Weapons/Mac11.cs: MAC-11, dual katanas
             if (extra3 != null) return extra3;
+            var melee2 = MeleePack2.Create(def); // Weapons/MeleePack2.cs: Gore Sandbox 2 melee
+            if (melee2 != null) return melee2;
             var style = FightingStyles.Create(def); // Weapons/FightingStyles.cs: Boxing (third person)
             if (style != null) return style;
             var content = ContentPack.Create(def); // Weapons/ContentPack.cs: Content Update weapons
