@@ -79,7 +79,7 @@ namespace SolarEclipse
             if (!CanVocalise || voice == null) return false;
             if (NetState.IsHost && doll != null) NetManager.I.BroadcastSay(doll, clip, volume, interrupt);
             if (!interrupt && voice.isPlaying) return false;
-            var c = SoundBank.Get(clip);
+            var c = RealVoices.Get(clip) ?? SoundBank.Get(clip); // recordings in Resources/Voices win (Audio/RealVoices.cs)
             if (c == null) return false;
             voice.clip = c;
             voice.pitch = pitch * Random.Range(0.96f, 1.04f) * Mathf.Lerp(0.6f, 1f, Time.timeScale);

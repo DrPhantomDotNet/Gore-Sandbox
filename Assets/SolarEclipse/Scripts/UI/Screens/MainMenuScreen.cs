@@ -75,33 +75,47 @@ namespace SolarEclipse
 
             DrawTitle(90, 70);
 
-            float y = 380;
-            string[] labels = { "PLAY", "PLAY MULTIPLAYER", "MAP EDITOR", "SETTINGS", "MODS", "CREDITS", "QUIT" };
-            string[] icons = { "play", "users", "building", "gear", "wrench", "book", "exit" };
-            float yy = y;
-            for (int i = 0; i < labels.Length; i++)
+            // Gore Sandbox 2: big cards with a line underneath, red bar on hover.
+            float yy = 330;
+            var cards = new (string title, string sub, string icon, System.Action go)[]
+            {
+                ("PLAY", "Sandbox: pick a map, spawn Goredolls, do your worst", "play", () => UIRoot.Push(new MapSelectScreen())),
+                ("STORY", "Chapter 1: The East Side  -  Chapter 2: Cold Blood", "book", () => UIRoot.Push(new StoryMenuScreen())),
+                ("MODES", "Zombie Survival, Gore Golf, Tournament, Hide & Seek, Daily", "flag", () => UIRoot.Push(new ModesScreen())),
+                ("MULTIPLAYER", "Host, join, Open World: Port Eclipse", "users", () => UIRoot.Push(new MultiplayerScreen())),
+                ("WORKSHOP", "Map editor and mods", "wrench", () => UIRoot.Push(new MapEditorHubScreen())),
+            };
+            for (int i = 0; i < cards.Length; i++)
             {
                 float a = Intro(0.15f + i * 0.07f, 0.4f);
-                bool big = i == 0, mp = i == 1;
-                var r = new Rect(90 - (1 - a) * 220, yy, big || mp ? 440 : 380, big ? 72 : mp ? 60 : 56);
-                yy += big ? 80 : mp ? 76 : 64;
-                var kind = big ? ButtonKind.Primary : i == labels.Length - 1 ? ButtonKind.Danger : ButtonKind.Normal;
+                bool big = i == 0;
+                var r = new Rect(90 - (1 - a) * 220, yy, 520, big ? 104 : 84);
+                yy += r.height + 10;
+                bool hover = UI.Hover(r);
+                UI.Rounded(r, new Color(0.05f, 0.03f, 0.03f, (hover ? 0.92f : 0.72f) * a));
+                UI.Fill(new Rect(r.x, r.y, hover ? 8 : 4, r.height), UI.Accent.WithAlpha(a));
+                if (big) UI.Fill(new Rect(r.x, r.yMax - 3, r.width, 3), UI.Accent.WithAlpha(0.8f * a));
+                var ic = IconFactory.Get(cards[i].icon);
+                if (ic != null) UI.Tex(new Rect(r.x + 24, r.y + (r.height - 40) / 2f, 40, 40), ic, Color.white.WithAlpha(a));
+                UI.Label(new Rect(r.x + 82, r.y + (big ? 10 : 6), r.width - 100, big ? 54 : 44), cards[i].title, big ? 42 : 32, Color.white.WithAlpha(a), TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
+                UI.Label(new Rect(r.x + 84, r.y + (big ? 62 : 48), r.width - 100, 30), cards[i].sub, 17, (hover ? UI.Accent2 : UI.Muted).WithAlpha(a), TextAnchor.MiddleLeft);
+                if (UI.Hit(r)) { AudioManager.Ui("ui_click"); cards[i].go(); }
+            }
+            // Small row: settings, daily, credits, quit.
+            {
+                float a = Intro(0.6f, 0.4f);
                 var old = GUI.color; GUI.color = new Color(1, 1, 1, a);
-                if (UI.Button(r, labels[i], kind, IconFactory.Get(icons[i]), big ? 34 : mp ? 26 : 26)) OnMain(i);
-                // Story mode (World/StoryMode.cs), right under PLAY.
-                if (big)
-                {
-                    if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 440, 60), "PLAY STORY", ButtonKind.Normal, IconFactory.Get("book"), 26, true, "Chapter 1: The East Side - 4 missions")) UIRoot.Push(new StoryMenuScreen());
-                    yy += 68;
-                    if (UI.Button(new Rect(90 - (1 - a) * 220, yy, 215, 60), "MODES", ButtonKind.Normal, IconFactory.Get("flag"), 24, true, "Zombie Survival, Gore Golf, Tournament, Hide & Seek")) UIRoot.Push(new ModesScreen());
-                    if (UI.Button(new Rect(315 - (1 - a) * 220, yy, 215, 60), "DAILY", ButtonKind.Normal, IconFactory.Get("clock"), 24, true, "Three new challenges every day")) UIRoot.Push(new DailyScreen());
-                    yy += 68;
-                }
+                float bx = 90, bw = 124;
+                if (UI.Button(new Rect(bx, yy + 6, bw, 52), "SETTINGS", ButtonKind.Ghost, null, 17)) UIRoot.Push(new SettingsScreen(false));
+                if (UI.Button(new Rect(bx + bw + 8, yy + 6, bw, 52), "DAILY", ButtonKind.Ghost, null, 17)) UIRoot.Push(new DailyScreen());
+                if (UI.Button(new Rect(bx + (bw + 8) * 2, yy + 6, bw, 52), "CREDITS", ButtonKind.Ghost, null, 17)) UIRoot.Push(new CreditsScreen());
+                if (UI.Button(new Rect(bx + (bw + 8) * 3, yy + 6, bw, 52), "QUIT", ButtonKind.Danger, null, 17)) OnBack();
                 GUI.color = old;
             }
 
             // Top-right buttons (like the original: changelog, stats, social)
             float tx = W - 30;
+            tx -= 150; if (UI.Button(new Rect(tx, 26, 140, 54), "MODS", ButtonKind.Ghost, IconFactory.Get("wrench"), 20)) UIRoot.Push(new ModsScreen());
             tx -= 300; if (UI.Button(new Rect(tx, 26, 290, 54), "STATS & ACHIEVEMENTS", ButtonKind.Ghost, IconFactory.Get("trophy"), 20)) UIRoot.Push(new StatsScreen());
             tx -= 210; if (UI.Button(new Rect(tx, 26, 200, 54), "CHANGELOG", ButtonKind.Ghost, IconFactory.Get("book"), 20)) UIRoot.Push(new ChangelogScreen());
             if (GoreContent.HasExtras) { tx -= 190; if (UI.Button(new Rect(tx, 26, 180, 54), "EXTRAS", ButtonKind.Ghost, IconFactory.Get("star"), 20, true, "Stories and screens made in the Unity editor")) UIRoot.Push(new ExtrasScreen()); }

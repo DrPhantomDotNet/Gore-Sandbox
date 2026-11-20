@@ -202,7 +202,8 @@ namespace SolarEclipse
                 if (Type == PartType.Neck && w.Arterial) cell = 13;
                 float rot = info.Type == DamageType.Slash ? Vector3.SignedAngle(transform.right, info.Direction, info.Normal) : -1f;
                 if (rot < 0 && rot != -1f) rot += 360f;
-                if (w.Kind != WoundKind.Blunt || dmg > 12f) Decals.Wound(pos, info.Normal, cell, size, Col, rot);
+                if (w.Kind != WoundKind.Blunt) Decals.Wound(pos, info.Normal, cell, size, Col, rot);
+                else if (dmg > 2.5f) Bruise.Begin(Decals.Wound(pos, info.Normal, cell, size * Mathf.Clamp(dmg / 15f, 0.5f, 1.4f), Col, rot)); // bruises age red > purple > blue > yellow (Gore/GoreRework.cs)
                 if (w.BleedRate > 0.5f) Doll.Bleeding.AddEmitter(this, w);
 
                 // The Gore Update (Gore/GoreKit.cs)

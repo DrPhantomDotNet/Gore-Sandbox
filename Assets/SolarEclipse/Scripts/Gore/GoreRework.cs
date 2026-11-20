@@ -196,3 +196,44 @@ namespace SolarEclipse
         }
     }
 }
+
+namespace SolarEclipse
+{
+    /// <summary>
+    /// A bruise ageing like a real one (sped up): red at first, purple within a minute, blue-black, then green-yellow
+    /// at the edges as it heals. Lives on a skin wound decal (Decals.Wound); disabled when the decal is reused.
+    /// </summary>
+    public sealed class Bruise : MonoBehaviour
+    {
+        float born, next;
+        Color baseCol;
+        Mesh mesh;
+        static readonly Color[] Stages = { new Color(1f, 0.75f, 0.75f), new Color(0.7f, 0.45f, 0.85f), new Color(0.45f, 0.42f, 0.7f), new Color(0.85f, 0.85f, 0.45f) };
+        static readonly float[] Times = { 0f, 45f, 150f, 420f };
+
+        public static void Begin(GameObject decal)
+        {
+            if (decal == null) return;
+            var b = decal.GetComponent<Bruise>() ?? decal.AddComponent<Bruise>();
+            var mf = decal.GetComponent<MeshFilter>();
+            b.mesh = mf != null ? mf.sharedMesh : null;
+            b.baseCol = b.mesh != null && b.mesh.colors.Length > 0 ? b.mesh.colors[0] : Color.white;
+            b.born = Time.time; b.next = 0f;
+            b.enabled = true;
+        }
+
+        void Update()
+        {
+            if (mesh == null || Time.time < next) return;
+            next = Time.time + 1f;
+            float age = Time.time - born;
+            int i = 0;
+            while (i < Times.Length - 2 && age > Times[i + 1]) i++;
+            float k = Mathf.Clamp01((age - Times[i]) / (Times[i + 1] - Times[i]));
+            var tint = Color.Lerp(Stages[i], Stages[i + 1], k);
+            var c = new Color(baseCol.r * tint.r, baseCol.g * tint.g, baseCol.b * tint.b, baseCol.a);
+            mesh.colors = new[] { c, c, c, c };
+            if (age > Times[Times.Length - 1]) enabled = false;
+        }
+    }
+}
