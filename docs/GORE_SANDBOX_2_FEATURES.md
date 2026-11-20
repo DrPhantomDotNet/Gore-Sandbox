@@ -932,10 +932,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 881. Full day/night cycle option
 882. Time-of-day slider
 883. Rain with puddles
-884. Thunderstorm with lightning strikes that hit things
+884. [x] Thunderstorm with lightning strikes that hit things
 885. Snow that builds up
 886. [x] Fog banks
-887. Wind gusts pushing light props
+887. [x] Wind gusts pushing light props
 888. [x] Sandstorm
 889. [x] Blood rain (fun mode)
 890. [x] Hail
@@ -943,13 +943,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 892. Weather presets per map
 893. Indoor rain effect stops at roofs
 894. Wet clothes and skin in rain
-895. Breath fog in cold weather
-896. Goredolls shivering in cold
+895. [x] Breath fog in cold weather
+896. [x] Goredolls shivering in cold
 897. Goredolls seeking shelter in rain
 898. Umbrellas on Goredolls in rain
 899. Moon phases at night
 900. Aurora on snowy maps
-901. Eclipse event (SolarEclipse!)
+901. [x] Eclipse event (SolarEclipse!)
 902. [x] Blood moon event
 903. Weather sounds layered
 904. Weather in multiplayer synced

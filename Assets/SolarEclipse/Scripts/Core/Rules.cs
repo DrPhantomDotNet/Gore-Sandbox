@@ -11,6 +11,7 @@ namespace SolarEclipse
         public static bool ShowAiThoughts, AlwaysDismember, SuperKick, ExplosiveBullets, BigHeads, NpcInfighting, SlowMoOnKill, ShowColliders, Xray;
         public static bool FreezeAi, NoBleeding, NoPain, InstantDeathOnHeadshot = true, BulletTracers = true, PlayerRagdollFall;
         public static bool LowGravity, Noir, Retro, Mirror;
+        public static bool ForceEclipse; // next daytime outdoor map starts a Solar Eclipse after 8 s (World/Weather2.cs)
         public static bool PoliceResponse = true;      // frightened Goredolls call the police (Goredoll/Police.cs) // Gore Sandbox 2 fun modes (Player/ScreenFx.cs)
         public static float DamageMultiplier = 1f, BleedMultiplier = 1f, NpcHealthMultiplier = 1f, BulletForceMultiplier = 1f;
         public static float PlayerSpeedMultiplier = 1f, JumpMultiplier = 1f, NpcSpeedMultiplier = 1f, AiAggression = 0f, GravityScale = 1f;

@@ -77,7 +77,7 @@ namespace SolarEclipse
 
         static Rect Next() { var r = new Rect(0, row * 62 + scrollY, width, 56); row++; return r; }
 
-        public static int Rows(int tab) => tab == 0 ? 11 : tab == 1 ? 13 : tab == 2 ? 7 : 6;
+        public static int Rows(int tab) => tab == 0 ? 18 : tab == 1 ? 13 : tab == 2 ? 7 : 6;
 
         public static void Draw(Rect view, int tab)
         {
@@ -105,6 +105,7 @@ namespace SolarEclipse
                     UI.Toggle(Next(), "Noir", ref Rules.Noir, "Black and white, except the blood.");
                     UI.Toggle(Next(), "Retro", ref Rules.Retro, "Low resolution, few colours, scanlines.");
                     UI.Toggle(Next(), "Mirror world", ref Rules.Mirror, "The whole picture flipped left to right.");
+                    UI.Toggle(Next(), "Eclipse on next day map", ref Rules.ForceEclipse, "Start a Solar Eclipse a few seconds into the next daytime outdoor map.");
                     UI.Toggle(Next(), "Explosive bullets", ref Rules.ExplosiveBullets, "Every bullet impact explodes.");
                     UI.Slider(Next(), "Movement speed", ref Rules.PlayerSpeedMultiplier, 0.25f, 4f, "0.00", null, "×");
                     UI.Slider(Next(), "Jump height", ref Rules.JumpMultiplier, 0.25f, 4f, "0.00", null, "×");

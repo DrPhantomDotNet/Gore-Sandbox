@@ -206,7 +206,7 @@ namespace SolarEclipse
                 flashPower = Mathf.Lerp(1.6f, 0.35f, Mathf.InverseLerp(120f, 2200f, dist));
                 if (near) CameraFX.Flash(new Color(0.85f, 0.9f, 1f), 0.18f * flashPower);
                 var dir = Quaternion.Euler(0, Random.Range(0f, 360f), 0) * Vector3.forward;
-                if (near && bolt != null) DrawBolt(cp + dir * Mathf.Min(dist, 350f));
+                if (near && bolt != null) DrawBolt(WeatherExtras.StrikePoint(cp, cp + dir * Mathf.Min(dist, 350f))); // sometimes hits a Goredoll (World/Weather2.cs)
                 // Thunder arrives later (speed of sound ~343 m/s), quieter the further away.
                 if (thunderPending < thunderAt.Length)
                 {

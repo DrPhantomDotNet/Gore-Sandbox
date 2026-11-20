@@ -184,6 +184,7 @@ namespace SolarEclipse
             }
             AudioManager.PlayAmbience(def.Ambience, 0.7f);
             Weather.Begin(def, opt, world.transform); // World/Weather.cs (rain, snow, fog, thunder)
+            WeatherExtras.Begin(def, opt, world.transform); // World/Weather2.cs (wind gusts, breath fog, eclipse)
             ls.Progress = 1f;
             yield return new WaitForSecondsRealtime(0.25f);
 
