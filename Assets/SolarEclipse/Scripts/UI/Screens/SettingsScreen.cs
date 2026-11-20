@@ -133,6 +133,8 @@ namespace SolarEclipse
                     { changed = true; UI.ReloadFonts(); }
                     changed |= UI.Toggle(Next(), "Automatic updates", ref d.autoUpdate, "Checks for a new version when the game starts and installs it (you're on v" + GameInfo.Version + ").");
                     changed |= UI.Toggle(Next(), "Play intro on startup", ref d.playIntro, "The cinematic after the studio logo. Tap twice to skip it any time.");
+                    changed |= UI.Toggle(Next(), "Pause when unfocused", ref d.pauseOnFocusLoss, "Alt-tab or leaving the app opens the pause menu (singleplayer) and mutes the sound until you come back.");
+                    changed |= UI.Toggle(Next(), "Vibration (phones)", ref d.vibration, "The phone vibrates when you get hurt.");
                     changed |= UI.Toggle(Next(), "Film look", ref d.filmLook, "Film grain and a soft vignette over the game, for a more cinematic, realistic feel.");
                     changed |= UI.Selector(Next(), "Main menu scene", ref d.menuScene, new[] { "Operating room", "Classic stage" }, "The live 3D scene behind the main menu. Applies next time the menu opens.");
                     changed |= UI.Toggle(Next(), "Show chat", ref d.showChat, "Chat messages in the corner (T or Enter to type, also in singleplayer).");

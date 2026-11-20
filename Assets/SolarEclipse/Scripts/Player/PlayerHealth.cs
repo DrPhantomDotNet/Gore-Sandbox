@@ -28,6 +28,9 @@ namespace SolarEclipse
             LastDamageDir = info.Direction;
             LastDamageTime = Time.time;
             CameraFX.Shake(Mathf.Clamp(info.Amount / 40f, 0.1f, 0.7f));
+#if (UNITY_ANDROID || UNITY_IOS) && !GS_REFCHECK // GS_REFCHECK: the offline compile check has no phone-only APIs
+            if (Settings.Data.vibration && info.Amount >= 8f) Handheld.Vibrate(); // Gore Sandbox 2
+#endif
             CameraFX.Punch(-info.Amount * 0.15f, Random.Range(-1f, 1f) * info.Amount * 0.1f);
             AudioManager.Play2D("player_hurt", 0.8f, Random.Range(0.95f, 1.05f), AudioBus.Sfx);
             if (Current <= 0) Die(info.Type == DamageType.Fall ? "Fell to your death" : info.Type == DamageType.Explosion ? "Blown up" : info.Weapon ?? "Killed");

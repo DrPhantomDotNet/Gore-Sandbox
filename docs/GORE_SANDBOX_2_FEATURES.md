@@ -612,7 +612,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 577. Mouse acceleration toggle
 578. Raw input option
 579. Controller aim assist (optional)
-580. Gyro aiming on phones
+580. [x] Gyro aiming on phones
 
 ## 13. Weapons — Firearms (50)
 581. New weapon models with more detail
@@ -1200,13 +1200,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1135. Context buttons that change with the weapon (all weapons)
 1136. Swipe to switch weapons
 1137. Weapon wheel for touch
-1138. Gyro aiming
+1138. [x] Gyro aiming
 1139. Auto-fire option
 1140. Aim assist on phones
-1141. Haptic vibration on hits
+1141. [x] Haptic vibration on hits
 1142. Battery saver mode
 1143. Thermal throttle protection
-1144. 30/60/90/120 FPS options on phones
+1144. [x] 30/60/90/120 FPS options on phones
 1145. Resolution scale on phones
 1146. Phone graphics auto-preset
 1147. Smaller download size
@@ -1220,7 +1220,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1155. Mobile-friendly spawn menu
 1156. Mobile-friendly map editor
 1157. Mobile keyboard handling improved
-1158. Background audio pause
+1158. [x] Background audio pause
 1159. Update download progress on phones
 1160. Signed APK updates (no uninstall) once a key is set
 
@@ -1230,10 +1230,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1163. UI text size slider
 1164. Subtitle size and background options
 1165. Sound indicators for deaf players
-1166. Reduce motion option
+1166. [x] Reduce motion option
 1167. [x] Screen shake slider (improved)
 1168. Flash reduction option
-1169. Hold vs toggle for every action
+1169. [x] Hold vs toggle for every action
 1170. Full key rebinding
 1171. Controller rebinding
 1172. One-handed control preset
@@ -1241,7 +1241,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1174. Blood colour for sensitive players
 1175. Arachnophobia-style toggle for flies/insects
 1176. Content warnings before story chapters
-1177. Pause on focus loss
+1177. [x] Pause on focus loss
 1178. [x] Performance overlay (FPS, ms, memory)
 1179. Benchmark mode
 1180. Crash reporter (local log)
@@ -1253,7 +1253,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1186. Settings profiles (save/load)
 1187. Language support framework
 1188. Translations (community)
-1189. Tutorial for new players
+1189. [x] Tutorial for new players
 1190. Help screen with search
 
 ## 29. VR (20)
