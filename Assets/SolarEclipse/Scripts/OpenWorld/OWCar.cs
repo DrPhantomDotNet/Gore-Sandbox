@@ -63,6 +63,15 @@ namespace SolarEclipse
             { 4.2f, 2.4f, 1.0f, 1.5f, 1.0f, -0.6f, 0.5f, 0.2f },    // bulldozer
             { 6.2f, 3.0f, 0.9f, 2.4f, 0.7f, -0.2f, 0.45f, 0.2f },   // tank (turret instead of a cabin)
             { 1.0f, 0.6f, 0.6f, 0f, 0f, 0f, 0.08f, 0.25f },         // shopping cart
+            // Gore Sandbox 2
+            { 11.0f, 2.5f, 2.2f, 2.2f, 0.5f, 4.2f, 0.5f, 0.35f },  // 16 bus
+            { 5.6f, 2.1f, 1.6f, 1.5f, 0.55f, 1.9f, 0.4f, 0.3f },   // 17 ambulance
+            { 8.5f, 2.4f, 1.5f, 1.6f, 0.65f, 3.0f, 0.5f, 0.35f },  // 18 fire truck
+            { 1.9f, 1.1f, 0.45f, 0f, 0f, -0.1f, 0.3f, 0.2f },      // 19 quad
+            { 2.4f, 1.2f, 0.45f, 1.1f, 1.0f, -0.2f, 0.22f, 0.15f }, // 20 golf cart
+            { 2.6f, 1.2f, 0.8f, 1.0f, 1.2f, -0.4f, 0.3f, 0.15f },  // 21 forklift
+            { 4.0f, 1.8f, 0.45f, 1.4f, 0.35f, -0.6f, 0.35f, 0.15f }, // 22 rocket car
+            { 7.5f, 2.5f, 1.5f, 1.8f, 0.8f, 2.6f, 0.55f, 0.4f },   // 23 semi truck
         };
 
         // ------------------------------------------------------------------ building
@@ -93,7 +102,7 @@ namespace SolarEclipse
 
             float bodyY = RH + WR + Hb / 2f;
             var mb = new MeshBuilder { Color = col, Gloss = paint != null && (paint.Id.Contains("chrome") || paint.Id.Contains("gold")) ? 0.95f : 0.6f };
-            if (body >= 12) BuildSpecial(mb, body, L, Wd, Hb, CL, CH, CO, WR, RH, bodyY, col);
+            if (body >= 12 && body <= 15) BuildSpecial(mb, body, L, Wd, Hb, CL, CH, CO, WR, RH, bodyY, col);
             else if (body == 11)
             {
                 mb.BevelBox(new Vector3(0, bodyY, 0), new Vector3(0.35f, 0.4f, 1.4f), 0.08f);
@@ -114,6 +123,13 @@ namespace SolarEclipse
                 mb.Box(new Vector3(0, RH + WR * 0.9f, L / 2f + 0.03f), new Vector3(Wd * 0.95f, 0.18f, 0.08f)); // bumpers
                 mb.Box(new Vector3(0, RH + WR * 0.9f, -L / 2f - 0.03f), new Vector3(Wd * 0.95f, 0.18f, 0.08f));
                 if (body == 8) { mb.SetColor(col * 0.6f, 0.6f); mb.Box(new Vector3(0, bodyY + Hb / 2f + 0.25f, -L / 2f + 0.2f), new Vector3(Wd, 0.06f, 0.35f)); } // spoiler
+                // Gore Sandbox 2 details
+                if (body == 16) { mb.SetColor(new Color(0.08f, 0.1f, 0.13f), 0.95f); foreach (var sx in new[] { -1f, 1f }) mb.Box(new Vector3(sx * (Wd / 2f + 0.005f), bodyY + Hb * 0.2f, 0), new Vector3(0.02f, Hb * 0.4f, L * 0.85f)); }
+                if (body == 17) { mb.SetColor(new Color(0.85f, 0.1f, 0.1f), 0.6f); foreach (var sx in new[] { -1f, 1f }) mb.Box(new Vector3(sx * (Wd / 2f + 0.005f), bodyY, -0.4f), new Vector3(0.02f, 0.25f, L * 0.6f)); }
+                if (body == 18) { mb.SetColor(new Color(0.75f, 0.76f, 0.8f), 0.8f); mb.Box(new Vector3(0, bodyY + Hb / 2f + 0.25f, -0.8f), new Vector3(0.6f, 0.12f, L * 0.7f)); for (int k = 0; k < 10; k++) mb.Box(new Vector3(0, bodyY + Hb / 2f + 0.32f, -0.8f - L * 0.32f + k * L * 0.07f), new Vector3(0.6f, 0.03f, 0.04f)); }
+                if (body == 21) { mb.SetColor(new Color(0.15f, 0.15f, 0.16f), 0.4f); mb.Box(new Vector3(0, bodyY + 0.6f, L / 2f + 0.15f), new Vector3(0.9f, 2.0f, 0.1f)); foreach (var sx in new[] { -0.3f, 0.3f }) mb.Box(new Vector3(sx, RH + 0.1f, L / 2f + 0.7f), new Vector3(0.12f, 0.05f, 1.1f)); }
+                if (body == 22) { mb.SetColor(new Color(0.3f, 0.3f, 0.32f), 0.7f); mb.Cylinder(new Vector3(0, bodyY + 0.2f, -L / 2f + 0.3f), new Vector3(0, bodyY + 0.2f, -L / 2f - 0.6f), 0.35f, 0.3f, 14); }
+                if (body == 23) { mb.SetColor(new Color(0.85f, 0.86f, 0.88f), 0.4f); mb.BevelBox(new Vector3(0, bodyY + 0.5f, -L * 0.18f), new Vector3(Wd, Hb + 1.0f, L * 0.62f), 0.05f); }
             }
             mb.SetColor(new Color(1f, 0.95f, 0.8f), 0.9f);
             mb.Box(new Vector3(-Wd * 0.32f, bodyY, L / 2f + 0.01f), new Vector3(0.3f, 0.14f, 0.04f));
@@ -132,7 +148,7 @@ namespace SolarEclipse
             bc.size = new Vector3(Mathf.Max(Wd, 0.5f), Hb + (body == 11 ? 0.4f : CH * 0.8f), L);
             if (body == 13) { var blade = go.AddComponent<BoxCollider>(); blade.center = new Vector3(0, RH + WR * 0.9f + 0.3f, L * 0.5f + 0.35f); blade.size = new Vector3(Wd * 1.15f, 1.1f, 0.2f); }
 
-            if (body == 6)
+            if (body == 6 || body == 17 || body == 18)
             {
                 car.sirenL = Light(go.transform, "Siren L", new Vector3(-0.3f, bodyY + Hb / 2f + CH + 0.12f, CO), new Color(1f, 0.1f, 0.1f));
                 car.sirenR = Light(go.transform, "Siren R", new Vector3(0.3f, bodyY + Hb / 2f + CH + 0.12f, CO), new Color(0.1f, 0.3f, 1f));
@@ -429,7 +445,7 @@ namespace SolarEclipse
         {
             if (Time.time < honkReady) return;
             honkReady = Time.time + 0.6f;
-            AudioManager.Play(AirHorn ? "air_horn" : IsPolice ? "siren" : "car_horn", transform.position, 1f, 1f, 1f, 5f, 120f);
+            AudioManager.Play(AirHorn ? "air_horn" : (IsPolice || (Model != null && (Model.Variant == 17 || Model.Variant == 18))) ? "siren" : "car_horn", transform.position, 1f, 1f, 1f, 5f, 120f);
             GameEvents.EmitNoise(transform.position, 25f, 0.2f, this);
         }
         float honkReady;

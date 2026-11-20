@@ -851,16 +851,16 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 804. Car crashes throwing Goredolls through windshields
 805. Seatbelts option for passengers
 806. Goredoll passengers
-807. Bus
+807. [x] Bus
 808. Truck with trailer
-809. Ambulance with siren
+809. [x] Ambulance with siren
 810. Police car with siren
-811. Fire truck with ladder
+811. [x] Fire truck with ladder
 812. Motorbike (improved)
 813. Bicycle
-814. Quad bike
-815. Golf cart
-816. Forklift
+814. [x] Quad bike
+815. [x] Golf cart
+816. [x] Forklift
 817. Excavator
 818. Train you can drive
 819. Tram
@@ -869,7 +869,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 822. Helicopter (improved controls)
 823. Small plane
 824. Hot air balloon
-825. Rocket car
+825. [x] Rocket car
 826. Monster truck (improved)
 827. Tank (improved, turret rotation)
 828. Mech suit

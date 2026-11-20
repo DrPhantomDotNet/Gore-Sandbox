@@ -88,6 +88,15 @@ namespace SolarEclipse
             Car("c_dozer", "Bulldozer", 70000, 13, "#f39c12", 0.45f, 0.9f, 1.3f, 4f, 3f, "Slow. Unstoppable. Pushes cars and bodies out of the way with its blade.");
             Car("c_tank", "Tank", 400000, 14, "#4b5320", 0.6f, 1.0f, 1.4f, 6f, 6f, "Armoured tank with a cannon: LMB fires a high-explosive shell.");
             Car("c_cart", "Shopping Cart", 500, 15, "#bdc3c7", 0.55f, 0.7f, 0.8f, 0.15f, 0.3f, "Someone stuck a motor on a shopping cart. Why not.");
+            // Gore Sandbox 2 vehicles (ids are saved: never rename)
+            Car("c_bus", "City Bus", 45000, 16, "#f1c40f", 0.7f, 0.6f, 1.0f, 4f, 2.5f, "A full-size bus. Turns like a ship.");
+            Car("c_ambulance", "Ambulance", 30000, 17, "#ecf0f1", 1.05f, 1.0f, 1.0f, 1.8f, 1.5f, "Lights and sirens. Ironic, considering.");
+            Car("c_firetruck", "Fire Truck", 55000, 18, "#c0392b", 0.8f, 0.75f, 1.0f, 3.5f, 2.5f, "Big, red, loud, with a ladder on top.");
+            Car("c_quad", "Quad Bike", 9000, 19, "#2c3e50", 1.15f, 1.35f, 1.3f, 0.45f, 0.6f, "Four wheels, no roof, maximum mud.");
+            Car("c_golf", "Golf Cart", 4000, 20, "#ecf0f1", 0.6f, 0.8f, 1.0f, 0.5f, 0.6f, "Quiet, slow, surprisingly deadly at the bottom of a hill.");
+            Car("c_forklift", "Forklift", 15000, 21, "#f39c12", 0.5f, 0.8f, 1.2f, 2.5f, 1.8f, "Forks at the front for lifting things. And people.");
+            Car("c_rocket", "Rocket Car", 250000, 22, "#e74c3c", 1.9f, 2.0f, 1.2f, 0.9f, 0.8f, "A jet engine strapped to a chassis. Nitro is permanent.");
+            Car("c_semi", "Semi Truck", 80000, 23, "#34495e", 0.85f, 0.65f, 1.0f, 5f, 3f, "A cab and trailer. Stops for nothing.");
 
             // ---------------- 10 car upgrades (Eclipse Customs). variant: 0 paint, 1 neon, 2 nitro, 3 armour, 4 horn
             Wear(OWCat.CarUpgrade, "u_paint_red", "Paint: Candy Red", 1500, "#e3001b", null, 0, false, "Glossy red paint for your car.");
