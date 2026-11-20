@@ -531,46 +531,46 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 500. AI relationship editor (who likes whom)
 
 ## 11. NPC Types & Characters (40)
-501. Businessman
+501. [x] Businessman
 502. Construction worker (improved)
 503. Doctor and nurse (improved)
-504. Surgeon in scrubs and mask
+504. [x] Surgeon in scrubs and mask
 505. Police officer (improved)
-506. SWAT member
-507. Firefighter with helmet
-508. Paramedic
+506. [x] SWAT member
+507. [x] Firefighter with helmet
+508. [x] Paramedic
 509. Soldier (improved)
 510. Prisoner (improved)
 511. Chef (improved)
 512. Clown (improved)
 513. Astronaut (improved)
 514. Ninja (improved)
-515. Boxer with gloves
-516. Wrestler
-517. Biker in leathers
-518. Gang member variants
-519. Scientist in lab coat
-520. Hazmat suit worker
-521. Bodybuilder
-522. Old man with cane
-523. Tourist with camera
-524. Jogger
-525. Office worker
-526. Homeless man
-527. Rich man in a suit
-528. Mascot costume person
-529. Knight in armour
-530. Viking
-531. Cowboy
-532. Pirate
-533. Samurai
-534. Gladiator
-535. Mummy-wrapped dummy
+515. [x] Boxer with gloves
+516. [x] Wrestler
+517. [x] Biker in leathers
+518. [x] Gang member variants
+519. [x] Scientist in lab coat
+520. [x] Hazmat suit worker
+521. [x] Bodybuilder
+522. [x] Old man with cane
+523. [x] Tourist with camera
+524. [x] Jogger
+525. [x] Office worker
+526. [x] Homeless man
+527. [x] Rich man in a suit
+528. [x] Mascot costume person
+529. [x] Knight in armour
+530. [x] Viking
+531. [x] Cowboy
+532. [x] Pirate
+533. [x] Samurai
+534. [x] Gladiator
+535. [x] Mummy-wrapped dummy
 536. Crash test dummy (no gore, sparks)
 537. Mannequin (breaks like plastic)
 538. Cyborg (metal under skin)
 539. Giant variants for every type
-540. Mini (half-size) variants
+540. [x] Mini (half-size) variants
 
 ## 12. Player Movement & Feel (40)
 541. Weighty camera with inertia

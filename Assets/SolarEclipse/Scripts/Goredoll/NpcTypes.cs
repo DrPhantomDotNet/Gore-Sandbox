@@ -19,6 +19,8 @@ namespace SolarEclipse
             public Color HatColor = Color.white;
             public string Mask;
             public bool Blade;
+            public int Armor = -1;      // Gore Sandbox 2: built-in armour level ("~aN")
+            public bool Gloves, Wraps;  // boxing gloves; mummy bandages
         }
 
         public static readonly List<TypeDef> Types = new List<TypeDef>
@@ -31,6 +33,33 @@ namespace SolarEclipse
             new TypeDef { Id = "astronaut", Name = "Astronaut", Desc = "Spacesuit, glass helmet and an oxygen pack.", Brain = "Passive", Shirt = new Color(0.92f, 0.92f, 0.93f), Pants = new Color(0.92f, 0.92f, 0.93f), Shoes = new Color(0.7f, 0.7f, 0.72f) },
             new TypeDef { Id = "cop", Name = "Police Officer", Desc = "Armed with a pistol and shoots back.", Brain = "Gunman", Shirt = new Color(0.12f, 0.2f, 0.4f), Pants = new Color(0.08f, 0.1f, 0.18f), Hat = 1, HatColor = new Color(0.1f, 0.15f, 0.3f) },
             new TypeDef { Id = "ninja", Name = "Ninja", Desc = "All black, masked, with a katana that cuts anything it touches.", Brain = "Aggressive", Shirt = new Color(0.05f, 0.05f, 0.06f), Pants = new Color(0.05f, 0.05f, 0.06f), Mask = "m_ski", Weapon = "katana", Blade = true },
+            // ---- Gore Sandbox 2 types
+            new TypeDef { Id = "businessman", Name = "Businessman", Desc = "Suit, tie and a terrible day ahead.", Brain = "Coward", Shirt = new Color(0.16f, 0.17f, 0.2f), Pants = new Color(0.14f, 0.15f, 0.18f), Hair = 0 },
+            new TypeDef { Id = "surgeon", Name = "Surgeon", Desc = "Scrubs, cap and mask, with a scalpel-sharp temper.", Brain = "Aggressive", Shirt = new Color(0.3f, 0.5f, 0.55f), Pants = new Color(0.3f, 0.5f, 0.55f), Hat = 3, HatColor = new Color(0.3f, 0.5f, 0.55f), Weapon = "knife", Blade = true },
+            new TypeDef { Id = "swat", Name = "SWAT Officer", Desc = "Heavy armour and a rifle. Shoots back.", Brain = "Gunman", Shirt = new Color(0.1f, 0.11f, 0.13f), Pants = new Color(0.1f, 0.11f, 0.13f), Hat = 7, HatColor = new Color(0.12f, 0.12f, 0.14f), Armor = 3, Weapon = "m4a1" },
+            new TypeDef { Id = "firefighter", Name = "Firefighter", Desc = "Turnout coat with reflective stripes and a helmet.", Brain = "Brave", Shirt = new Color(0.75f, 0.6f, 0.25f), Pants = new Color(0.75f, 0.6f, 0.25f), Hat = 6, HatColor = new Color(0.8f, 0.1f, 0.08f) },
+            new TypeDef { Id = "paramedic", Name = "Paramedic", Desc = "Green uniform. Runs toward danger.", Brain = "Brave", Shirt = new Color(0.2f, 0.45f, 0.25f), Pants = new Color(0.15f, 0.3f, 0.18f) },
+            new TypeDef { Id = "boxer", Name = "Boxer", Desc = "Shorts, gloves and a mean right hand.", Brain = "Aggressive", Shirt = new Color(0.85f, 0.65f, 0.55f), Pants = new Color(0.75f, 0.08f, 0.08f), Sleeves = false, Gloves = true, Hair = 1 },
+            new TypeDef { Id = "wrestler", Name = "Wrestler", Desc = "Singlet and a masked face. Big and angry.", Brain = "Aggressive", Shirt = new Color(0.2f, 0.25f, 0.8f), Pants = new Color(0.2f, 0.25f, 0.8f), Sleeves = false, Mask = "m_ski" },
+            new TypeDef { Id = "biker", Name = "Biker", Desc = "Black leather, bandana and a short fuse.", Brain = "Aggressive", Shirt = new Color(0.07f, 0.07f, 0.08f), Pants = new Color(0.14f, 0.2f, 0.35f), Mask = "m_bandana" },
+            new TypeDef { Id = "gangster", Name = "Gang Member", Desc = "Red colours, backwards cap, a pistol in his belt.", Brain = "Gunman", Shirt = new Color(0.75f, 0.1f, 0.1f), Pants = new Color(0.12f, 0.12f, 0.14f), Hat = 2, HatColor = new Color(0.75f, 0.1f, 0.1f), Weapon = "glock" },
+            new TypeDef { Id = "scientist", Name = "Scientist", Desc = "Lab coat and safety glasses. Very curious, not very brave.", Brain = "Coward", Shirt = new Color(0.95f, 0.95f, 0.96f), Pants = new Color(0.3f, 0.32f, 0.36f) },
+            new TypeDef { Id = "hazmat", Name = "Hazmat Worker", Desc = "Yellow suit and a gas mask.", Brain = "Passive", Shirt = new Color(0.95f, 0.85f, 0.15f), Pants = new Color(0.95f, 0.85f, 0.15f), Shoes = new Color(0.1f, 0.1f, 0.1f), Mask = "m_hazmat" },
+            new TypeDef { Id = "bodybuilder", Name = "Bodybuilder", Desc = "Tank top, huge arms, protein breath.", Brain = "Brave", Shirt = new Color(0.95f, 0.95f, 0.95f), Pants = new Color(0.1f, 0.1f, 0.5f), Sleeves = false },
+            new TypeDef { Id = "oldman", Name = "Old Man", Desc = "Cardigan, slippers, grey hair. Walks slowly.", Brain = "Passive", Shirt = new Color(0.55f, 0.45f, 0.35f), Pants = new Color(0.4f, 0.38f, 0.35f), Hat = 11, HatColor = new Color(0.5f, 0.45f, 0.38f) },
+            new TypeDef { Id = "tourist", Name = "Tourist", Desc = "Hawaiian shirt, shorts and a bucket hat.", Brain = "Normal", Shirt = new Color(0.1f, 0.6f, 0.75f), Pants = new Color(0.85f, 0.78f, 0.6f), Sleeves = false, Hat = 11, HatColor = new Color(0.9f, 0.85f, 0.7f) },
+            new TypeDef { Id = "jogger", Name = "Jogger", Desc = "Running gear and a headband. Fast.", Brain = "Coward", Shirt = new Color(0.95f, 0.3f, 0.5f), Pants = new Color(0.1f, 0.1f, 0.12f), Sleeves = false, Hat = 10, HatColor = new Color(0.95f, 0.95f, 0.95f) },
+            new TypeDef { Id = "office", Name = "Office Worker", Desc = "Shirt and tie, ID badge, coffee breath.", Brain = "Normal", Shirt = new Color(0.75f, 0.82f, 0.92f), Pants = new Color(0.2f, 0.22f, 0.26f) },
+            new TypeDef { Id = "homeless", Name = "Homeless Man", Desc = "Layers of worn clothes and a beanie.", Brain = "Passive", Shirt = new Color(0.35f, 0.3f, 0.22f), Pants = new Color(0.28f, 0.26f, 0.22f), Hat = 3, HatColor = new Color(0.3f, 0.32f, 0.28f) },
+            new TypeDef { Id = "richman", Name = "Rich Man", Desc = "White suit and a top hat. Thinks he's untouchable.", Brain = "Coward", Shirt = new Color(0.95f, 0.94f, 0.9f), Pants = new Color(0.95f, 0.94f, 0.9f), Hat = 5, HatColor = new Color(0.1f, 0.1f, 0.12f) },
+            new TypeDef { Id = "mascot", Name = "Pig Mascot", Desc = "A sweaty person in a pig costume head.", Brain = "Passive", Shirt = new Color(0.95f, 0.65f, 0.7f), Pants = new Color(0.95f, 0.65f, 0.7f), Mask = "m_pig" },
+            new TypeDef { Id = "knight", Name = "Knight", Desc = "Plate armour and a sword.", Brain = "Brave", Shirt = new Color(0.6f, 0.62f, 0.66f), Pants = new Color(0.55f, 0.57f, 0.6f), Shoes = new Color(0.5f, 0.52f, 0.55f), Hat = 7, HatColor = new Color(0.6f, 0.62f, 0.66f), Armor = 3, Weapon = "katana", Blade = true },
+            new TypeDef { Id = "viking", Name = "Viking", Desc = "Horned helmet, fur and an axe-happy attitude.", Brain = "Aggressive", Shirt = new Color(0.45f, 0.32f, 0.2f), Pants = new Color(0.3f, 0.22f, 0.15f), Hat = 15, Weapon = "cleaver", Blade = true },
+            new TypeDef { Id = "cowboy", Name = "Cowboy", Desc = "Hat, boots and a revolver.", Brain = "Gunman", Shirt = new Color(0.6f, 0.35f, 0.2f), Pants = new Color(0.2f, 0.3f, 0.5f), Shoes = new Color(0.35f, 0.2f, 0.1f), Hat = 4, HatColor = new Color(0.45f, 0.3f, 0.15f), Weapon = "revolver" },
+            new TypeDef { Id = "pirate", Name = "Pirate", Desc = "Bandana, striped shirt and a blade.", Brain = "Aggressive", Shirt = new Color(0.9f, 0.9f, 0.9f), Pants = new Color(0.15f, 0.15f, 0.2f), Mask = "m_bandana", Weapon = "knife", Blade = true },
+            new TypeDef { Id = "samurai", Name = "Samurai", Desc = "Armour, topknot and a katana.", Brain = "Brave", Shirt = new Color(0.55f, 0.1f, 0.08f), Pants = new Color(0.1f, 0.1f, 0.12f), Armor = 2, Weapon = "katana", Blade = true },
+            new TypeDef { Id = "gladiator", Name = "Gladiator", Desc = "Helmet, armour and a short sword. Born for the arena.", Brain = "Brave", Shirt = new Color(0.75f, 0.6f, 0.4f), Pants = new Color(0.55f, 0.15f, 0.1f), Sleeves = false, Hat = 7, HatColor = new Color(0.8f, 0.65f, 0.3f), Armor = 2, Weapon = "knife", Blade = true },
+            new TypeDef { Id = "mummy", Name = "Mummy", Desc = "Wrapped head to toe in old bandages.", Brain = "Aggressive", Shirt = new Color(0.82f, 0.78f, 0.65f), Pants = new Color(0.82f, 0.78f, 0.65f), Shoes = new Color(0.75f, 0.7f, 0.58f), Wraps = true },
         };
 
         public static TypeDef Get(string id) => Types.Find(t => t.Id == id);
@@ -46,7 +75,7 @@ namespace SolarEclipse
             if (t.Hair >= 0) look.HairStyle = t.Hair;
             look.Name = t.Name;
             look.Role = 0;
-            return t.Brain + "~c" + look.Encode() + "~t" + t.Id + tokens;
+            return t.Brain + (t.Armor >= 0 ? "~a" + t.Armor : "") + "~c" + look.Encode() + "~t" + t.Id + tokens;
         }
 
         public static string TypeOf(string preset)
@@ -71,6 +100,7 @@ namespace SolarEclipse
 
         public static bool IsGiant(string preset) => Flag(preset, "~g");
         public static bool IsSkeleton(string preset) => Flag(preset, "~s");
+        public static bool IsMini(string preset) => Flag(preset, "~n");
 
         /// <summary>Before the body is built (GoredollFactory.Spawn): skeleton colours, giant size.</summary>
         public static void ApplyLook(Appearance look, string preset)
@@ -83,6 +113,7 @@ namespace SolarEclipse
                 look.Name = "Skeleton";
             }
             if (IsGiant(preset)) look.Height *= 3f;
+            if (IsMini(preset)) look.Height *= 0.5f;
         }
 
         /// <summary>After the body is built: props, giant physics, skeleton (no blood), blade AI.</summary>
@@ -112,6 +143,24 @@ namespace SolarEclipse
                         if (chest != null) Piece(chest, "Badge", mb => { mb.Color = new Color(1f, 0.82f, 0.3f); mb.Gloss = 0.9f; mb.Box(new Vector3(-0.08f, 0.2f, 0.115f), new Vector3(0.04f, 0.05f, 0.01f)); }, layer);
                         break;
                 }
+                if (t.Gloves)
+                {
+                    var parts = new Dictionary<PartType, Transform>();
+                    foreach (var kv in doll.Parts) if (kv.Value != null) parts[kv.Key] = kv.Value.transform;
+                    FightAnim.Gloves(parts, layer);
+                }
+                if (t.Wraps)
+                    foreach (var kv in doll.Parts)
+                    {
+                        if (kv.Value == null) continue;
+                        var col = kv.Value.GetComponent<Collider>();
+                        float len = col != null ? Mathf.Max(col.bounds.size.y, 0.1f) / Mathf.Max(0.1f, kv.Value.transform.lossyScale.y) : 0.2f;
+                        Piece(kv.Value.transform, "Wraps", mb =>
+                        {
+                            mb.Color = new Color(0.62f, 0.58f, 0.46f);
+                            for (int i = 0; i < 4; i++) mb.Box(new Vector3(0, -len * (0.15f + i * 0.2f) + (kv.Key == PartType.Head ? HumanModel.HeadCenterY + len * 0.4f : 0f), 0), new Vector3(0.13f, 0.012f, 0.13f));
+                        }, layer);
+                    }
                 if (t.Weapon != null && doll.Parts.TryGetValue(PartType.HandR, out var hand) && hand != null)
                 {
                     var w = ArmedDolls.MountGun(hand.transform, t.Weapon, layer);
@@ -122,6 +171,11 @@ namespace SolarEclipse
             {
                 doll.DisplayName = t != null ? "Skeleton " + t.Name : "Skeleton";
                 if (doll.Bleeding != null) doll.Bleeding.enabled = false;
+            }
+            if (IsMini(preset))
+            {
+                doll.DisplayName = "Mini " + doll.DisplayName;
+                foreach (var p in doll.Parts.Values) if (p != null && p.Body != null) p.Body.mass *= 0.25f;
             }
             if (IsGiant(preset))
             {
@@ -156,6 +210,7 @@ namespace SolarEclipse
                 ai.Add(new SpawnableDef { Id = "npc_" + id, Name = t.Name, Category = "AI", Glyph = "person", Description = t.Desc, Spawn = (p, r) => GoredollFactory.Spawn(p, r.eulerAngles.y, Preset(id)).gameObject });
             }
             ai.Add(new SpawnableDef { Id = "npc_giant", Name = "Giant Goredoll", Category = "AI", Glyph = "person", Description = "Three times the size, nine times the weight, four times the health.", Spawn = (p, r) => GoredollFactory.Spawn(p + Vector3.up * 0.5f, r.eulerAngles.y, "Normal~g").gameObject });
+            ai.Add(new SpawnableDef { Id = "npc_mini", Name = "Mini Goredoll", Category = "AI", Glyph = "person", Description = "Half the size, a quarter of the weight. Flies a long way.", Spawn = (p, r) => GoredollFactory.Spawn(p, r.eulerAngles.y, "Normal~n").gameObject });
             ai.Add(new SpawnableDef { Id = "npc_skeleton", Name = "Skeleton", Category = "AI", Glyph = "skull", Description = "A walking skeleton. No blood, just bones.", Spawn = (p, r) => GoredollFactory.Spawn(p, r.eulerAngles.y, "Aggressive~s").gameObject });
             ai.Add(new SpawnableDef { Id = "npc_giant_ninja", Name = "Giant Ninja", Category = "AI", Glyph = "person", Description = "A 5 metre ninja with a 3 metre katana. Good luck.", Spawn = (p, r) => GoredollFactory.Spawn(p + Vector3.up * 0.5f, r.eulerAngles.y, Preset("ninja", true)).gameObject });
         }
