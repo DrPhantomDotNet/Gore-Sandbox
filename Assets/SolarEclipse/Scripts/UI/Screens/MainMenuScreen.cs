@@ -37,6 +37,14 @@ namespace SolarEclipse
         {
             for (int i = 0; i < dripSeeds.Length; i++) dripSeeds[i] = Random.value;
             AudioManager.PlayMusic("music_menu", 0.85f);
+            // What's new: show the changelog once after the game updated.
+            if (Settings.Data.setupDone && Settings.Data.lastSeenVersion != GameInfo.Version)
+            {
+                bool first = string.IsNullOrEmpty(Settings.Data.lastSeenVersion);
+                Settings.Data.lastSeenVersion = GameInfo.Version;
+                Settings.Save();
+                if (!first) UIRoot.Push(new ChangelogScreen());
+            }
         }
 
         public override bool OnBack()
@@ -100,6 +108,21 @@ namespace SolarEclipse
                 UI.Label(new Rect(r.x + 82, r.y + (big ? 10 : 6), r.width - 100, big ? 54 : 44), cards[i].title, big ? 42 : 32, Color.white.WithAlpha(a), TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
                 UI.Label(new Rect(r.x + 84, r.y + (big ? 62 : 48), r.width - 100, 30), cards[i].sub, 17, (hover ? UI.Accent2 : UI.Muted).WithAlpha(a), TextAnchor.MiddleLeft);
                 if (UI.Hit(r)) { AudioManager.Ui("ui_click"); cards[i].go(); }
+            }
+            // Continue where you left off + quick play.
+            {
+                float a = Intro(0.5f, 0.4f);
+                var last = string.IsNullOrEmpty(Settings.Data.lastMapId) ? null : MapCatalog.All.Find(m => m.Id == Settings.Data.lastMapId);
+                var old = GUI.color; GUI.color = new Color(1, 1, 1, a);
+                if (last != null && UI.Button(new Rect(90, yy, 330, 56), "CONTINUE: " + last.Name.ToUpperInvariant(), ButtonKind.Normal, IconFactory.Get("play"), 17, last.IsUnlocked()))
+                    GameManager.I.StartMap(last, new MapOptions { Time = last.DefaultTime, StartingNpcs = 3 });
+                if (UI.Button(new Rect(last != null ? 430 : 90, yy, last != null ? 180 : 520, 56), "QUICK PLAY", ButtonKind.Ghost, IconFactory.Get("refresh"), 17, true, "A random map with a few Goredolls"))
+                {
+                    var pool = MapCatalog.All.FindAll(m => !m.Secret && m.IsUnlocked() && !CustomMaps.IsCustom(m) && m.Id != "porteclipse");
+                    if (pool.Count > 0) { var m = pool[Random.Range(0, pool.Count)]; GameManager.I.StartMap(m, new MapOptions { Time = m.DefaultTime, StartingNpcs = 5 }); }
+                }
+                GUI.color = old;
+                yy += 64;
             }
             // Small row: settings, daily, credits, quit.
             {

@@ -47,7 +47,9 @@ namespace SolarEclipse
         // Startup
         public bool playIntro = true;
         public bool filmLook = true;   // Gore Sandbox 2: film grain + vignette over the game (Gore/GoreRework.cs)
-        public int menuScene = 0;      // 0 operating room (GS2), 1 classic stage (Game/MenuBackdrop.cs)
+        public int menuScene = 0;
+        public string lastSeenVersion = "";   // "What's new" popup after an update (UI/Screens/MainMenuScreen.cs)
+        public string lastMapId = "";         // CONTINUE card on the main menu      // 0 operating room (GS2), 1 classic stage (Game/MenuBackdrop.cs)
         public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)
         // VR (Scripts/VR): Windows + SteamVR / OpenXR
         public int vrMode = 0;                  // 0 auto (when SteamVR is running), 1 always try, 2 never

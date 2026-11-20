@@ -20,13 +20,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 7. [x] Title text with blood running down the letters
 8. [x] Intro music: low drone, heartbeat and distorted hit
 9. [x] Skip intro with any key or tap
-10. "Skip intro next time" setting
+10. [x] "Skip intro next time" setting
 11. Short intro (5 s) after the first launch
 12. Loading screen with a slowly rotating anatomical model
-13. Loading tips about anatomy and game mechanics
-14. Loading progress bar shaped like an ECG line
-15. Splash warning screen: "Contains extreme gore" with age note
-16. Gore level picker on the very first launch
+13. [x] Loading tips about anatomy and game mechanics
+14. [x] Loading progress bar shaped like an ECG line
+15. [x] Splash warning screen: "Contains extreme gore" with age note
+16. [x] Gore level picker on the very first launch
 17. First-launch language/graphics quick setup
 18. Animated studio "SolarEclipse Productions" card
 19. Version + build number on the title card
@@ -35,8 +35,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 22. [x] Film grain + chromatic aberration in cinematics
 23. [x] Letterbox bars for cinematic moments
 24. Cinematic subtitles style
-25. Credits reel reachable from the menu
-26. "What's new" popup after updating
+25. [x] Credits reel reachable from the menu
+26. [x] "What's new" popup after updating
 27. Trailer mode button in Extras (unlisted)
 28. Photo-real thumbnail generator for maps
 29. Shareable title screen screenshot
@@ -59,12 +59,12 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 44. [x] Film grain overlay on menus (toggle)
 45. [x] Vignette and subtle scanlines on menus (toggle)
 46. Animated background blood drips on menu panels
-47. "Continue" card: jump back into your last map
+47. [x] "Continue" card: jump back into your last map
 48. Recent maps row on the main menu
 49. News panel fed by the latest changelog entry
 50. Discord / itch.io links as small icons
 51. Player profile card on the menu (name, level, badge)
-52. Quick-play button (random map + Goredolls)
+52. [x] Quick-play button (random map + Goredolls)
 53. Menu music with 3 tracks and a mute button
 54. Unified Play hub for Sandbox, Modes, Story, Open World
 55. Map select with big preview images and filters
@@ -139,18 +139,18 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 122. Sparks on metal impacts
 123. Wood splinters on wood impacts
 124. Concrete chunks and dust puffs
-125. Screen-space blood on the lens (option)
+125. [x] Screen-space blood on the lens (option)
 126. Rain droplets on the camera lens
 127. Heat haze over fire and explosions
 128. Smoke that lingers and drifts
 129. Graphics presets Low/Medium/High/Ultra
 130. Auto-detect best preset on first launch
 131. Render scale slider
-132. FPS limiter (30/60/90/120/unlimited)
-133. V-sync toggle
+132. [x] FPS limiter (30/60/90/120/unlimited)
+133. [x] V-sync toggle
 134. Shadow distance slider
-135. Decal limit slider
-136. Ragdoll limit slider
+135. [x] Decal limit slider
+136. [x] Ragdoll limit slider
 137. Particle quality slider
 138. LOD system for bodies and props
 139. Occlusion culling for indoor maps
@@ -308,7 +308,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 285. Blood on weapons after melee hits
 286. Blood on the player's hands/gloves
 287. Clean blood off weapons (inspect key)
-288. Blood colour options (red, dark, green, blue)
+288. [x] Blood colour options (red, dark, green, blue)
 289. Blood viscosity setting
 290. Blood on water surfaces spreads
 291. Blood in rain gets washed thin
@@ -419,8 +419,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 392. Voice muffled when the head is covered
 393. Voice gets weaker with blood loss
 394. Voice stops with a destroyed jaw or throat
-395. Subtitles for every voice line
-396. Voice volume slider
+395. [x] Subtitles for every voice line
+396. [x] Voice volume slider
 397. Voice language filter (no words / words)
 398. Distance and room echo on voices
 399. Zombie voices separate from human voices
@@ -458,7 +458,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 429. Map-specific music themes
 430. Menu music tracks
 431. Music player in settings
-432. Audio mixer sliders: master, music, sfx, voice, ambience, UI
+432. [x] Audio mixer sliders: master, music, sfx, voice, ambience, UI
 433. Mono audio option
 434. Dynamic range options (night mode)
 435. Audio visualiser for deaf players (sound indicators)
@@ -1231,7 +1231,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1164. Subtitle size and background options
 1165. Sound indicators for deaf players
 1166. Reduce motion option
-1167. Screen shake slider (improved)
+1167. [x] Screen shake slider (improved)
 1168. Flash reduction option
 1169. Hold vs toggle for every action
 1170. Full key rebinding
@@ -1242,7 +1242,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1175. Arachnophobia-style toggle for flies/insects
 1176. Content warnings before story chapters
 1177. Pause on focus loss
-1178. Performance overlay (FPS, ms, memory)
+1178. [x] Performance overlay (FPS, ms, memory)
 1179. Benchmark mode
 1180. Crash reporter (local log)
 1181. Faster startup
