@@ -48,7 +48,7 @@ namespace SolarEclipse
             {
                 done = true;
                 // The cinematic intro (UI/Screens/IntroScreen.cs) calls OnSplashFinished itself when it ends or is skipped.
-                if (IntroScreen.ShouldPlay) UIRoot.Replace(new IntroScreen());
+                if (IntroScreen.ShouldPlay) UIRoot.Replace(new Intro2Screen()); // Gore Sandbox 2: the morgue intro (the alley one stays in IntroScreen.cs)
                 else GameManager.I.OnSplashFinished();
             }
 

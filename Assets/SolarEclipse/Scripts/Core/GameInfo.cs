@@ -3,7 +3,7 @@ namespace SolarEclipse
     /// <summary>Product identity shown in menus. Rename the game here.</summary>
     public static class GameInfo
     {
-        public const string Title = "GORE SANDBOX";
+        public const string Title = "GORE SANDBOX 2";
         public const string Subtitle = "a SolarEclipse Games production";
         public const string Studio = "SolarEclipse Games";
         public const string Version = "0.13.0";

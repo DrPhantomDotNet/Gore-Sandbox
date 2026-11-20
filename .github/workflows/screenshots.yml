@@ -1,0 +1,115 @@
+# Development screenshots: builds a Linux copy of the game, runs it on a virtual screen (software rendering, so
+# lighting can look a bit flatter than on a real graphics card) with -gs-screenshots (Dev/ScreenshotTour.cs), and
+# pushes the PNGs to the "screenshots" branch. Run by hand: Actions > Screenshots > Run workflow (pick a branch).
+# Never publishes anything to players.
+name: Screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ gs2 ]   # every Gore Sandbox 2 work-in-progress push gets fresh screenshots
+
+permissions:
+  contents: write
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Linux test copy
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - uses: actions/checkout@v4
+
+      - name: Cache Unity Library folder
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-StandaloneLinux64-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-StandaloneLinux64-
+
+      - name: Install GameCI
+        run: |
+          export GAME_CI_VERSION=v0.1.72 GAME_CI_INSTALL="$RUNNER_TEMP/game-ci/bin"
+          curl -fsSL "https://raw.githubusercontent.com/game-ci/cli/$GAME_CI_VERSION/install.sh" -o "$RUNNER_TEMP/install-game-ci.sh"
+          sh "$RUNNER_TEMP/install-game-ci.sh"
+          chmod +x "$GAME_CI_INSTALL/game-ci"
+          echo "$GAME_CI_INSTALL" >> "$GITHUB_PATH"
+
+      - name: Build with Unity
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          set +e
+          game-ci build \
+            --targetPlatform StandaloneLinux64 \
+            --buildName GoreSandbox \
+            --buildsPath build \
+            --buildMethod SolarEclipse.EditorTools.CIBuild.Build \
+            --unityLicensingMethod personal \
+            --versioningStrategy None \
+            --allowDirtyBuild true 2>&1 | tee build.log
+          sudo chown -R "$(id -u)" build 2>/dev/null || true
+          ls -la build/StandaloneLinux64 || true
+          if [ ! -f build/StandaloneLinux64/GoreSandbox ]; then
+            grep -E "error CS[0-9]+|Build Finished, Result|\[CIBuild\]|Exception:" build.log | head -n 40
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GoreSandbox-Linux
+          path: build/StandaloneLinux64
+          retention-days: 3
+
+  shoot:
+    name: Take screenshots
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: GoreSandbox-Linux
+          path: game
+
+      - name: Run the game on a virtual screen
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglu1-mesa mesa-utils pulseaudio > /dev/null
+          pulseaudio --start --exit-idle-time=-1 || true
+          chmod +x game/GoreSandbox
+          mkdir -p shots
+          timeout 900 xvfb-run -a -s "-screen 0 1600x900x24" game/GoreSandbox -gs-screenshots "$PWD/shots" \
+            -force-glcore -screen-width 1600 -screen-height 900 -screen-fullscreen 0 -logFile "$PWD/shots/player.log" || true
+          ls -la shots
+          grep -E "ScreenshotTour|Exception|Error" shots/player.log | head -n 60 || true
+
+      - name: Push screenshots to the "screenshots" branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd shots
+          git init -q
+          git config user.name "screenshots-bot"
+          git config user.email "screenshots-bot@users.noreply.github.com"
+          echo "Screenshots of ${GITHUB_REF_NAME} @ ${GITHUB_SHA} (run ${GITHUB_RUN_NUMBER})" > README.md
+          git add -A
+          git commit -qm "Screenshots: ${GITHUB_REF_NAME} ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:screenshots

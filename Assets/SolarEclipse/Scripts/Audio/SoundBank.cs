@@ -211,6 +211,7 @@ namespace SolarEclipse
             Def("intro_shot", 1, (r, s, v) => RecipesIntro.Gunshot(r, s));
             Def("intro_logo", 1, (r, s, v) => RecipesIntro.LogoSlam(r, s));
             Def("intro_buzz", 1, (r, s, v) => RecipesIntro.LampBuzz(r, s), 22050);
+            Def("intro2_score", 1, (r, s, v) => RecipesIntro2.Score(r, s), 22050); // Gore Sandbox 2 intro (Audio/RecipesIntro2.cs)
             // Open World (OpenWorld/*)
             Def("car_engine", 1, (r, s, v) => RecipesCity.Engine(r, s), 22050);
             Def("car_horn", 1, (r, s, v) => RecipesCity.Horn(r, s, false), 22050);
