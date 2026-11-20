@@ -33,6 +33,7 @@ namespace SolarEclipse
             add("officechair", "Office Chair", "A rolling desk chair that spins.", "refresh", OfficeChair.Create);
             add("hydrant", "Fire Hydrant", "Shoot it or hit it hard and it blasts a jet of water.", "drop", Hydrant.Create);
             add("jetengine", "Jet Engine", "A running jet engine. It sucks in everything in front of it.", "wind", JetEngine.Create);
+            Traps3.Register(add); // part 2 (World/Traps3.cs)
         }
 
         internal static readonly Color Spike = new Color(0.5f, 0.5f, 0.52f), Rusty = new Color(0.45f, 0.28f, 0.18f);

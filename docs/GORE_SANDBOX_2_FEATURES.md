@@ -802,36 +802,36 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 757. [x] Buzz saw on a rail
 758. [x] Flame jets
 759. [x] Acid pool
-760. Lava pool
+760. [x] Lava pool
 761. [x] Electric floor
 762. [x] Laser grid
 763. [x] Crusher ceiling
 764. [x] Iron maiden
-765. Rack
-766. Stocks
+765. [x] Rack
+766. [x] Stocks
 767. Guillotine (improved)
 768. Gallows (improved)
 769. Electric chair (improved)
 770. Woodchipper (improved)
 771. [x] Jet engine (sucks in)
-772. Car crusher
+772. [x] Car crusher
 773. Elevator cable cut
-774. Trapdoor
-775. Conveyor into furnace
-776. Furnace
-777. Freezer room
+774. [x] Trapdoor
+775. [x] Conveyor into furnace
+776. [x] Furnace
+777. [x] Freezer room
 778. Shark tank
 779. Piranha pool
 780. Bear trap (improved)
 781. [x] Landmines
-782. Claymore mines
-783. Tripwire grenades
-784. Bouncy castle
-785. Ball pit
+782. [x] Claymore mines
+783. [x] Tripwire grenades
+784. [x] Bouncy castle
+785. [x] Ball pit
 786. Pinball machine giant
-787. Bowling alley set
-788. Basketball hoop
-789. Soccer goal
+787. [x] Bowling alley set
+788. [x] Basketball hoop
+789. [x] Soccer goal
 790. [x] Punching bag
 791. [x] Hospital bed with straps
 792. Operating table with tools
@@ -840,9 +840,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 795. [x] Office chair (rolling)
 796. Vending machine (breakable)
 797. [x] Fire hydrant (water jet when broken)
-798. Traffic lights (working)
-799. Street lamps (breakable)
-800. Prop spawner tool (repeat spawns)
+798. [x] Traffic lights (working)
+799. [x] Street lamps (breakable)
+800. [x] Prop spawner tool (repeat spawns)
 
 ## 18. Vehicles (30)
 801. Better car handling
