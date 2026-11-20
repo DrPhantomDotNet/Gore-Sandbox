@@ -10,6 +10,7 @@ namespace SolarEclipse
         public static bool NoFallDamage, Invincible, AiIgnorePlayer, InfiniteAmmo, NoReload, OneHitKill, NoclipAllowed = true;
         public static bool ShowAiThoughts, AlwaysDismember, SuperKick, ExplosiveBullets, BigHeads, NpcInfighting, SlowMoOnKill, ShowColliders, Xray;
         public static bool FreezeAi, NoBleeding, NoPain, InstantDeathOnHeadshot = true, BulletTracers = true, PlayerRagdollFall;
+        public static bool LowGravity, Noir, Retro, Mirror; // Gore Sandbox 2 fun modes (Player/ScreenFx.cs)
         public static float DamageMultiplier = 1f, BleedMultiplier = 1f, NpcHealthMultiplier = 1f, BulletForceMultiplier = 1f;
         public static float PlayerSpeedMultiplier = 1f, JumpMultiplier = 1f, NpcSpeedMultiplier = 1f, AiAggression = 0f, GravityScale = 1f;
         static float timeScale = 1f;
@@ -32,6 +33,7 @@ namespace SolarEclipse
             NoFallDamage = Invincible = AiIgnorePlayer = InfiniteAmmo = NoReload = OneHitKill = false;
             NoclipAllowed = true;
             ShowAiThoughts = AlwaysDismember = SuperKick = ExplosiveBullets = BigHeads = NpcInfighting = SlowMoOnKill = ShowColliders = Xray = false;
+            LowGravity = Noir = Retro = Mirror = false;
             FreezeAi = NoBleeding = NoPain = PlayerRagdollFall = false;
             InstantDeathOnHeadshot = BulletTracers = true;
             DamageMultiplier = BleedMultiplier = NpcHealthMultiplier = BulletForceMultiplier = 1f;

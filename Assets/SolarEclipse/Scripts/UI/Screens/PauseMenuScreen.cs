@@ -100,6 +100,10 @@ namespace SolarEclipse
                     }
                     else Next();
                     UI.Toggle(Next(), "Super kick", ref Rules.SuperKick, "Kicks and haymakers send things flying.");
+                    UI.Toggle(Next(), "Low gravity", ref Rules.LowGravity, "Moon gravity for everything: bodies float and fly.");
+                    UI.Toggle(Next(), "Noir", ref Rules.Noir, "Black and white, except the blood.");
+                    UI.Toggle(Next(), "Retro", ref Rules.Retro, "Low resolution, few colours, scanlines.");
+                    UI.Toggle(Next(), "Mirror world", ref Rules.Mirror, "The whole picture flipped left to right.");
                     UI.Toggle(Next(), "Explosive bullets", ref Rules.ExplosiveBullets, "Every bullet impact explodes.");
                     UI.Slider(Next(), "Movement speed", ref Rules.PlayerSpeedMultiplier, 0.25f, 4f, "0.00", null, "×");
                     UI.Slider(Next(), "Jump height", ref Rules.JumpMultiplier, 0.25f, 4f, "0.00", null, "×");

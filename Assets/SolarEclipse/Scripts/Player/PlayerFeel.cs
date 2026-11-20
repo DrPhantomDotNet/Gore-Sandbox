@@ -45,6 +45,7 @@ namespace SolarEclipse
 
         public static void Tick(PlayerController p, bool sprinting, float dt)
         {
+            ScreenFx.Sync(p.Cam); // fun modes: noir, retro, mirror, low gravity (Player/ScreenFx.cs)
             // Stamina: about 8 seconds of sprinting, refills in 5; empty = no sprint until it is back to 30%.
             if (sprinting) Stamina = Mathf.Max(0f, Stamina - dt / 8f);
             else Stamina = Mathf.Min(1f, Stamina + dt / 5f);

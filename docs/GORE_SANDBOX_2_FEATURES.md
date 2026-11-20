@@ -1289,11 +1289,11 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1218. Time stop power
 1219. Telekinesis power
 1220. Super strength mode
-1221. Big head mode
-1222. Low gravity mode
-1223. Mirror world mode
-1224. Retro graphics filter
-1225. Black-and-white noir mode
+1221. [x] Big head mode
+1222. [x] Low gravity mode
+1223. [x] Mirror world mode
+1224. [x] Retro graphics filter
+1225. [x] Black-and-white noir mode
 1226. Cartoon outline mode
 1227. Easter eggs (10 new secrets)
 1228. Hidden dev room
