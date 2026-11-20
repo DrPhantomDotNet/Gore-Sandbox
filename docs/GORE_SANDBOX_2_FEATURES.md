@@ -6,20 +6,20 @@ Released as version 2.0 of the current game, through the auto-updater. Built in 
 - **Phase 2 — Gameplay (v2.1–2.4):** sections 10–18 (AI, characters, movement, weapons, fighting, physics, props, vehicles).
 - **Phase 3 — World & Community (v2.5+):** sections 19–30 (maps, weather, modes, story, open world, multiplayer, tools, progression, mobile, settings, VR, extras).
 
-Nothing here can be play-tested inside this cloud setup (there is no Unity here), so every phase gets tuned from your feedback after you play it.
+Built features are marked [x]. Nothing here can be play-tested inside this cloud setup (there is no Unity here), so every phase gets tuned from your feedback after you play it.
 
 ---
 
 ## 1. Intro & Presentation (30)
-1. New cinematic intro: heartbeat on a black screen
-2. Slow camera dolly through a rain-lit morgue
-3. Flickering fluorescent lights in the intro
-4. Body bag on a gurney that twitches
-5. Studio logo burned in with a light flicker
-6. GORE SANDBOX 2 title revealed on an ECG flatline
-7. Title text with blood running down the letters
-8. Intro music: low drone, heartbeat and distorted hit
-9. Skip intro with any key or tap
+1. [x] New cinematic intro: heartbeat on a black screen
+2. [x] Slow camera dolly through a rain-lit morgue
+3. [x] Flickering fluorescent lights in the intro
+4. [x] Body bag on a gurney that twitches
+5. [x] Studio logo burned in with a light flicker
+6. [x] GORE SANDBOX 2 title revealed on an ECG flatline
+7. [x] Title text with blood running down the letters
+8. [x] Intro music: low drone, heartbeat and distorted hit
+9. [x] Skip intro with any key or tap
 10. "Skip intro next time" setting
 11. Short intro (5 s) after the first launch
 12. Loading screen with a slowly rotating anatomical model
@@ -32,8 +32,8 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 19. Version + build number on the title card
 20. Seasonal intro variants (Halloween, Christmas)
 21. Random intro scene each launch (morgue, alley, hospital)
-22. Film grain + chromatic aberration in cinematics
-23. Letterbox bars for cinematic moments
+22. [x] Film grain + chromatic aberration in cinematics
+23. [x] Letterbox bars for cinematic moments
 24. Cinematic subtitles style
 25. Credits reel reachable from the menu
 26. "What's new" popup after updating
@@ -43,21 +43,21 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 30. Soft fade transitions between every screen
 
 ## 2. Main Menu & UI (50)
-31. Live 3D scene behind the main menu
-32. Operating-room menu scene with a surgical lamp
+31. [x] Live 3D scene behind the main menu
+32. [x] Operating-room menu scene with a surgical lamp
 33. Slaughterhouse menu scene with swinging hook
 34. Alley-in-the-rain menu scene
-35. Menu scene picker in Settings
-36. Slow orbiting menu camera with parallax
-37. Mouse/finger-tilt parallax on the menu camera
-38. Big picture cards: Play, Multiplayer, Story, Workshop, Settings
+35. [x] Menu scene picker in Settings
+36. [x] Slow orbiting menu camera with parallax
+37. [x] Mouse/finger-tilt parallax on the menu camera
+38. [x] Big picture cards: Play, Multiplayer, Story, Workshop, Settings
 39. Card hover animations with sound
 40. New darker UI theme with red accents
 41. New heading font and clean body font
 42. One consistent button style across every screen
 43. Icon set redrawn at higher resolution
-44. Film grain overlay on menus (toggle)
-45. Vignette and subtle scanlines on menus (toggle)
+44. [x] Film grain overlay on menus (toggle)
+45. [x] Vignette and subtle scanlines on menus (toggle)
 46. Animated background blood drips on menu panels
 47. "Continue" card: jump back into your last map
 48. Recent maps row on the main menu
@@ -103,7 +103,7 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 86. Soft shadow filtering quality setting
 87. Bloom on bright lights (toggle)
 88. Lens dirt on bright lights (toggle)
-89. Film grain in game (toggle)
+89. [x] Film grain in game (toggle)
 90. Chromatic aberration on big hits (toggle)
 91. Depth of field in photo mode
 92. Motion blur option
@@ -188,8 +188,8 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 169. Facial expressions: pain, fear, rage, shock, crying
 170. Tears when crying
 171. Sweat shine when stressed
-172. Skin going pale with blood loss
-173. Lips turning blue with low oxygen
+172. [x] Skin going pale with blood loss
+173. [x] Lips turning blue with low oxygen
 174. Pupils reacting to light and death
 175. Jaw going slack on death
 176. Eyes rolling back when unconscious
@@ -241,8 +241,8 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 220. Spine visible on deep back wounds
 221. Broken bones bending limbs at wrong angles
 222. Compound fractures with bone poking through
-223. Bruises appearing over seconds
-224. Bruises aging: red, purple, blue, yellow
+223. [x] Bruises appearing over seconds
+224. [x] Bruises aging: red, purple, blue, yellow
 225. Swelling around blunt hits
 226. Black eyes from face punches
 227. Burns: red skin, blisters, charred black
@@ -267,7 +267,7 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 246. Severed limbs twitch for a few seconds
 247. Severed heads keep expression
 248. Clothes torn around wounds
-249. Clothes soaked with blood spreading from wounds
+249. [x] Clothes soaked with blood spreading from wounds
 250. Blood-soaked hair
 251. Wound inspector shows every layer hit
 252. Wound inspector X-ray view
@@ -286,17 +286,17 @@ Nothing here can be play-tested inside this cloud setup (there is no Unity here)
 265. Impaled bodies stay on spikes
 266. Bodies pinned to walls with bolts
 267. Bullet wounds bleed out of clothes holes
-268. Arterial wounds spray in pulses
+268. [x] Arterial wounds spray in pulses
 269. Venous wounds ooze steadily
 270. Capillary wounds bead and drip
 
 ## 6. Blood & Fluids (40)
-271. Arterial spray that pulses with the heartbeat
-272. Spray strength drops as blood pressure falls
-273. Blood pools that spread over time
-274. Pools darken and dry at the edges
+271. [x] Arterial spray that pulses with the heartbeat
+272. [x] Spray strength drops as blood pressure falls
+273. [x] Blood pools that spread over time
+274. [x] Pools darken and dry at the edges
 275. Pools merge when they touch
-276. Footprints left when walking through blood
+276. [x] Footprints left when walking through blood
 277. Bloody handprints when crawling
 278. Blood strands dripping from wounds
 279. Drips from severed limbs

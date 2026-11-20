@@ -6,8 +6,6 @@ name: Screenshots
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ gs2 ]   # every Gore Sandbox 2 work-in-progress push gets fresh screenshots
 
 permissions:
   contents: write
