@@ -39,6 +39,7 @@ namespace SolarEclipse
             add("cancannon", "Can Cannon", "A broken vending machine that fires cans at 30 m/s. Press E for a burst.", "can", CanCannon.Create);
             add("meathook", "Meat Hook", "A hanging hook on a chain. Bodies that touch it get hooked.", "anchor", MeatHook.Create);
             add("electricchair", "Electric Chair", "Sit a Goredoll in it, press E.", "bolt", ElectricChair.Create);
+            Traps2.Register(add); // Gore Sandbox 2 traps and props (World/Traps2.cs)
         }
 
         // ------------------------------------------------------------------ building helpers

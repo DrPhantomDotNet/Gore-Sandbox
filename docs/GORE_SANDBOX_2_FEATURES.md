@@ -795,25 +795,25 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 ## 17. Props, Machines & Traps (50)
 751. Industrial press
 752. Meat grinder (improved)
-753. Spike pit
-754. Spike wall that closes in
-755. Swinging blades
-756. Rotating blade pillar
-757. Buzz saw on a rail
-758. Flame jets
-759. Acid pool
+753. [x] Spike pit
+754. [x] Spike wall that closes in
+755. [x] Swinging blades
+756. [x] Rotating blade pillar
+757. [x] Buzz saw on a rail
+758. [x] Flame jets
+759. [x] Acid pool
 760. Lava pool
-761. Electric floor
-762. Laser grid
-763. Crusher ceiling
-764. Iron maiden
+761. [x] Electric floor
+762. [x] Laser grid
+763. [x] Crusher ceiling
+764. [x] Iron maiden
 765. Rack
 766. Stocks
 767. Guillotine (improved)
 768. Gallows (improved)
 769. Electric chair (improved)
 770. Woodchipper (improved)
-771. Jet engine (sucks in)
+771. [x] Jet engine (sucks in)
 772. Car crusher
 773. Elevator cable cut
 774. Trapdoor
@@ -823,7 +823,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 778. Shark tank
 779. Piranha pool
 780. Bear trap (improved)
-781. Landmines
+781. [x] Landmines
 782. Claymore mines
 783. Tripwire grenades
 784. Bouncy castle
@@ -832,14 +832,14 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 787. Bowling alley set
 788. Basketball hoop
 789. Soccer goal
-790. Punching bag
-791. Hospital bed with straps
+790. [x] Punching bag
+791. [x] Hospital bed with straps
 792. Operating table with tools
-793. Wheelchair
+793. [x] Wheelchair
 794. Shopping trolley (improved)
-795. Office chair (rolling)
+795. [x] Office chair (rolling)
 796. Vending machine (breakable)
-797. Fire hydrant (water jet when broken)
+797. [x] Fire hydrant (water jet when broken)
 798. Traffic lights (working)
 799. Street lamps (breakable)
 800. Prop spawner tool (repeat spawns)
