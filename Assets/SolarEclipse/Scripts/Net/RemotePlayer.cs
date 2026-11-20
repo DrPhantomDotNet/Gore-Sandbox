@@ -212,8 +212,9 @@ namespace SolarEclipse
                 });
                 if (face != null && fm != SolarEclipse.FightMove.None) face.Expression = Expression.Angry;
             }
-            if (fighting && (gloves == null || gloves[0] == null && gloves[1] == null)) gloves = FightAnim.Gloves(parts, Layers.RemotePlayer);
-            if (gloves != null) foreach (var gl in gloves) if (gl != null && gl.activeSelf != fighting) gl.SetActive(fighting);
+            bool gloved = fighting && FightingStyles.StyleFor(WeaponCatalog.All[weaponIndex].Id).Gloves;
+            if (gloved && (gloves == null || gloves[0] == null && gloves[1] == null)) gloves = FightAnim.Gloves(parts, Layers.RemotePlayer);
+            if (gloves != null) foreach (var gl in gloves) if (gl != null && gl.activeSelf != gloved) gl.SetActive(gloved);
 
             // Weapon in hand
             if (Player.Weapon != netWeapon) { netWeapon = Player.Weapon; SetWeapon(Mods.ModNet.LocalIndex(Player.Weapon)); } // modded weapons: host session index -> local catalog

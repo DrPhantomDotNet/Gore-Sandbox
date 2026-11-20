@@ -709,17 +709,17 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 670. Vacuum cleaner (sucks gibs)
 
 ## 15. Fighting Styles (40)
-671. Karate: chops, front kicks, knife-hand strikes
-672. Kung Fu: palm strikes, sweeps, combos
-673. Muay Thai: elbows, knees, clinch
-674. Wrestling: suplex, slam, piledriver
+671. [x] Karate: chops, front kicks, knife-hand strikes
+672. [x] Kung Fu: palm strikes, sweeps, combos
+673. [x] Muay Thai: elbows, knees, clinch
+674. [x] Wrestling: suplex, slam, piledriver
 675. Judo: throws and trips
 676. Brazilian jiu-jitsu: chokes and arm locks
-677. Street brawler: dirty hits, headbutts
-678. Taekwondo: spinning and jumping kicks
+677. [x] Street brawler: dirty hits, headbutts
+678. [x] Taekwondo: spinning and jumping kicks
 679. Capoeira: acrobatic kicks
 680. Drunken fist: unpredictable moves
-681. Sumo: pushes and slams
+681. [x] Sumo: pushes and slams
 682. Krav Maga: disarms and counters
 683. Counters/parries with good timing
 684. Dodges and side-steps

@@ -10,7 +10,8 @@ namespace SolarEclipse
     /// in a headlock and see its consciousness, alert state, pain and oxygen above its head. Head and neck shots do
     /// reduced damage so it takes a lot of punches to kill. Moves are sent to other players so they see the animation.
     /// </summary>
-    public enum FightMove : byte { None, Jab, Cross, Hook, Uppercut, Haymaker, BodyHook, Roundhouse, LowKick, SpinKick, FlyingKick, AxeKick, FrontKick, Knee, LockPunch, Throw }
+    public enum FightMove : byte { None, Jab, Cross, Hook, Uppercut, Haymaker, BodyHook, Roundhouse, LowKick, SpinKick, FlyingKick, AxeKick, FrontKick, Knee, LockPunch, Throw,
+        Elbow, Headbutt, Chop, Palm, TornadoKick, SumoPush, Suplex, Sweep }
 
     public sealed class MoveSpec
     {
@@ -27,7 +28,7 @@ namespace SolarEclipse
         public const string BoxingId = "boxing";
         /// <summary>Head and neck shots from fighting styles do this much of their damage: it takes a lot of punches to kill.</summary>
         public const float HeadMul = 0.2f;
-        static readonly MoveSpec[] moves = new MoveSpec[16];
+        static readonly MoveSpec[] moves = new MoveSpec[32];
 
         static FightingStyles()
         {
@@ -46,6 +47,14 @@ namespace SolarEclipse
             M(FightMove.Knee, "Knee", 0.45f, 0.25f, 0.48f, 0.60f, 1.4f, 16f, 60f, 0f, 0, true, 0.2f);
             M(FightMove.LockPunch, "Punch", 0.32f, 0.15f, 0.40f, 0.55f, 1.4f, 12f, 40f, 0f, 0, false, 0.1f);
             M(FightMove.Throw, "Throw", 0.60f, 0.30f, 0.50f, 0.65f, 2.5f, 0f, 0f, 0f, 1, false, 0.2f, "whoosh_big");
+            M(FightMove.Elbow, "Elbow", 0.38f, 0.20f, 0.42f, 0.58f, 1.25f, 18f, 80f, 0f, 0, false, 0.18f);
+            M(FightMove.Headbutt, "Headbutt", 0.42f, 0.24f, 0.45f, 0.6f, 1.15f, 16f, 60f, 1.5f, 0, false, 0.25f);
+            M(FightMove.Chop, "Knife-Hand Chop", 0.36f, 0.18f, 0.42f, 0.58f, 1.5f, 14f, 70f, 0f, 0, false, 0.12f);
+            M(FightMove.Palm, "Palm Strike", 0.34f, 0.16f, 0.40f, 0.56f, 1.55f, 12f, 120f, 1.5f, 0, false, 0.12f);
+            M(FightMove.TornadoKick, "Tornado Kick", 0.9f, 0.25f, 0.5f, 0.66f, 2.1f, 34f, 420f, 11f, 0, true, 0.45f, "whoosh_big");
+            M(FightMove.SumoPush, "Sumo Shove", 0.6f, 0.32f, 0.5f, 0.66f, 1.6f, 8f, 420f, 9f, 1, false, 0.3f, "whoosh_big");
+            M(FightMove.Suplex, "Suplex", 0.9f, 0.3f, 0.55f, 0.75f, 2.5f, 0f, 0f, 0f, 1, false, 0.5f, "whoosh_big");
+            M(FightMove.Sweep, "Leg Sweep", 0.5f, 0.25f, 0.48f, 0.6f, 1.8f, 10f, 140f, 4f, 2, true, 0.2f);
         }
 
         static void M(FightMove id, string name, float dur, float wind, float hit, float hold, float reach, float dmg, float force, float knock, int zone, bool kick, float shake, string whoosh = "whoosh_small")
@@ -53,14 +62,50 @@ namespace SolarEclipse
 
         public static MoveSpec Spec(FightMove m) => (int)m > 0 && (int)m < moves.Length ? moves[(int)m] : null;
 
+        /// <summary>
+        /// One fighting style: which move each input does, the LMB combo, damage/speed and whether you wear gloves.
+        /// Inputs: LMB combo (crouch / sprint variants), F kick (crouch / sprint / air variants), R and Q specials,
+        /// R in a headlock = the style's throw.
+        /// </summary>
+        public sealed class Style
+        {
+            public string Id, Name, Desc;
+            public FightMove[] Combo;
+            public FightMove CrouchLmb = FightMove.BodyHook, SprintLmb = FightMove.Haymaker, Kick = FightMove.Roundhouse, CrouchKick = FightMove.LowKick,
+                SprintKick = FightMove.FrontKick, AirKick = FightMove.FlyingKick, R = FightMove.SpinKick, Q = FightMove.AxeKick, LockThrow = FightMove.Throw;
+            public float Damage = 1f, Speed = 1f, Move = 1f;
+            public bool Gloves;
+        }
+
+        public static readonly List<Style> Styles = new List<Style>
+        {
+            new Style { Id = BoxingId, Name = "Boxing", Gloves = true, Combo = new[] { FightMove.Jab, FightMove.Cross, FightMove.Hook, FightMove.Uppercut },
+                Desc = "Fighting style, third person. LMB punch combo, F kick, R spinning kick, Q axe kick, hold RMB guard, E headlock, MMB grab." },
+            new Style { Id = "karate", Name = "Karate", Combo = new[] { FightMove.Jab, FightMove.Chop, FightMove.Palm, FightMove.Chop }, CrouchKick = FightMove.Sweep, R = FightMove.SpinKick, Q = FightMove.AxeKick,
+                Desc = "Knife-hand chops to the neck, palm strikes, sweeps and kicks. LMB chop combo, F kick, crouch+F leg sweep, R spinning kick, Q axe kick." },
+            new Style { Id = "kungfu", Name = "Kung Fu", Speed = 1.2f, Damage = 0.85f, Combo = new[] { FightMove.Palm, FightMove.Jab, FightMove.Palm, FightMove.Chop, FightMove.Jab, FightMove.Palm }, R = FightMove.TornadoKick, Q = FightMove.Sweep, CrouchKick = FightMove.Sweep,
+                Desc = "Lightning-fast palm strikes and chops, tornado kicks and sweeps. Faster moves, a little less power." },
+            new Style { Id = "muaythai", Name = "Muay Thai", Gloves = true, Damage = 1.15f, Combo = new[] { FightMove.Jab, FightMove.Cross, FightMove.Elbow, FightMove.Knee }, R = FightMove.Elbow, Q = FightMove.Knee,
+                Desc = "The art of eight limbs: punches, elbows, knees and brutal roundhouse kicks. Knees in the headlock hit harder." },
+            new Style { Id = "wrestling", Name = "Wrestling", Speed = 0.85f, Damage = 1.1f, Combo = new[] { FightMove.Cross, FightMove.Haymaker }, R = FightMove.SumoPush, Q = FightMove.Headbutt, LockThrow = FightMove.Suplex,
+                Desc = "Grab, headlock and SUPLEX (R in a headlock). LMB heavy punches, Q headbutt, R shoulder shove." },
+            new Style { Id = "taekwondo", Name = "Taekwondo", Combo = new[] { FightMove.Jab, FightMove.Cross }, R = FightMove.TornadoKick, Q = FightMove.AxeKick, SprintKick = FightMove.FlyingKick,
+                Desc = "Kicks, kicks and more kicks: tornado kick (R), axe kick (Q), flying kicks off a sprint." },
+            new Style { Id = "brawler", Name = "Street Brawler", Damage = 1.1f, Combo = new[] { FightMove.Haymaker, FightMove.Cross, FightMove.Uppercut }, R = FightMove.Elbow, Q = FightMove.Headbutt, SprintKick = FightMove.FrontKick,
+                Desc = "No rules: wild haymakers, headbutts (Q), elbows (R) and stomps." },
+            new Style { Id = "sumo", Name = "Sumo", Speed = 0.8f, Damage = 1.3f, Move = 0.8f, Combo = new[] { FightMove.SumoPush, FightMove.Palm }, Kick = FightMove.AxeKick, R = FightMove.SumoPush, Q = FightMove.Headbutt,
+                Desc = "Slow, heavy and unstoppable: shoves that send Goredolls flying, palm slaps and stomps." },
+        };
+
+        public static Style StyleFor(string id) => Styles.Find(x => x.Id == id) ?? Styles[0];
+
         public static void AppendDefs(List<WeaponDef> all)
         {
-            if (all.Exists(d => d.Id == BoxingId)) return;
-            all.Add(new WeaponDef
+            foreach (var st in Styles)
             {
-                Id = BoxingId, Name = "Boxing", Kind = WeaponKind.FightingStyle, Glyph = "fist", Damage = 10, Force = 40,
-                Description = "Fighting style, third person. LMB punch combo, F kick, R spinning kick, Q axe kick, hold RMB guard, E headlock, MMB grab.",
-            });
+                if (all.Exists(d => d.Id == st.Id)) continue;
+                all.Add(new WeaponDef { Id = st.Id, Name = st.Name, Kind = WeaponKind.FightingStyle, Glyph = "fist", Damage = 10, Force = 40, Description = st.Desc });
+            }
         }
 
         public static Weapon Create(WeaponDef def) => def != null && def.Kind == WeaponKind.FightingStyle ? new Boxing { Def = def } : null;
@@ -265,6 +310,52 @@ namespace SolarEclipse
                         W[I(PartType.UpperArmL)] = new Vector3(-20f, 10f, 40f); W[I(PartType.ForearmL)] = new Vector3(-120f, 0f, 0f);
                         S[I(PartType.UpperArmL)] = new Vector3(-55f, 40f, -5f); S[I(PartType.ForearmL)] = new Vector3(-25f, 0f, 0f); S[I(PartType.Chest)].y += 10f;
                         break;
+                    case FightMove.Elbow:
+                        W[I(PartType.UpperArmR)] = new Vector3(-40f, 30f, 50f); W[I(PartType.ForearmR)] = new Vector3(-150f, 0f, 0f); W[I(PartType.Chest)].y += 18f;
+                        S[I(PartType.UpperArmR)] = new Vector3(-85f, -55f, -10f); S[I(PartType.ForearmR)] = new Vector3(-155f, 0f, 0f);
+                        S[I(PartType.Chest)].y -= 32f; S[I(PartType.Abdomen)].y -= 12f; yawS = -12f;
+                        break;
+                    case FightMove.Headbutt:
+                        W[I(PartType.Chest)].x -= 18f; W[I(PartType.Head)].x -= 15f;
+                        S[I(PartType.Chest)].x += 28f; S[I(PartType.Head)].x += 25f; S[I(PartType.Neck)].x += 10f; yS = -0.04f;
+                        break;
+                    case FightMove.Chop:
+                        W[I(PartType.UpperArmR)] = new Vector3(-120f, 0f, 40f); W[I(PartType.ForearmR)] = new Vector3(-60f, 0f, 0f); W[I(PartType.Chest)].y += 15f;
+                        S[I(PartType.UpperArmR)] = new Vector3(-80f, -45f, -5f); S[I(PartType.ForearmR)] = new Vector3(-15f, 0f, 0f); S[I(PartType.HandR)] = new Vector3(0f, 0f, 0f);
+                        S[I(PartType.Chest)].y -= 25f; yawS = -8f;
+                        break;
+                    case FightMove.Palm:
+                        W[I(PartType.UpperArmR)] = new Vector3(-20f, 0f, 10f); W[I(PartType.ForearmR)] = new Vector3(-120f, 0f, 0f);
+                        S[I(PartType.UpperArmR)] = new Vector3(-90f, 4f, -6f); S[I(PartType.ForearmR)] = new Vector3(-8f, 0f, 0f); S[I(PartType.HandR)] = new Vector3(-70f, 0f, 0f);
+                        S[I(PartType.Chest)].y -= 26f; S[I(PartType.ThighR)].x += 10f; yawS = -10f;
+                        break;
+                    case FightMove.TornadoKick:
+                        spin = 360f * Ease((p.T - 0.05f) / 0.75f);
+                        W[I(PartType.ThighL)] = new Vector3(-90f, 0f, 0f); W[I(PartType.ShinL)] = new Vector3(110f, 0f, 0f); yW = 0.15f;
+                        S[I(PartType.ThighR)] = new Vector3(-15f, -62f, 115f); S[I(PartType.ShinR)] = new Vector3(6f, 0f, 0f); S[I(PartType.FootR)] = new Vector3(35f, 0f, 0f);
+                        S[I(PartType.ThighL)] = new Vector3(-80f, 0f, -10f); S[I(PartType.ShinL)] = new Vector3(120f, 0f, 0f);
+                        S[I(PartType.Chest)] += new Vector3(-8f, 0f, 35f); S[I(PartType.UpperArmR)] = new Vector3(20f, 0f, 50f); S[I(PartType.UpperArmL)] = new Vector3(-40f, 0f, -40f); yS = 0.25f;
+                        break;
+                    case FightMove.SumoPush:
+                        W[I(PartType.UpperArmR)] = new Vector3(-50f, 0f, 20f); W[I(PartType.UpperArmL)] = new Vector3(-50f, 0f, -20f);
+                        W[I(PartType.ForearmR)] = new Vector3(-110f, 0f, 0f); W[I(PartType.ForearmL)] = new Vector3(-110f, 0f, 0f); yW = -0.08f;
+                        S[I(PartType.UpperArmR)] = new Vector3(-88f, 0f, -8f); S[I(PartType.UpperArmL)] = new Vector3(-88f, 0f, 8f);
+                        S[I(PartType.ForearmR)] = new Vector3(-5f, 0f, 0f); S[I(PartType.ForearmL)] = new Vector3(-5f, 0f, 0f);
+                        S[I(PartType.HandR)] = new Vector3(-70f, 0f, 0f); S[I(PartType.HandL)] = new Vector3(-70f, 0f, 0f);
+                        S[I(PartType.Chest)].x += 22f; S[I(PartType.ThighR)].x += 25f; yS = -0.06f;
+                        break;
+                    case FightMove.Suplex:
+                        W[I(PartType.Chest)].x += 20f; yW = -0.1f;
+                        S[I(PartType.Chest)].x -= 70f; S[I(PartType.Abdomen)].x -= 35f; S[I(PartType.Head)].x -= 30f;
+                        S[I(PartType.UpperArmR)] = new Vector3(-160f, 0f, -20f); S[I(PartType.UpperArmL)] = new Vector3(-160f, 0f, 20f);
+                        S[I(PartType.ThighL)].x -= 30f; S[I(PartType.ThighR)].x -= 30f; S[I(PartType.ShinL)].x += 50f; S[I(PartType.ShinR)].x += 50f; yS = -0.2f;
+                        break;
+                    case FightMove.Sweep:
+                        W[I(PartType.ThighR)] = new Vector3(-20f, 40f, 40f); W[I(PartType.ShinR)] = new Vector3(30f, 0f, 0f); yW = -0.3f;
+                        W[I(PartType.ThighL)].x -= 70f; W[I(PartType.ShinL)].x += 110f;
+                        S[I(PartType.ThighR)] = new Vector3(-10f, -70f, 75f); S[I(PartType.ShinR)] = new Vector3(5f, 0f, 0f);
+                        S[I(PartType.ThighL)].x -= 70f; S[I(PartType.ShinL)].x += 110f; yS = -0.35f; spin = -60f * st;
+                        break;
                     case FightMove.Throw:
                         W[I(PartType.Chest)] += new Vector3(10f, 30f, 0f); yawW = 15f;
                         S[I(PartType.Chest)] += new Vector3(-10f, -45f, 0f);
@@ -316,13 +407,15 @@ namespace SolarEclipse
         Transform model;
         float height = 1f;
         FaceRig face;
+        bool gloves = true;
 
-        public static FighterRig Create(PlayerController p)
+        public static FighterRig Create(PlayerController p, bool gloves = true)
         {
             var go = new GameObject("FighterBody");
             go.layer = Layers.Effects;
             go.transform.SetParent(p.transform, false);
             var r = go.AddComponent<FighterRig>();
+            r.gloves = gloves;
             r.Build();
             return r;
         }
@@ -360,7 +453,7 @@ namespace SolarEclipse
             if (custom != null && custom.Glasses) CustomDolls.AddGlasses(Parts[PartType.Head], Layers.Effects);
             if (prof != null && !OWOutfit.HasHat(prof.Outfit)) Hats.Attach(Parts[PartType.Head], prof.Hat, prof.HatColor, Layers.Effects);
             if (prof != null) OWOutfit.Attach(Parts[PartType.Head], Parts[PartType.Chest], Parts.TryGetValue(PartType.ForearmL, out var fa) ? fa : null, prof.Outfit, Layers.Effects);
-            FightAnim.Gloves(Parts, Layers.Effects);
+            if (gloves) FightAnim.Gloves(Parts, Layers.Effects);
             IconFactory.SetLayer(model.gameObject, Layers.Effects);
             foreach (var c in GetComponentsInChildren<Collider>(true)) c.enabled = false;
         }
@@ -470,12 +563,14 @@ namespace SolarEclipse
         readonly HandGrab grab = new HandGrab();
         int sentState = -1;
 
+        FightingStyles.Style style;
+        FightingStyles.Style St => style ??= FightingStyles.StyleFor(Def != null ? Def.Id : FightingStyles.BoxingId);
         public override bool ThirdPerson => true;
         public override bool ConsumesKick => true;
         public override bool IsAiming => guard > 0.5f; // other players see the guard; no zoom
         public override float AimFov => 1f;
         public override bool ConsumesUse => locked != null || candidate != null;
-        public override float MoveSpeedMul => locked != null ? 0.55f : grab.Holding ? 0.75f : move == FightMove.FlyingKick ? 1f : 0.95f;
+        public override float MoveSpeedMul => (locked != null ? 0.55f : grab.Holding ? 0.75f : move == FightMove.FlyingKick ? 1f : 0.95f) * St.Move;
         public override string AmmoText => "";
         public override string ModeText => locked != null ? "HEADLOCK" : grab.Holding ? "CARRYING" : guard > 0.5f ? "GUARD" : "";
         public override bool Busy => move != FightMove.None;
@@ -487,7 +582,7 @@ namespace SolarEclipse
         {
             Current = this;
             Vm.ResetHands();
-            if (rig == null) rig = FighterRig.Create(Player);
+            if (rig == null) rig = FighterRig.Create(Player, St.Gloves);
             move = FightMove.None; combo = 0; guard = 0f;
             AudioManager.Play("cloth", Player.transform.position, 0.6f);
         }
@@ -543,7 +638,7 @@ namespace SolarEclipse
             var spec = FightingStyles.Spec(move);
             if (spec != null)
             {
-                moveT += dt / spec.Dur;
+                moveT += dt / spec.Dur * St.Speed;
                 if (!hitDone && moveT >= spec.Hit) { hitDone = Strike(spec); if (move != FightMove.FlyingKick) hitDone = true; }
                 if (move == FightMove.FlyingKick && !hitDone && moveT > spec.Hold) hitDone = true;
                 if (moveT >= 1f) { move = FightMove.None; moveT = 0f; }
@@ -572,24 +667,26 @@ namespace SolarEclipse
                 return;
             }
             if (move != FightMove.None) return;
+            var st = St;
             if (f.Kick)
             {
-                if (!p.Grounded && !p.Noclip) Start(FightMove.FlyingKick);
-                else if (p.Crouching) Start(FightMove.LowKick);
-                else if (f.Sprint && p.Speed > 3f) Start(FightMove.FrontKick);
-                else Start(FightMove.Roundhouse);
+                if (!p.Grounded && !p.Noclip) Start(st.AirKick);
+                else if (p.Crouching) Start(st.CrouchKick);
+                else if (f.Sprint && p.Speed > 3f) Start(st.SprintKick);
+                else Start(st.Kick);
             }
-            else if (f.Reload) Start(FightMove.SpinKick);
-            else if (f.Inspect) Start(FightMove.AxeKick);
+            else if (f.Reload) Start(st.R);
+            else if (f.Inspect) Start(st.Q);
         }
 
         void ReadPunch(PlayerController p)
         {
-            if (p.Crouching) { Start(FightMove.BodyHook); return; }
-            if (PlayerInput.Frame.Sprint && p.Speed > 3f) { Start(FightMove.Haymaker); return; }
+            var st = St;
+            if (p.Crouching) { Start(st.CrouchLmb); return; }
+            if (PlayerInput.Frame.Sprint && p.Speed > 3f) { Start(st.SprintLmb); return; }
             if (Time.time > comboUntil) combo = 0;
-            var m = combo == 0 ? FightMove.Jab : combo == 1 ? FightMove.Cross : combo == 2 ? FightMove.Hook : FightMove.Uppercut;
-            combo = (combo + 1) % 4;
+            var m = st.Combo[combo % st.Combo.Length];
+            combo = (combo + 1) % st.Combo.Length;
             Start(m);
         }
 
@@ -598,6 +695,7 @@ namespace SolarEclipse
             var spec = FightingStyles.Spec(m);
             if (spec == null) return;
             move = m; moveT = 0f; hitDone = false;
+            if (m == FightMove.TornadoKick && Player.Grounded) Player.Launch(Flat * 3f + Vector3.up * 4.5f);
             comboUntil = Time.time + spec.Dur + 0.7f;
             Swing(spec.Whoosh, spec.Kick ? 0.8f : 0.6f);
             if (m == FightMove.FlyingKick) Player.Launch(Flat * 8f + Vector3.up * 3.5f);
@@ -661,7 +759,18 @@ namespace SolarEclipse
         bool Strike(MoveSpec spec)
         {
             var p = Player;
-            if (move == FightMove.Throw)
+            if (move == FightMove.Suplex && locked != null)
+            {
+                // Lift them over and slam them down behind you, head first.
+                var d = locked; ReleaseLock();
+                d.Launch(-Flat * 4f + Vector3.up * 6.5f);
+                if (d.Parts.TryGetValue(PartType.Head, out var hd) && hd != null)
+                    hd.TakeDamage(new DamageInfo { Amount = 22f * St.Damage, Force = Vector3.down * 300f, Point = hd.transform.position, Normal = Vector3.up, Direction = Vector3.down, Type = DamageType.Blunt, Source = p, Weapon = "Suplex" });
+                CameraFX.Shake(0.5f); AudioManager.Play("body_thud", p.transform.position, 1f);
+                Flash("Suplex");
+                return true;
+            }
+            if (move == FightMove.Throw || move == FightMove.Suplex)
             {
                 var v = Flat * 13f + Vector3.up * 4f;
                 if (grab.Holding) grab.Release(v);
@@ -690,8 +799,8 @@ namespace SolarEclipse
                 var point = part.Body.worldCenterOfMass - Flat * 0.08f;
                 var info = new DamageInfo
                 {
-                    Amount = spec.Dmg * (head ? FightingStyles.HeadMul : 1f) * (super ? 3f : 1f), Force = dir * spec.Force * (super ? 4f : 1f),
-                    Point = point, Normal = -dir, Direction = dir, Type = DamageType.Blunt, Source = p, Weapon = "Boxing: " + spec.Name,
+                    Amount = spec.Dmg * St.Damage * (head ? FightingStyles.HeadMul : 1f) * (super ? 3f : 1f), Force = dir * spec.Force * (super ? 4f : 1f),
+                    Point = point, Normal = -dir, Direction = dir, Type = DamageType.Blunt, Source = p, Weapon = St.Name + ": " + spec.Name,
                 };
                 part.TakeDamage(info);
                 if (spec.Knock > 0f) doll.Launch(dir * spec.Knock * (super ? 3f : 1f) + Vector3.up * (move == FightMove.LowKick ? 2.5f : 1f));
@@ -710,7 +819,7 @@ namespace SolarEclipse
             var origin = p.transform.position + Vector3.up * (spec.Zone == 0 ? 1.5f : spec.Zone == 1 ? 1.1f : 0.5f);
             if (Physics.SphereCast(origin, 0.3f, Flat, out var hit, spec.Reach, Layers.ShootMask, QueryTriggerInteraction.Ignore))
             {
-                var info = new DamageInfo { Amount = spec.Dmg * (super ? 3f : 1f), Force = dir * spec.Force, Point = hit.point, Normal = hit.normal, Direction = dir, Type = DamageType.Blunt, Source = p, Weapon = "Boxing: " + spec.Name };
+                var info = new DamageInfo { Amount = spec.Dmg * (super ? 3f : 1f), Force = dir * spec.Force, Point = hit.point, Normal = hit.normal, Direction = dir, Type = DamageType.Blunt, Source = p, Weapon = St.Name + ": " + spec.Name };
                 var dmg = hit.collider.GetComponentInParent<IDamageable>();
                 if (dmg != null) dmg.TakeDamage(info);
                 if (hit.rigidbody != null) NetPhysics.Impulse(hit.rigidbody, dir * spec.Force * (super ? 4f : 1f), hit.point);
@@ -807,7 +916,7 @@ namespace SolarEclipse
             {
                 if (f.Fire) Start(FightMove.LockPunch);
                 else if (f.Kick) Start(FightMove.Knee);
-                else if (f.Reload) Start(FightMove.Throw);
+                else if (f.Reload) Start(St.LockThrow);
                 else if (f.Use || f.Middle) ReleaseLock();
             }
         }
