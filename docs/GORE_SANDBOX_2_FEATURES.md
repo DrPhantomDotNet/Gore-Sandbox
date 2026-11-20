@@ -852,9 +852,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 805. Seatbelts option for passengers
 806. Goredoll passengers
 807. [x] Bus
-808. Truck with trailer
+808. [x] Truck with trailer
 809. [x] Ambulance with siren
-810. Police car with siren
+810. [x] Police car with siren
 811. [x] Fire truck with ladder
 812. Motorbike (improved)
 813. Bicycle
