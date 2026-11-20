@@ -14,7 +14,8 @@ namespace SolarEclipse
             public BodyPart Part;
             public Wound Wound;
             public Vector3 LocalPos, LocalNormal;
-            public float Accum, PulsePhase;
+            public float Accum, PulsePhase, StainT;
+            public int Stains;
         }
 
         const int MaxEmitters = 8;
@@ -78,6 +79,15 @@ namespace SolarEclipse
                 {
                     e.Accum -= 4f;
                     BloodFX.Drip(pos + Random.insideUnitSphere * 0.01f, RB.Vel(e.Part.Body) * 0.5f);
+                }
+                // Blood soaks into the clothes around the wound: a stain that spreads over half a minute.
+                e.StainT += dt * Mathf.Clamp(rate / 6f, 0.3f, 3f);
+                if (e.StainT > 4f && e.Stains < 3)
+                {
+                    e.StainT = 0f;
+                    var col = e.Part.GetComponent<Collider>();
+                    if (col != null) Decals.Blood(pos - normal * 0.002f + Random.insideUnitSphere * 0.02f, normal, 0.1f + e.Stains * 0.07f, 0, col, 8f);
+                    e.Stains++;
                 }
                 // Wounds slowly clot unless arterial.
                 if (!e.Wound.Arterial) e.Wound.BleedRate *= Mathf.Exp(-dt / 60f);

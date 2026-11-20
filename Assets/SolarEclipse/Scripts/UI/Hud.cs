@@ -88,6 +88,7 @@ namespace SolarEclipse
             var d = Settings.Data;
             bool repaint = Event.current.type == EventType.Repaint;
 
+            FilmLook.Draw(W, H);
             DrawDamageVignette(p, W, H);
             if (gm.HudHidden) { DrawDeath(p, W, H); return; }
 

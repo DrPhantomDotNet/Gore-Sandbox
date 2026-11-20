@@ -60,6 +60,8 @@ namespace SolarEclipse
             if (zombieKind.HasValue) Zombies.Attach(doll, zombieKind.Value, seed);
             NpcMods.Attach(doll, preset, mods);
             NpcTypes.Attach(doll, netPreset);
+            SkinTone.Attach(doll);       // pale / blue / waxy skin (Gore/GoreRework.cs)
+            DollFootprints.Attach(doll); // bloody footprints
 
             Stats.Add(Stats.Spawned);
             if (!NetState.IsClient) EnforceLimit();

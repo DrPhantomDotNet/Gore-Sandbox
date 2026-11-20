@@ -96,6 +96,9 @@ namespace SolarEclipse
         public static Material DecalHoles => decalHoles ??= DecalWith(TextureFactory.HoleAtlas, 0.2f);
         public static Material DecalWounds => decalWounds ??= DecalWith(TextureFactory.WoundAtlas, 0.65f);
 
+        /// <summary>A decal material for any texture (Gore/GoreRework.cs footprints).</summary>
+        public static Material DecalFor(Texture tex, float gloss) => DecalWith(tex, gloss);
+
         static Material DecalWith(Texture tex, float gloss)
         {
             var m = Make(Find("SolarEclipse/Decal", "Sprites/Default"), "SEG_Decal_" + tex.name);

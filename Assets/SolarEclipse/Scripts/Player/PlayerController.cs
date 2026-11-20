@@ -301,6 +301,7 @@ namespace SolarEclipse
 
         void Footstep(bool sprint)
         {
+            PlayerFootprints.OnStep(transform.position, yaw); // bloody prints after stepping in a pool (Gore/GoreRework.cs)
             string clip = "step_concrete";
             if (Physics.Raycast(transform.position + Vector3.up * 0.2f, Vector3.down, out var hit, 0.6f, Layers.WorldMask, QueryTriggerInteraction.Ignore))
             {

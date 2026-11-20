@@ -19,7 +19,7 @@ namespace SolarEclipse
             public DecalKind Kind;
             public Color Color;
             public float Born, GrowTime, TargetSize, StartSize, FadeAfter;
-            public bool Active;
+            public bool Active, Darken;
         }
 
         static readonly List<Decal> blood = new List<Decal>();
@@ -47,6 +47,7 @@ namespace SolarEclipse
             foreach (var d in blood) if (d.Go != null) Object.Destroy(d.Go);
             foreach (var d in other) if (d.Go != null) Object.Destroy(d.Go);
             blood.Clear(); other.Clear(); growing.Clear();
+            BloodPools.Clear();
             bloodNext = otherNext = 0;
             ActiveCount = 0;
         }
@@ -81,6 +82,7 @@ namespace SolarEclipse
             }
             growing.Remove(d);
             d.Active = true;
+            d.Darken = false;
             return d;
         }
 
@@ -170,12 +172,34 @@ namespace SolarEclipse
             float start = growTime > 0 ? size * 0.15f : size;
             Place(d, pos, normal, start, rot, TextureFactory.AtlasCell(cell, TextureFactory.BloodCells), col, surface, 0.004f + Random.value * 0.003f);
             d.Renderer.sharedMaterial = Mats.DecalBlood;
+            if (kind == 2) { d.Darken = true; BloodPools.Add(pos, size); } // pools dry darker; feet that step in them leave prints
             if (growTime > 0)
             {
                 d.StartSize = start; d.TargetSize = size; d.GrowTime = growTime;
                 growing.Add(d);
             }
-            else if (fadeAfter > 0) growing.Add(d);
+            else if (fadeAfter > 0 || d.Darken) growing.Add(d);
+        }
+
+        /// <summary>A bloody shoe print (Gore/GoreRework.cs). Left feet are the right print mirrored.</summary>
+        public static void Footprint(Vector3 pos, Vector3 normal, float yaw, bool left, Color color, Collider surface)
+        {
+            if (!Settings.GoreEnabled) return;
+            var d = Acquire(true);
+            d.Kind = DecalKind.Blood;
+            d.Born = Time.time;
+            d.FadeAfter = 240f;
+            // The quad faces the surface; turn it so the toes point where the foot was heading.
+            var look = Quaternion.LookRotation(-normal);
+            var fwd = Quaternion.Euler(0f, yaw, 0f) * Vector3.forward;
+            var lf = Quaternion.Inverse(look) * Vector3.ProjectOnPlane(fwd, normal).normalized;
+            float rot = Mathf.Atan2(-lf.x, lf.y) * Mathf.Rad2Deg;
+            Place(d, pos, normal, 0.3f, rot, left ? new Rect(1f, 0f, -1f, 1f) : new Rect(0f, 0f, 1f, 1f), color, surface, 0.005f);
+            // Shoe prints are taller than wide.
+            var ls = d.Go.transform.localScale;
+            d.Go.transform.localScale = new Vector3(ls.x * 0.5f, ls.y, ls.z);
+            d.Renderer.sharedMaterial = Footprints.Material;
+            growing.Add(d);
         }
 
         public static void BulletHole(Vector3 pos, Vector3 normal, SurfaceType surface, Collider col, float size = 0.12f)
@@ -233,7 +257,18 @@ namespace SolarEclipse
                     if ((Time.frameCount + i) % 10 == 0) SetColor(d, c);
                     if (f <= 0f) { d.Go.SetActive(false); d.FadeAfter = 0; }
                 }
-                if (d.GrowTime <= 0 && d.FadeAfter <= 0) growing.RemoveAt(i);
+                if (d.Darken)
+                {
+                    // Fresh pools are bright red; over two minutes they dry dark at the edges and lose their shine.
+                    float k = Mathf.Clamp01((now - d.Born) / 120f);
+                    if ((Time.frameCount + i) % 15 == 0)
+                    {
+                        var c = d.Color; var dk = new Color(c.r * 0.42f, c.g * 0.38f, c.b * 0.38f, c.a);
+                        SetColor(d, Color.Lerp(c, dk, k));
+                    }
+                    if (k >= 1f) d.Darken = false;
+                }
+                if (d.GrowTime <= 0 && d.FadeAfter <= 0 && !d.Darken) growing.RemoveAt(i);
             }
         }
 

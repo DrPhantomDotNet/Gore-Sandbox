@@ -132,7 +132,9 @@ namespace SolarEclipse
                     if (!Application.isMobilePlatform && UI.Toggle(Next(), "Use built-in game font", ref d.builtinFont, "Turn on if text looks broken. Phones always use it."))
                     { changed = true; UI.ReloadFonts(); }
                     changed |= UI.Toggle(Next(), "Automatic updates", ref d.autoUpdate, "Checks for a new version when the game starts and installs it (you're on v" + GameInfo.Version + ").");
-                    changed |= UI.Toggle(Next(), "Play intro on startup", ref d.playIntro, "The 20 second cinematic after the studio logo. Tap twice to skip it any time.");
+                    changed |= UI.Toggle(Next(), "Play intro on startup", ref d.playIntro, "The cinematic after the studio logo. Tap twice to skip it any time.");
+                    changed |= UI.Toggle(Next(), "Film look", ref d.filmLook, "Film grain and a soft vignette over the game, for a more cinematic, realistic feel.");
+                    changed |= UI.Selector(Next(), "Main menu scene", ref d.menuScene, new[] { "Operating room", "Classic stage" }, "The live 3D scene behind the main menu. Applies next time the menu opens.");
                     changed |= UI.Toggle(Next(), "Show chat", ref d.showChat, "Chat messages in the corner (T or Enter to type, also in singleplayer).");
                     changed |= UI.Selector(Next(), "Your age (for chat)", ref d.ageGroup, ChatFilter.AgeGroups, "Only stored on this device, never sent anywhere. Used to set chat maturity: under 13 always hides profanity.");
                     if (ChatFilter.ForcedOn)
