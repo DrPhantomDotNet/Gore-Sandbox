@@ -470,32 +470,32 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 
 ## 10. Goredoll AI & Behaviour (60)
 441. Personalities: brave, coward, aggressive, curious, calm
-442. Memory of who hurt them
+442. [x] Memory of who hurt them
 443. Grudges: attack the player who hurt them
 444. Friends that help each other
 445. Dragging injured friends to safety
 446. Applying bandages to friends
-447. Calling for help on phones
-448. Fleeing to exits
-449. Hiding behind cover
+447. [x] Calling for help on phones
+448. [x] Fleeing to exits
+449. [x] Hiding behind cover
 450. Hiding in rooms and closing doors
 451. Locking doors
 452. Barricading with props
 453. Picking up weapons from the ground
 454. Using melee weapons they find
 455. Throwing props at you
-456. Fighting back with punches and kicks
+456. [x] Fighting back with punches and kicks
 457. Grappling and shoving
-458. Surrendering with hands up
-459. Playing dead
-460. Panicking in crowds
+458. [x] Surrendering with hands up
+459. [x] Playing dead
+460. [x] Panicking in crowds
 461. Stampedes that knock others over
-462. Reacting to gunshots by distance
+462. [x] Reacting to gunshots by distance
 463. Reacting to screams
 464. Reacting to seeing corpses
 465. [x] Vomiting when seeing gore
-466. Fainting when seeing gore (sensitive ones)
-467. Investigating sounds
+466. [x] Fainting when seeing gore (sensitive ones)
+467. [x] Investigating sounds
 468. Looking at the player when spoken to
 469. Talking to each other (ambient)
 470. Sitting on chairs and benches
@@ -512,7 +512,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 481. Crowd simulation on big maps
 482. Daily routines on story maps
 483. Smoking, drinking and phone idles
-484. Dancing when music plays
+484. [x] Dancing when music plays
 485. Cheering at fights
 486. Filming fights with phones
 487. Police AI that arrests
@@ -525,9 +525,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 494. Throwing grenades (armed AI)
 495. Retreating when hurt
 496. AI difficulty slider
-497. AI aggression slider (improved)
+497. [x] AI aggression slider (improved)
 498. AI vision cone debug view
-499. AI thought bubbles debug option
+499. [x] AI thought bubbles debug option
 500. AI relationship editor (who likes whom)
 
 ## 11. NPC Types & Characters (40)

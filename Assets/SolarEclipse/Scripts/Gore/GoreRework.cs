@@ -350,6 +350,7 @@ namespace SolarEclipse
             {
                 if (d == null || d == victim || d.Brain == null || !d.Vitals.Conscious || d.Zombie != null) continue;
                 if ((d.Position - victim.Position).sqrMagnitude > 7f * 7f || d.Brain.Bravery > 0.4f || Random.value > 0.45f) continue;
+                if (d.Brain.Bravery < 0.12f && Random.value < 0.35f) { d.Vitals.Sedate(Random.Range(4f, 9f)); d.Voice.ShowSubtitle("*faints*", 2f); continue; } // fainted at the sight
                 d.StartCoroutine(Vomit(d, Random.Range(0.6f, 2.2f)));
             }
         }

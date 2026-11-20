@@ -261,6 +261,7 @@ namespace SolarEclipse
                 case AiAction.Flee:
                     if (NavGrid.Current != null && NavGrid.Current.FleePoint(threatPos, Pelvis, Random.Range(15f, 28f), out var f)) PathTo(f);
                     if (prev != AiAction.Panic && Random.value < 0.6f) doll.Voice.Say(Random.value < 0.6f ? "v_scream" : "v_no");
+                    if (Random.value < 0.3f) Police.Call(doll); // Gore Sandbox 2 (Goredoll/Police.cs)
                     break;
                 case AiAction.Hide:
                     if (NavGrid.Current != null && p != null && NavGrid.Current.FindCover(p.EyePosition, Pelvis, 14f, out var c)) PathTo(c);

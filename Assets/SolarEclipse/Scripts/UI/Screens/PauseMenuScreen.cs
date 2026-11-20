@@ -101,6 +101,7 @@ namespace SolarEclipse
                     else Next();
                     UI.Toggle(Next(), "Super kick", ref Rules.SuperKick, "Kicks and haymakers send things flying.");
                     UI.Toggle(Next(), "Low gravity", ref Rules.LowGravity, "Moon gravity for everything: bodies float and fly.");
+                    UI.Toggle(Next(), "Police respond to calls", ref Rules.PoliceResponse, "Goredolls running for their lives call the police. Two armed officers arrive about 30 seconds later.");
                     UI.Toggle(Next(), "Noir", ref Rules.Noir, "Black and white, except the blood.");
                     UI.Toggle(Next(), "Retro", ref Rules.Retro, "Low resolution, few colours, scanlines.");
                     UI.Toggle(Next(), "Mirror world", ref Rules.Mirror, "The whole picture flipped left to right.");
