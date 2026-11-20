@@ -934,11 +934,11 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 883. Rain with puddles
 884. Thunderstorm with lightning strikes that hit things
 885. Snow that builds up
-886. Fog banks
+886. [x] Fog banks
 887. Wind gusts pushing light props
-888. Sandstorm
-889. Blood rain (fun mode)
-890. Hail
+888. [x] Sandstorm
+889. [x] Blood rain (fun mode)
+890. [x] Hail
 891. Weather that changes over time
 892. Weather presets per map
 893. Indoor rain effect stops at roofs
@@ -950,7 +950,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 899. Moon phases at night
 900. Aurora on snowy maps
 901. Eclipse event (SolarEclipse!)
-902. Blood moon event
+902. [x] Blood moon event
 903. Weather sounds layered
 904. Weather in multiplayer synced
 905. Weather control panel

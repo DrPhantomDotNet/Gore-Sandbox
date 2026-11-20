@@ -48,7 +48,7 @@ namespace SolarEclipse
         {
             Kind = kind;
             Current = this;
-            bool wet = kind == WeatherKind.Rain || kind == WeatherKind.Thunderstorm;
+            bool wet = kind == WeatherKind.Rain || kind == WeatherKind.Thunderstorm || kind == WeatherKind.BloodRain || kind == WeatherKind.Hail;
             bool night = time == TimeOfDay.Night || time == TimeOfDay.BloodMoon;
 
             // ---- Look: darker / greyer ambient, denser fog, overcast sky.
@@ -59,6 +59,8 @@ namespace SolarEclipse
             var sun = MapLighting.Sun;
             if (sun != null) sun.intensity *= kind == WeatherKind.Snow ? 0.7f : kind == WeatherKind.Fog ? 0.6f : 0.4f;
             var grey = night ? new Color(0.05f, 0.06f, 0.08f) : kind == WeatherKind.Snow ? new Color(0.78f, 0.8f, 0.84f) : new Color(0.42f, 0.45f, 0.5f);
+            if (kind == WeatherKind.BloodRain) grey = night ? new Color(0.12f, 0.02f, 0.02f) : new Color(0.45f, 0.12f, 0.1f);
+            if (kind == WeatherKind.Sandstorm) { grey = night ? new Color(0.12f, 0.09f, 0.05f) : new Color(0.72f, 0.58f, 0.38f); RenderSettings.fog = true; RenderSettings.fogDensity += 0.03f; }
             RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, grey, kind == WeatherKind.Fog ? 0.8f : 0.6f);
             float add = kind == WeatherKind.Fog ? 0.04f : kind == WeatherKind.Thunderstorm ? 0.012f : kind == WeatherKind.Snow ? 0.014f : 0.008f;
             RenderSettings.fogDensity += add;
@@ -85,7 +87,7 @@ namespace SolarEclipse
                 rainLoop = AudioManager.CreateLoop(kind == WeatherKind.Thunderstorm ? "amb_rain_heavy" : "amb_rain", transform, 0.75f, AudioBus.Ambience, 50f);
                 if (rainLoop != null) rainLoop.spatialBlend = 0f;
             }
-            else if (kind == WeatherKind.Snow)
+            else if (kind == WeatherKind.Snow || kind == WeatherKind.Sandstorm)
             {
                 flakes = ParticleKit.Create("Snow", transform, Mats.Particle, 5000, 0f);
                 ParticleKit.FadeOut(flakes, 1f);
@@ -125,6 +127,7 @@ namespace SolarEclipse
 
             if (drops != null) EmitRain(cp, dt);
             if (flakes != null) EmitSnow(cp, dt);
+            if (rainLoop == null && Kind == WeatherKind.Sandstorm) { rainLoop = AudioManager.CreateLoop("amb_wind", transform, 0.9f, AudioBus.Ambience, 50f); if (rainLoop != null) rainLoop.spatialBlend = 0f; }
             if (Kind == WeatherKind.Thunderstorm) UpdateLightning(cp);
         }
 
@@ -140,6 +143,9 @@ namespace SolarEclipse
             var wind = heavy ? new Vector3(2.5f, 0, 1.2f) : new Vector3(0.8f, 0, 0.4f);
             const float speed = 19f;
             var col = new Color(0.75f, 0.8f, 0.9f, heavy ? 0.45f : 0.38f);
+            bool blood = Kind == WeatherKind.BloodRain, hail = Kind == WeatherKind.Hail;
+            if (blood) col = new Color(0.6f, 0.03f, 0.03f, 0.6f);
+            if (hail) col = new Color(0.95f, 0.97f, 1f, 0.9f);
             for (int i = 0; i < n; i++)
             {
                 var off = Random.insideUnitCircle * 20f;
@@ -154,12 +160,13 @@ namespace SolarEclipse
                     {
                         splashAcc -= 1f;
                         for (int k = 0; k < 2; k++)
-                            ParticleKit.Emit(splashes, hit.point + hit.normal * 0.03f, new Vector3(Random.Range(-0.6f, 0.6f), Random.Range(0.8f, 1.6f), Random.Range(-0.6f, 0.6f)),
-                                Random.Range(0.025f, 0.05f), Random.Range(0.15f, 0.3f), new Color(0.8f, 0.85f, 0.95f, 0.6f));
+                            ParticleKit.Emit(splashes, hit.point + hit.normal * 0.03f, new Vector3(Random.Range(-0.6f, 0.6f), Random.Range(0.8f, 1.6f) * (hail ? 2f : 1f), Random.Range(-0.6f, 0.6f)),
+                                Random.Range(0.025f, 0.05f), Random.Range(0.15f, 0.3f), blood ? new Color(0.55f, 0.02f, 0.02f, 0.8f) : new Color(0.8f, 0.85f, 0.95f, 0.6f));
+                        if (blood && Random.value < 0.04f && Settings.GoreEnabled) Decals.Blood(hit.point, hit.normal, Random.Range(0.1f, 0.3f), 3, hit.collider, 0f, 120f); // the ground slowly turns red
                     }
                 }
                 if (life < 0.03f) continue;
-                ParticleKit.Emit(drops, start, vel, 0.025f, life, col);
+                ParticleKit.Emit(drops, start, hail ? vel * 1.1f : vel, hail ? 0.05f : 0.025f, life, col);
             }
         }
 
@@ -174,11 +181,12 @@ namespace SolarEclipse
                 var off = Random.insideUnitCircle * 22f;
                 var start = new Vector3(cp.x + off.x, cp.y + 10f, cp.z + off.y);
                 var vel = new Vector3(Random.Range(-0.4f, 0.6f), -Random.Range(1.1f, 1.8f), Random.Range(-0.4f, 0.4f));
+                if (Kind == WeatherKind.Sandstorm) { vel = new Vector3(Random.Range(9f, 14f), Random.Range(-0.6f, 0.4f), Random.Range(2f, 4f)); start = new Vector3(cp.x - 18f, cp.y + Random.Range(-1f, 6f), cp.z + Random.Range(-20f, 20f)); }
                 float life = 12f;
                 if (Physics.Raycast(start, vel.normalized, out var hit, 30f, RainMask, QueryTriggerInteraction.Ignore))
                     life = hit.distance / vel.magnitude;
                 if (life < 0.1f) continue;
-                ParticleKit.Emit(flakes, start, vel, Random.Range(0.04f, 0.09f), life, new Color(1f, 1f, 1f, 0.9f), Random.Range(0f, 360f));
+                ParticleKit.Emit(flakes, start, vel, Random.Range(0.04f, 0.09f) * (Kind == WeatherKind.Sandstorm ? 2.5f : 1f), Kind == WeatherKind.Sandstorm ? 3.5f : life, Kind == WeatherKind.Sandstorm ? new Color(0.75f, 0.6f, 0.4f, 0.5f) : new Color(1f, 1f, 1f, 0.9f), Random.Range(0f, 360f));
             }
         }
 
