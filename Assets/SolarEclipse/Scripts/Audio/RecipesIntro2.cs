@@ -119,6 +119,20 @@ namespace SolarEclipse.Audio
             return wet;
         }
 
+        /// <summary>Ear ringing after a blast: a thin high tone that fades over a few seconds.</summary>
+        public static float[] Tinnitus(FastRng r, int rate)
+        {
+            var b = Buf(5f, rate);
+            double ph = 0;
+            for (int i = 0; i < b.Length; i++)
+            {
+                float t = i / (float)rate;
+                ph += (6200.0 + 30.0 * Math.Sin(t * 3.0)) / rate;
+                b[i] = Sin((float)(ph % 1.0)) * (float)Math.Exp(-t * 0.6f) * Clamp01(t / 0.05f) * 0.5f;
+            }
+            return b;
+        }
+
         static readonly float[] Flickers = { 3.1f, 3.25f, 5.9f, 7.7f, 9.3f };
         public static bool Flicker(float t)
         {

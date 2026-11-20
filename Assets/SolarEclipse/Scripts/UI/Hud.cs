@@ -392,6 +392,9 @@ namespace SolarEclipse
             UI.Fill(new Rect(bar.x, bar.y, bar.width * f, bar.height), Color.Lerp(UI.Bad, UI.Good, f));
             UI.Label(new Rect(r.x + 58, r.y + 4, 200, 30), Mathf.CeilToInt(h.Current).ToString(), 26, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
             if (Rules.Invincible) UI.Label(new Rect(r.x + 130, r.y + 4, 190, 30), "INVINCIBLE", 14, UI.Warn, TextAnchor.MiddleRight);
+            // Stamina (Player/PlayerFeel.cs): a thin bar under the health bar while it isn't full.
+            if (PlayerFeel.Stamina < 0.999f) { UI.Fill(new Rect(bar.x, bar.y + 14, bar.width, 4), new Color(1, 1, 1, 0.1f)); UI.Fill(new Rect(bar.x, bar.y + 14, bar.width * PlayerFeel.Stamina, 4), PlayerFeel.CanSprint ? new Color(0.95f, 0.85f, 0.4f, 0.8f) : new Color(0.9f, 0.3f, 0.2f, 0.8f)); }
+            if (PlayerFeel.Limping) UI.Label(new Rect(r.x + 130, r.y + 4, 190, 30), "LIMPING", 14, UI.Warn, TextAnchor.MiddleRight);
 
             // Damage direction indicator.
             float since = Time.time - h.LastDamageTime;

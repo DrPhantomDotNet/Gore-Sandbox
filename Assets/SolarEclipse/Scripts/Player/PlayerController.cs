@@ -228,8 +228,8 @@ namespace SolarEclipse
             var right = Quaternion.Euler(0, moveYaw, 0) * Vector3.right;
             var wish = (fwd * f.Move.y + right * f.Move.x);
             bool aiming = Inventory.Current != null && Inventory.Current.IsAiming;
-            bool sprint = f.Sprint && f.Move.y > 0.1f && !crouching && !aiming;
-            float speed = (crouching ? 2.2f : sprint ? 7.2f : aiming ? 3f : 4.4f) * Rules.PlayerSpeedMultiplier
+            bool sprint = f.Sprint && f.Move.y > 0.1f && !crouching && !aiming && PlayerFeel.CanSprint && !PlayerFeel.Limping;
+            float speed = (crouching ? 2.2f : sprint ? 7.2f : aiming ? 3f : 4.4f) * Rules.PlayerSpeedMultiplier * PlayerFeel.SpeedMul
                           * (Inventory.Current != null ? Inventory.Current.MoveSpeedMul : 1f);
             var target = wish * speed;
             float accel = Grounded ? 55f : 9f;
@@ -256,6 +256,7 @@ namespace SolarEclipse
             if ((flags & CollisionFlags.Above) != 0 && velocity.y > 0) velocity.y = 0;
             Speed = MathX.Flat(CC.velocity).magnitude;
             Sprinting = sprint && Speed > 5f;
+            PlayerFeel.Tick(this, Sprinting, dt); // stamina, limp, low-health heartbeat, blast deafness (Player/PlayerFeel.cs)
 
             if (Grounded && !wasGrounded) Land();
             if (Grounded)
@@ -292,6 +293,7 @@ namespace SolarEclipse
                 CameraFX.Shake(Mathf.Clamp01((v - 3f) / 15f) * 0.6f);
                 CameraFX.Punch(Mathf.Clamp(v * 0.4f, 0f, 6f), 0);
             }
+            PlayerFeel.OnHardLanding(v);
             if (v > 12f)
             {
                 Health.TakeDamage(new DamageInfo { Amount = (v - 12f) * 9f, Type = DamageType.Fall, Point = transform.position, Direction = Vector3.down, Weapon = "Fall" });
@@ -408,6 +410,7 @@ namespace SolarEclipse
 
         public void Respawn()
         {
+            PlayerFeel.Reset();
             if (Noclip) SetNoclip(false);
             Teleport(WorldRoot.Current != null ? WorldRoot.Current.PlayerSpawn : spawnPos, WorldRoot.Current != null ? WorldRoot.Current.PlayerYaw : spawnYaw);
             pitch = 0;

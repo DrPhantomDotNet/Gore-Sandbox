@@ -25,6 +25,7 @@ namespace SolarEclipse
             GameEvents.EmitNoise(pos, 140f, 1f, source);
             Stats.Add(Stats.Explosions);
             CameraFX.ShakeAt(pos, 1.1f, radius * 5f);
+            if (PlayerController.Instance != null) PlayerFeel.Blast(Mathf.Clamp01(1f - Vector3.Distance(PlayerController.Instance.EyePosition, pos) / (radius * 3f))); // ringing ears
             if (Physics.Raycast(pos + Vector3.up * 0.5f, Vector3.down, out var ground, 3f, Layers.DecalMask, QueryTriggerInteraction.Ignore))
                 Decals.Scorch(ground.point, ground.normal, radius * 0.9f, ground.collider);
 

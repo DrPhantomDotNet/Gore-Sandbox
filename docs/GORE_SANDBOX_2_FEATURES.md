@@ -81,11 +81,11 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 66. HUD scale and opacity sliders
 67. HUD hides automatically in photo mode
 68. Kill feed with weapon icons (multiplayer)
-69. Damage indicator arcs on screen edges
+69. [x] Damage indicator arcs on screen edges
 70. Hit markers with headshot variant
-71. Crosshair editor (shape, size, colour, gap)
+71. [x] Crosshair editor (shape, size, colour, gap)
 72. Toast notifications redesigned
-73. Tooltips everywhere on PC
+73. [x] Tooltips everywhere on PC
 74. Controller button prompts that change with the device
 75. UI sounds redone (clicks, hovers, opens)
 76. Smooth screen transitions (slide/fade)
@@ -448,9 +448,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 419. Dripping water ambience indoors
 420. Flickering light buzz
 421. Machine hums and clanks
-422. Heartbeat when your health is low
-423. Tinnitus ring after explosions
-424. Muffled hearing after explosions
+422. [x] Heartbeat when your health is low
+423. [x] Tinnitus ring after explosions
+424. [x] Muffled hearing after explosions
 425. Reverb zones per room size
 426. Occlusion: sounds behind walls muffled
 427. Dynamic music that rises with action
@@ -585,8 +585,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 550. Ladders
 551. Mantle onto crates
 552. Wall-kick jump
-553. Stamina bar for sprinting
-554. Out-of-breath sounds when stamina is empty
+553. [x] Stamina bar for sprinting
+554. [x] Out-of-breath sounds when stamina is empty
 555. Your own body visible when looking down
 556. Your own shadow
 557. Hands touching walls when close
@@ -594,10 +594,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 559. Third-person toggle for all weapons
 560. Shoulder swap in third person
 561. Free-look (hold key)
-562. Fall damage with broken legs (limp)
+562. [x] Fall damage with broken legs (limp)
 563. Player bleeding and bandaging
 564. Player limb damage (arm shot = shaky aim)
-565. Player pain effects (blurry, red edges)
+565. [x] Player pain effects (blurry, red edges)
 566. Player death cam: ragdoll from third person
 567. Player ragdoll toggle (go limp)
 568. Player get-up after being knocked down
