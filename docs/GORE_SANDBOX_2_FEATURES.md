@@ -680,8 +680,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 641. [x] Hatchet
 642. Chainsaw (improved, with fuel)
 643. [x] Kukri
-644. [x] Cleaver (improved)
-645. [x] Butterfly knife
+644. Cleaver (improved)
+645. Butterfly knife
 646. Bayonet
 647. [x] Rapier
 648. [x] Longsword
