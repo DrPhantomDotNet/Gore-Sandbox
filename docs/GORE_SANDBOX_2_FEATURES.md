@@ -341,33 +341,33 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 316. Spinal cord levels: neck, upper back, lower back
 317. Brain regions: speech, movement, consciousness
 318. Concussion with stumbling and confusion
-319. Heart rate with real arrhythmias
-320. Blood pressure readout
-321. Breathing rate and depth
-322. Collapsed lung (pneumothorax)
+319. [x] Heart rate with real arrhythmias
+320. [x] Blood pressure readout
+321. [x] Breathing rate and depth
+322. [x] Collapsed lung (pneumothorax)
 323. Blood in lungs (hemothorax)
 324. Internal bleeding without visible wounds
 325. Liver and spleen ruptures
 326. Kidney damage
 327. Stomach and intestine damage
-328. Shock stages I–IV
+328. [x] Shock stages I–IV
 329. Hypothermia and hyperthermia
 330. Pain that changes behaviour by severity
 331. Adrenaline that delays pain
-332. Fainting from pain or blood sight
+332. [x] Fainting from pain or blood sight
 333. Seizures from brain trauma
-334. Choking on blood
+334. [x] Choking on blood
 335. Airway blocked by swelling
-336. Oxygen level drives consciousness (improved)
-337. Cardiac arrest and agonal breathing
-338. Death time-of-death and cause list
-339. Medical tools: bandage, tourniquet, splint
-340. Medical tools: chest seal, needle decompression
-341. Defibrillator that can restart a heart
+336. [x] Oxygen level drives consciousness (improved)
+337. [x] Cardiac arrest and agonal breathing
+338. [x] Death time-of-death and cause list
+339. [x] Medical tools: bandage, tourniquet, splint
+340. [x] Medical tools: chest seal, needle decompression
+341. [x] Defibrillator that can restart a heart
 342. CPR minigame
-343. Morphine reduces pain
-344. Adrenaline shot revives briefly
-345. Blood transfusion bag
+343. [x] Morphine reduces pain
+344. [x] Adrenaline shot revives briefly
+345. [x] Blood transfusion bag
 346. Surgery mode: stitch wounds
 347. Surgery mode: remove bullets
 348. Surgery mode: reattach severed limbs (fictional)
@@ -376,13 +376,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 351. Medical chart screen per Goredoll
 352. Body temperature readout
 353. Pupil response check
-354. Glasgow coma score display (improved)
+354. [x] Glasgow coma score display (improved)
 355. Triage tag tool (colours)
 356. Autopsy mode on corpses
 357. Organ weight/condition report in autopsy
 358. Educational tooltips (real anatomy facts)
 359. Medical realism toggle (realistic vs arcade)
-360. Immortal Goredoll option for testing
+360. [x] Immortal Goredoll option for testing
 
 ## 8. Voices & Human Sounds (40)
 361. Real recorded human voices (CC0 recordings)

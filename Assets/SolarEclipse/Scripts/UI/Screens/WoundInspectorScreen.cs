@@ -234,6 +234,22 @@ namespace SolarEclipse
                 OnBack();
             }
             if (UI.Button(new Rect(area.xMax - 200, area.y, 200, area.height), "CLOSE", ButtonKind.Primary)) OnBack();
+
+            // Gore Sandbox 2 medical kit: a second row of treatments (Gore/Medical.cs).
+            var row = new Rect(area.x, area.y - area.height - 12, area.width, area.height);
+            float bx = row.x, w2 = 220;
+            var sel = selected;
+            bool fractured = sel.HasValue && doll.Parts.TryGetValue(sel.Value, out var sp) && sp != null && sp.Fractured;
+            if (UI.Button(new Rect(bx, row.y, w2, row.height), "MORPHINE", ButtonKind.Normal, IconFactory.Get("pill"), 17, alive, "Takes most of the pain away. Too much makes them drowsy.")) Medical.Do(doll, 27, PartType.Pelvis);
+            bx += w2 + 12;
+            if (UI.Button(new Rect(bx, row.y, w2, row.height), "CHEST SEAL", ButtonKind.Normal, IconFactory.Get("heart"), 17, alive && doll.Vitals.LungDamage > 0.05f, "Seals a sucking chest wound: breathing and oxygen recover.")) Medical.Do(doll, 28, PartType.Chest);
+            bx += w2 + 12;
+            if (UI.Button(new Rect(bx, row.y, w2, row.height), "SPLINT", ButtonKind.Normal, IconFactory.Get("link"), 17, alive && fractured, "Splints the selected broken limb.")) Medical.Do(doll, 29, sel.Value);
+            bx += w2 + 12;
+            if (UI.Button(new Rect(bx, row.y, w2, row.height), "TRANSFUSION", ButtonKind.Normal, IconFactory.Get("drop"), 17, alive && doll.Vitals.BloodLost > 100f, "One unit of blood (about 500 ml).")) Medical.Do(doll, 30, PartType.Pelvis);
+            bx += w2 + 12;
+            bool canShock = Medical.CanDefib(doll);
+            if (UI.Button(new Rect(bx, row.y, w2, row.height), "DEFIBRILLATOR", ButtonKind.Danger, IconFactory.Get("bolt"), 17, canShock, "Shock a heart that stopped less than a minute ago. Needs enough blood left and an intact brain.")) Medical.Do(doll, 31, PartType.Chest);
         }
 
         static bool IsDistal(PartType p, PartType of)
