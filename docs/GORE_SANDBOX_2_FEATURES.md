@@ -895,17 +895,17 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 846. New map: School-free campus (university)
 847. New map: Amusement park
 848. New map: Haunted mansion
-849. New map: Sewers
-850. New map: Morgue
+849. [x] New map: Sewers
+850. [x] New map: Morgue
 851. New map: Laboratory
 852. New map: Space station
 853. New map: Moon base (low gravity)
 854. New map: Medieval village
 855. New map: Arena colosseum
-856. New map: Rooftops
+856. [x] New map: Rooftops
 857. New map: Highway with traffic
 858. New map: Construction crane yard
-859. New map: Junkyard
+859. [x] New map: Junkyard
 860. New map: Docks at night
 861. New map: Flatgrass 2 (huge, empty)
 862. New map: Backrooms 2
