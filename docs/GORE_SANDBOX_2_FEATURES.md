@@ -726,13 +726,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 685. Stamina in fights
 686. Combos with bonus damage
 687. Finishers on dazed Goredolls
-688. Ground and pound
+688. [x] Ground and pound
 689. Mount position
-690. Rear naked choke (improved headlock)
+690. [x] Rear naked choke (improved headlock)
 691. Arm breaks
 692. Leg locks
-693. Neck snap (instant kill finisher)
-694. Throwing Goredolls into walls with damage
+693. [x] Neck snap (instant kill finisher)
+694. [x] Throwing Goredolls into walls with damage
 695. Throwing Goredolls through glass
 696. Wall slams
 697. Table slams
@@ -741,11 +741,11 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 700. Goredolls that box back
 701. Goredoll fighting styles (karate Goredolls)
 702. Fight arena with crowd
-703. Training dummy with damage numbers
+703. [x] Training dummy with damage numbers
 704. Move list screen per style
 705. Combo trainer
 706. Fight camera that frames both fighters
-707. Slow-motion on the final hit
+707. [x] Slow-motion on the final hit
 708. Fight stats (punches thrown, landed)
 709. Style mixing (pick your moves)
 710. Custom move editor (choose poses, timing)

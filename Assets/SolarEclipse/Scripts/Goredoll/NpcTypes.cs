@@ -210,6 +210,13 @@ namespace SolarEclipse
                 ai.Add(new SpawnableDef { Id = "npc_" + id, Name = t.Name, Category = "AI", Glyph = "person", Description = t.Desc, Spawn = (p, r) => GoredollFactory.Spawn(p, r.eulerAngles.y, Preset(id)).gameObject });
             }
             ai.Add(new SpawnableDef { Id = "npc_giant", Name = "Giant Goredoll", Category = "AI", Glyph = "person", Description = "Three times the size, nine times the weight, four times the health.", Spawn = (p, r) => GoredollFactory.Spawn(p + Vector3.up * 0.5f, r.eulerAngles.y, "Normal~g").gameObject });
+            ai.Add(new SpawnableDef { Id = "npc_dummy", Name = "Training Dummy", Category = "AI", Glyph = "target", Description = "A Goredoll that can't die. Practise your combos (turn on damage numbers in Settings).", Spawn = (p, r) =>
+            {
+                var d = GoredollFactory.Spawn(p, r.eulerAngles.y, "Passive");
+                d.Vitals.Immortal = true; d.DisplayName = "Training Dummy";
+                if (d.Brain != null) d.Brain.enabled = false;
+                return d.gameObject;
+            } });
             ai.Add(new SpawnableDef { Id = "npc_mini", Name = "Mini Goredoll", Category = "AI", Glyph = "person", Description = "Half the size, a quarter of the weight. Flies a long way.", Spawn = (p, r) => GoredollFactory.Spawn(p, r.eulerAngles.y, "Normal~n").gameObject });
             ai.Add(new SpawnableDef { Id = "npc_skeleton", Name = "Skeleton", Category = "AI", Glyph = "skull", Description = "A walking skeleton. No blood, just bones.", Spawn = (p, r) => GoredollFactory.Spawn(p, r.eulerAngles.y, "Aggressive~s").gameObject });
             ai.Add(new SpawnableDef { Id = "npc_giant_ninja", Name = "Giant Ninja", Category = "AI", Glyph = "person", Description = "A 5 metre ninja with a 3 metre katana. Good luck.", Spawn = (p, r) => GoredollFactory.Spawn(p + Vector3.up * 0.5f, r.eulerAngles.y, Preset("ninja", true)).gameObject });

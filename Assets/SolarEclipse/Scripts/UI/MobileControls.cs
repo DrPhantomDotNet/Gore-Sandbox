@@ -84,7 +84,7 @@ namespace SolarEclipse
                         b.Label = boxing != null ? (boxing.Locking ? "CHOKE" : "GUARD") : aiming ? "AIMING" : "AIM";
                         break;
                     case Kind.Jump: b.Rect = new Rect(W - s - 40, H - s * 1.6f - 60 - s - g, s, s); break;
-                    case Kind.Reload: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : boxing != null ? (boxing.Locking ? "THROW" : "SPIN KICK") : "RELOAD"; break;
+                    case Kind.Reload: b.Rect = new Rect(W - s * 3 - 40 - g * 2, H - s * 1.6f - 60 - s - g, s, s); b.Label = spawnGun ? "UNDO" : boxing != null ? (boxing.Locking ? "THROW" : "SPECIAL 1") : "RELOAD"; break;
                     case Kind.Crouch: b.Rect = new Rect(W - s * 1.6f - 40 - (s + g) * 2, H - s - 60, s, s); break;
                     case Kind.Kick: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - s - g, s, s); b.Label = holding ? "FREEZE" : boxing != null && boxing.Locking ? "KNEE" : "KICK"; break;
                     case Kind.Use:
@@ -110,7 +110,7 @@ namespace SolarEclipse
                     case Kind.Further: b.Rect = new Rect(W - s * 4 - 40 - g * 3, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Visible = holding; break;
                     case Kind.Mode: b.Rect = new Rect(W - s * 0.8f - 40, 130, s * 0.8f, s * 0.6f); b.Visible = cur != null && (cur.Def.Auto || cur.Def.Kind == WeaponKind.Admin); break;
                     case Kind.Inspect:
-                        if (boxing != null) { b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Label = "AXE KICK"; }
+                        if (boxing != null) { b.Rect = new Rect(W - s * 2 - 40 - g, H - s * 1.6f - 60 - (s + g) * 2, s, s); b.Label = boxing.Locking ? "SNAP NECK" : "SPECIAL 2"; }
                         else { b.Rect = new Rect(W - s * 1.6f - 50 - s * 0.8f, 130, s * 0.8f, s * 0.6f); b.Label = "INSPECT"; }
                         break;
                     case Kind.Weapon: b.Rect = new Rect(W - s * 2.4f - 60 - s * 0.8f, 130, s * 0.8f, s * 0.6f); break;

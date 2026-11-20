@@ -810,6 +810,8 @@ namespace SolarEclipse
                 AudioManager.Play(spec.Kick ? "kick_hit" : "punch_hit", point, 1f, Random.Range(0.9f, 1.1f));
                 if (head && spec.Dmg >= 20f) AudioManager.Play("bone_crack", point, 0.45f, Random.Range(0.9f, 1.1f));
                 Flash(spec.Name);
+                // A blow that drops them: a moment of slow motion (singleplayer only).
+                if (!NetState.Active && spec.Knock > 4f && GameManager.I != null) GameManager.I.SlowMo(0.35f, 0.45f);
                 CameraFX.Shake(spec.Shake);
                 CameraFX.Punch(-spec.Shake * 2f, 0f);
                 GameEvents.EmitNoise(point, 10f, 0.4f, p);
@@ -865,6 +867,24 @@ namespace SolarEclipse
             Stats.Add("headlocks");
         }
 
+        /// <summary>Headlock finisher (Q): a sharp twist that breaks the neck. Instant and final.</summary>
+        void SnapNeck()
+        {
+            var d = locked;
+            if (d == null) return;
+            if (d.Parts.TryGetValue(PartType.Neck, out var neck) && neck != null && !neck.Severed)
+            {
+                neck.TakeDamage(new DamageInfo { Amount = 200f, Force = Right * 20f, Point = neck.transform.position, Normal = Right, Direction = Right, Type = DamageType.Crush, Source = Player, Weapon = St.Name + ": Neck Snap" });
+                if (!d.NetProxy) { d.Vitals.Paralysis = Paralysis.Total; d.Vitals.Die("Broken neck (cervical spine fracture)"); }
+                else d.Kill("Broken neck (cervical spine fracture)");
+            }
+            AudioManager.Play("bone_crack", Player.transform.position + Vector3.up * 1.2f, 1f, 0.85f);
+            CameraFX.Shake(0.3f);
+            Flash("Neck Snap");
+            Stats.Add("neck_snaps");
+            ReleaseLock();
+        }
+
         void ReleaseLock()
         {
             if (locked == null) return;
@@ -914,6 +934,7 @@ namespace SolarEclipse
             }
             if (move == FightMove.None)
             {
+                if (f.Inspect) { SnapNeck(); return; }
                 if (f.Fire) Start(FightMove.LockPunch);
                 else if (f.Kick) Start(FightMove.Knee);
                 else if (f.Reload) Start(St.LockThrow);
@@ -959,7 +980,7 @@ namespace SolarEclipse
             }
             if (!touch)
             {
-                string help = locked != null ? "LMB punch   F knee   hold RMB choke   R throw   E release"
+                string help = locked != null ? "LMB punch   F knee   hold RMB choke   R " + (St.LockThrow == FightMove.Suplex ? "suplex" : "throw") + "   Q snap neck   E release"
                     : grab.Holding ? "LMB throw   RMB / MMB drop"
                     : "LMB combo   crouch+LMB body shot   sprint+LMB overhand   F kick (crouch: low kick, in air: flying kick, sprint: push kick)   R spinning kick   Q axe kick   RMB guard";
                 UI.Label(new Rect(20, H - 46, W - 40, 30), help, 15, new Color(1f, 1f, 1f, 0.55f), TextAnchor.MiddleCenter);
