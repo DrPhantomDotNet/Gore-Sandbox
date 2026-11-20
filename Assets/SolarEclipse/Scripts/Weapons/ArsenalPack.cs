@@ -44,6 +44,7 @@ namespace SolarEclipse
             if (defined) return;
             defined = true;
             DefineGuns();
+            DefineGuns2();
             DefineMelee();
         }
 
@@ -163,6 +164,48 @@ namespace SolarEclipse
             Id = id, Name = name, Description = desc, Glyph = "rifle", FireSound = sound, MagOut = "mag_out_rifle", MagIn = "mag_in_rifle", Charge = "charging_handle",
             HipPos = RifleHip, AimFov = 0.64f, AimDistance = 0.16f, CasingType = 1, NoiseRadius = 130f,
         };
+
+        /// <summary>Gore Sandbox 2 guns: Five-seveN, AK-74, AWP-style bolt sniper, slug and bean-bag shotguns.</summary>
+        static void DefineGuns2()
+        {
+            var d = PistolDef("fiveseven", "Five-seveN", "5.7mm pistol. 20 armour-piercing rounds, light recoil.", "gun_m1911");
+            d.Damage = 30; d.Rpm = 500; d.HipSpread = 1f; d.AimSpread = 0.08f; d.Recoil = 1.2f; d.Penetration = 1.1f; d.Force = 8; d.Caliber = 5.7f; d.Mag = 20;
+            d.ReloadTime = 1.5f; d.EmptyExtra = 0.35f; d.WeightKg = 0.75f; d.NoiseRadius = 85f;
+            Gun(d, new GunSpec { Frame = GunFrame.Pistol, MagLen = 0.12f, Body = GunKit.Polymer, Metal = new Color(0.22f, 0.22f, 0.24f), Furniture = GunKit.Polymer },
+                new GunExtra { Category = "Pistols", Allowed = "reddot holo ext supp comp laser" });
+
+            d = RifleDef("ak74", "AK-74", "5.45mm AK with a big muzzle brake. 30 rounds, flatter and faster than the AK-47.", "gun_ak47");
+            d.Damage = 48; d.Rpm = 650; d.Auto = true; d.HipSpread = 1.7f; d.AimSpread = 0.08f; d.Recoil = 1.9f; d.Penetration = 1.4f; d.Force = 20; d.Caliber = 5.45f; d.Mag = 30;
+            d.ReloadTime = 2.4f; d.EmptyExtra = 0.5f; d.WeightKg = 3.3f;
+            Gun(d, new GunSpec { Bore = 0.06f, RecBack = -0.09f, RecFront = 0.2f, RecH = 0.06f, RecW = 0.03f, Muzzle = 0.6f, BarrelR = 0.009f, GasTube = true, Brake = true,
+                Guard = GunGuard.Slim, GuardStart = 0.2f, GuardEnd = 0.4f, GuardR = 0.022f, Stock = GunStock.Skeleton, StockLen = 0.28f,
+                Mag = GunMag.Curved, MagZ = 0.1f, MagLen = 0.19f, MagW = 0.024f, MagD = 0.05f, MagAngle = 16f, Body = GunKit.DarkSteel, Furniture = new Color(0.45f, 0.18f, 0.1f), MetalBody = true },
+                new GunExtra { Category = "Rifles", Allowed = AllRifle });
+
+            d = RifleDef("awp", "Arctic Sniper", "Bolt-action .338 sniper rifle with a scope (hold RMB). One shot, work the bolt, repeat.", "gun_barrett");
+            d.Damage = 190; d.Rpm = 60; d.HipSpread = 6f; d.AimSpread = 0f; d.Recoil = 6f; d.Penetration = 4f; d.Force = 110; d.Range = 1000f; d.Caliber = 8.6f; d.Mag = 5;
+            d.ReloadTime = 3.4f; d.EmptyExtra = 0.5f; d.Charge = "lever_action"; d.WeightKg = 6.5f; d.NoiseRadius = 220f; d.HipPos = new Vector3(0.13f, -0.18f, 0.14f); d.AimFov = 0.18f; d.AimDistance = 0.09f;
+            Gun(d, new GunSpec { Bore = 0.06f, RecBack = -0.1f, RecFront = 0.24f, RecH = 0.07f, RecW = 0.036f, Muzzle = 0.9f, BarrelR = 0.011f, Scope = true, Brake = true, Bipod = true,
+                Guard = GunGuard.Shroud, GuardStart = 0.24f, GuardEnd = 0.46f, GuardR = 0.024f, Stock = GunStock.Heavy, StockLen = 0.32f,
+                Mag = GunMag.Stick, MagZ = 0.08f, MagLen = 0.08f, MagW = 0.03f, MagD = 0.07f, MagAngle = 0f, Body = new Color(0.32f, 0.38f, 0.3f), Furniture = new Color(0.32f, 0.38f, 0.3f) },
+                new GunExtra { Category = "Rifles", Allowed = "ext supp comp laser", Scoped = true, Cycle = 1.1f, Launch = 10f, LaunchRange = 200f, Mode = "BOLT .338" });
+
+            d = RifleDef("slugger", "Slug Shotgun", "Pump 12 gauge loaded with solid slugs: one huge projectile that blows limbs off at range.", "gun_shotgun");
+            d.Glyph = "shotgun"; d.Damage = 140; d.Pellets = 1; d.Rpm = 70; d.HipSpread = 2.5f; d.AimSpread = 0.3f; d.Recoil = 5.5f; d.Penetration = 1.6f; d.Force = 70; d.Caliber = 18.5f; d.Mag = 6;
+            d.ShellReload = true; d.ReloadTime = 0.5f; d.EmptyExtra = 0.3f; d.MagIn = "shell_in"; d.MagOut = null; d.Charge = "pump_action"; d.CasingType = 2; d.WeightKg = 3.4f; d.NoiseRadius = 150f;
+            Gun(d, new GunSpec { Bore = 0.05f, RecBack = -0.06f, RecFront = 0.12f, RecH = 0.06f, RecW = 0.034f, Muzzle = 0.68f, BarrelR = 0.012f,
+                Guard = GunGuard.Wood, GuardStart = 0.2f, GuardEnd = 0.36f, GuardR = 0.022f, Stock = GunStock.Wood, StockLen = 0.32f, StockDrop = 0.04f,
+                Mag = GunMag.Tube, Body = GunKit.DarkSteel, Furniture = new Color(0.2f, 0.2f, 0.21f), MetalBody = true },
+                new GunExtra { Category = "Shotguns", Allowed = "reddot holo comp laser", Cycle = 0.55f, Launch = 9f, LaunchRange = 12f, Mode = "PUMP SLUG" });
+
+            d = RifleDef("beanbag", "Bean-Bag Shotgun", "Less-lethal: fabric bags that knock Goredolls flat and bruise them badly without (usually) killing.", "gun_shotgun");
+            d.Glyph = "shotgun"; d.Damage = 9; d.Pellets = 1; d.Rpm = 90; d.HipSpread = 2f; d.AimSpread = 0.4f; d.Recoil = 3.5f; d.Penetration = 0f; d.Force = 140; d.Caliber = 18.5f; d.Mag = 6;
+            d.ShellReload = true; d.ReloadTime = 0.5f; d.EmptyExtra = 0.3f; d.MagIn = "shell_in"; d.MagOut = null; d.Charge = "pump_action"; d.CasingType = 2; d.WeightKg = 3.4f; d.NoiseRadius = 110f;
+            Gun(d, new GunSpec { Bore = 0.05f, RecBack = -0.06f, RecFront = 0.12f, RecH = 0.06f, RecW = 0.034f, Muzzle = 0.62f, BarrelR = 0.012f,
+                Guard = GunGuard.Slim, GuardStart = 0.2f, GuardEnd = 0.36f, GuardR = 0.022f, Stock = GunStock.Fixed, StockLen = 0.26f,
+                Mag = GunMag.Tube, Body = new Color(0.9f, 0.55f, 0.1f), Furniture = new Color(0.9f, 0.55f, 0.1f) },
+                new GunExtra { Category = "Shotguns", Allowed = "reddot laser", Cycle = 0.55f, Launch = 7f, LaunchRange = 20f, Mode = "BEAN BAG" });
+        }
 
         static void DefineGuns()
         {

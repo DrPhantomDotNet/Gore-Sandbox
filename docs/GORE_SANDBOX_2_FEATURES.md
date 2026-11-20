@@ -639,21 +639,21 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 602. Dual wielding pistols
 603. Akimbo SMGs
 604. Desert Eagle (improved)
-605. Five-seven
+605. [x] Five-seven
 606. Revolver with speed loader
-607. P90
-608. Vector
-609. Thompson
-610. AK-74
-611. SCAR-H
-612. G36
-613. FAMAS
-614. Barrett .50
-615. AWP-style sniper
-616. Lever-action rifle
-617. Double-barrel shotgun
-618. Pump shotgun with slugs
-619. Auto shotgun drum
+607. [x] P90
+608. [x] Vector
+609. [x] Thompson
+610. [x] AK-74
+611. [x] SCAR-H
+612. [x] G36
+613. [x] FAMAS
+614. [x] Barrett .50
+615. [x] AWP-style sniper
+616. [x] Lever-action rifle
+617. [x] Double-barrel shotgun
+618. [x] Pump shotgun with slugs
+619. [x] Auto shotgun drum
 620. Flare gun
 621. Nail gun (improved)
 622. Rivet gun
@@ -662,7 +662,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 625. Railgun
 626. Gauss rifle
 627. Taser
-628. Bean-bag shotgun (non-lethal)
+628. [x] Bean-bag shotgun (non-lethal)
 629. Paintball gun
 630. Water gun (washes blood)
 
