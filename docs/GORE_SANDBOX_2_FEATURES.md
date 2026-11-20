@@ -654,17 +654,17 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 617. [x] Double-barrel shotgun
 618. [x] Pump shotgun with slugs
 619. [x] Auto shotgun drum
-620. Flare gun
+620. [x] Flare gun
 621. Nail gun (improved)
 622. Rivet gun
-623. Grenade launcher
+623. [x] Grenade launcher
 624. Underbarrel grenade launcher
-625. Railgun
+625. [x] Railgun
 626. Gauss rifle
-627. Taser
+627. [x] Taser
 628. [x] Bean-bag shotgun (non-lethal)
-629. Paintball gun
-630. Water gun (washes blood)
+629. [x] Paintball gun
+630. [x] Water gun (washes blood)
 
 ## 14. Weapons — Melee & Tools (40)
 631. [x] Machete
@@ -768,7 +768,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 725. Collapsing scaffolding
 726. Explosion shockwaves pushing props
 727. Fire spreading on wood and cloth
-728. Fire extinguishing with water
+728. [x] Fire extinguishing with water
 729. Smoke filling rooms
 730. Gas leaks that explode
 731. Liquid barrels that leak

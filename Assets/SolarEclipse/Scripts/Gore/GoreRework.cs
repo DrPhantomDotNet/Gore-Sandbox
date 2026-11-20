@@ -23,6 +23,7 @@ namespace SolarEclipse
         }
 
         public static void Clear() => pools.Clear();
+        public static void Remove(Vector3 p, float radius) => pools.RemoveAll(q => (q.P - p).sqrMagnitude < (radius + q.R) * (radius + q.R));
 
         /// <summary>Is this point standing in fresh-ish blood (a pool less than 10 minutes old)?</summary>
         public static bool In(Vector3 p)

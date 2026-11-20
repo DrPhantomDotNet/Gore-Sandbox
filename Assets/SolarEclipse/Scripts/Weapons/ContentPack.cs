@@ -223,6 +223,15 @@ namespace SolarEclipse
             b.src = src;
         }
 
+        /// <summary>Water puts burning Goredolls out (Super Soaker, Weapons/SpecialGuns.cs).</summary>
+        public static bool Extinguish(Goredoll d)
+        {
+            var b = d != null ? d.GetComponent<Burning>() : null;
+            if (b == null) return false;
+            Destroy(b);
+            return true;
+        }
+
         void Update()
         {
             if (d == null || Time.time > until) { Destroy(this); return; }

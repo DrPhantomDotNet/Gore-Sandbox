@@ -25,6 +25,7 @@ namespace SolarEclipse
             public string Mode;
             public string Category = "Rifles";
             public string Allowed = "";
+            public string Special; // Gore Sandbox 2 special rounds (Weapons/SpecialGuns.cs): gl, rail, taser, paint, water, flare
         }
 
         sealed class GunEntry { public WeaponDef Def; public GunSpec Spec; public GunExtra Extra; }
@@ -205,6 +206,52 @@ namespace SolarEclipse
                 Guard = GunGuard.Slim, GuardStart = 0.2f, GuardEnd = 0.36f, GuardR = 0.022f, Stock = GunStock.Fixed, StockLen = 0.26f,
                 Mag = GunMag.Tube, Body = new Color(0.9f, 0.55f, 0.1f), Furniture = new Color(0.9f, 0.55f, 0.1f) },
                 new GunExtra { Category = "Shotguns", Allowed = "reddot laser", Cycle = 0.55f, Launch = 7f, LaunchRange = 20f, Mode = "BEAN BAG" });
+            DefineSpecial();
+        }
+
+        /// <summary>Gore Sandbox 2 special guns; their rounds are handled in Weapons/SpecialGuns.cs.</summary>
+        static void DefineSpecial()
+        {
+            var d = RifleDef("gl40", "Grenade Launcher", "Single-shot 40mm launcher. Lobs a grenade that bursts on impact. Arc your shots.", "rocket_fire");
+            d.Glyph = "rifle"; d.Damage = 1; d.Pellets = 1; d.Rpm = 60; d.HipSpread = 0.5f; d.AimSpread = 0.1f; d.Recoil = 4f; d.Force = 0; d.Caliber = 40f; d.Mag = 1;
+            d.ReloadTime = 1.6f; d.EmptyExtra = 0f; d.CasingType = 2; d.WeightKg = 2.7f; d.NoiseRadius = 90f;
+            Gun(d, new GunSpec { Bore = 0.06f, RecBack = -0.05f, RecFront = 0.1f, RecH = 0.07f, RecW = 0.04f, Muzzle = 0.42f, BarrelR = 0.024f, BreakAction = true,
+                Guard = GunGuard.None, Stock = GunStock.Fixed, StockLen = 0.24f, Mag = GunMag.Shell, Body = new Color(0.32f, 0.36f, 0.28f), Furniture = new Color(0.25f, 0.27f, 0.22f) },
+                new GunExtra { Category = "Explosives", Allowed = "reddot", Mode = "40MM HE", Special = "gl" });
+
+            d = RifleDef("railgun", "Railgun", "Charges a slug to hypersonic speed. Goes through walls, Goredolls and the Goredolls behind them.", "laser_zap");
+            d.Damage = 220; d.Pellets = 1; d.Rpm = 40; d.HipSpread = 0.3f; d.AimSpread = 0f; d.Recoil = 5f; d.Penetration = 50f; d.Force = 160; d.Range = 1500f; d.Caliber = 10f; d.Mag = 4;
+            d.ReloadTime = 2.8f; d.EmptyExtra = 0f; d.CasingType = 0; d.WeightKg = 7f; d.NoiseRadius = 160f;
+            Gun(d, new GunSpec { Bore = 0.06f, RecBack = -0.12f, RecFront = 0.28f, RecH = 0.08f, RecW = 0.05f, Muzzle = 0.85f, BarrelR = 0.016f, Rail = true,
+                Guard = GunGuard.Shroud, GuardStart = 0.28f, GuardEnd = 0.8f, GuardR = 0.03f, Stock = GunStock.Bullpup, StockLen = 0.22f,
+                Mag = GunMag.Box, MagZ = -0.05f, MagLen = 0.08f, Body = new Color(0.15f, 0.17f, 0.22f), Furniture = new Color(0.1f, 0.6f, 0.9f), MetalBody = true },
+                new GunExtra { Category = "Heavy", Allowed = "reddot holo acog", Cycle = 1.2f, Mode = "RAIL", Special = "rail" });
+
+            d = PistolDef("taser", "Taser", "Two barbed darts on wires. 50,000 volts: they lock up, fall and twitch. Doesn't kill (usually).", "tranq");
+            d.Damage = 2; d.Rpm = 60; d.HipSpread = 1f; d.AimSpread = 0.2f; d.Recoil = 0.5f; d.Penetration = 0f; d.Force = 0; d.Range = 9f; d.Caliber = 4f; d.Mag = 1;
+            d.ReloadTime = 1.4f; d.EmptyExtra = 0f; d.CasingType = 0; d.WeightKg = 0.3f; d.NoiseRadius = 15f;
+            Gun(d, new GunSpec { Frame = GunFrame.Pistol, MagLen = 0.1f, Body = new Color(0.95f, 0.8f, 0.1f), Metal = new Color(0.1f, 0.1f, 0.1f), Furniture = new Color(0.1f, 0.1f, 0.1f) },
+                new GunExtra { Category = "Pistols", Allowed = "laser", Mode = "50 KV", Special = "taser" });
+
+            d = SmgDef("paintball", "Paintball Marker", "Fires balls of paint that splat on everything. Stings a bit. Pick your colours.", "gun_suppressed");
+            d.Damage = 1; d.Rpm = 600; d.HipSpread = 1.4f; d.AimSpread = 0.4f; d.Recoil = 0.4f; d.Penetration = 0f; d.Force = 3; d.Range = 80f; d.Caliber = 17f; d.Mag = 100;
+            d.ReloadTime = 2f; d.EmptyExtra = 0f; d.CasingType = 0; d.WeightKg = 1.3f; d.NoiseRadius = 20f;
+            Gun(d, new GunSpec { Bore = 0.05f, RecBack = -0.06f, RecFront = 0.12f, RecH = 0.07f, RecW = 0.04f, Muzzle = 0.4f, BarrelR = 0.012f,
+                Guard = GunGuard.None, Stock = GunStock.None, Mag = GunMag.Top, Body = new Color(0.1f, 0.65f, 0.9f), Furniture = new Color(0.95f, 0.3f, 0.6f) },
+                new GunExtra { Category = "Tools", Allowed = "reddot", Mode = "PAINT", Special = "paint" });
+
+            d = SmgDef("watergun", "Super Soaker", "Pressurised water. Knocks things over, puts out fires and washes the blood off walls and floors.", "hiss");
+            d.Damage = 0; d.Rpm = 900; d.HipSpread = 0.8f; d.AimSpread = 0.5f; d.Recoil = 0.1f; d.Penetration = 0f; d.Force = 6; d.Range = 14f; d.Caliber = 5f; d.Mag = 200;
+            d.ReloadTime = 1.5f; d.EmptyExtra = 0f; d.CasingType = 0; d.WeightKg = 0.8f; d.NoiseRadius = 8f;
+            Gun(d, new GunSpec { Bore = 0.05f, RecBack = -0.08f, RecFront = 0.12f, RecH = 0.08f, RecW = 0.05f, Muzzle = 0.38f, BarrelR = 0.014f,
+                Guard = GunGuard.Round, GuardStart = 0.14f, GuardEnd = 0.3f, GuardR = 0.03f, Stock = GunStock.None, Mag = GunMag.Top, Body = new Color(0.2f, 0.75f, 0.35f), Furniture = new Color(0.95f, 0.55f, 0.1f) },
+                new GunExtra { Category = "Tools", Allowed = "", Mode = "SOAK", Special = "water" });
+
+            d = PistolDef("flaregun", "Flare Gun", "A burning red flare. Lights up the night and sets whoever it hits on fire.", "gun_dbarrel");
+            d.Damage = 12; d.Rpm = 60; d.HipSpread = 0.8f; d.AimSpread = 0.2f; d.Recoil = 2f; d.Penetration = 0f; d.Force = 4; d.Range = 120f; d.Caliber = 26f; d.Mag = 1;
+            d.ReloadTime = 1.3f; d.EmptyExtra = 0f; d.CasingType = 2; d.WeightKg = 0.5f; d.NoiseRadius = 50f;
+            Gun(d, new GunSpec { Frame = GunFrame.Pistol, MagLen = 0.1f, Body = new Color(0.9f, 0.35f, 0.1f), Metal = new Color(0.85f, 0.3f, 0.08f), Furniture = new Color(0.1f, 0.1f, 0.1f) },
+                new GunExtra { Category = "Pistols", Allowed = "", Mode = "FLARE", Special = "flare" });
         }
 
         static void DefineGuns()
@@ -436,6 +483,11 @@ namespace SolarEclipse
 
         public override bool OpenBolt => Extra != null && Extra.OpenBolt;
         protected override bool CanShoot => cycleT < 0f;
+        protected override void FireRound(Vector3 origin, Vector3 dir, Vector3 muzzle, int index, bool authority)
+        {
+            if (Extra != null && Extra.Special != null && SpecialGuns.Fire(this, Extra.Special, origin, dir, muzzle, authority)) return;
+            base.FireRound(origin, dir, muzzle, index, authority);
+        }
         public override string ModeText => Extra != null && !string.IsNullOrEmpty(Extra.Mode) ? Extra.Mode : base.ModeText;
         public override float MoveSpeedMul => Def.WeightKg >= 7f ? Mathf.Lerp(0.9f, 0.75f, Mathf.InverseLerp(7f, 14f, Def.WeightKg)) : 1f;
 

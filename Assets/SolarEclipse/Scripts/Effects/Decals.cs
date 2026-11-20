@@ -146,6 +146,32 @@ namespace SolarEclipse
         // ------------------------------------------------------------------ public API
 
         /// <summary>Blood splat. kind 0 splat, 1 streak (walls), 2 pool, 3 droplets.</summary>
+        /// <summary>A coloured splat (paintball). Uses the blood splat shapes in another colour.</summary>
+        public static void Paint(Vector3 pos, Vector3 normal, float size, Color col, Collider surface)
+        {
+            var d = Acquire(false);
+            d.Kind = DecalKind.Blood;
+            d.Born = Time.time; d.FadeAfter = 0f;
+            if (surface != null && surface.attachedRigidbody == null) size = FitSize(pos, normal, size);
+            Place(d, pos, normal, size, Random.Range(0f, 360f), TextureFactory.AtlasCell(Random.Range(0, 6), TextureFactory.BloodCells), col, surface, 0.004f + Random.value * 0.003f);
+            d.Renderer.sharedMaterial = Mats.DecalBlood;
+        }
+
+        /// <summary>Washes blood (and paint) off within a radius (Super Soaker). Returns how many decals were removed.</summary>
+        public static int Wash(Vector3 pos, float radius)
+        {
+            int n = 0; float r2 = radius * radius;
+            foreach (var list in new[] { blood, other })
+                foreach (var d in list)
+                {
+                    if (d.Go == null || !d.Go.activeSelf || d.Kind != DecalKind.Blood) continue;
+                    if ((d.Go.transform.position - pos).sqrMagnitude > r2) continue;
+                    d.Go.SetActive(false); d.Active = false; n++;
+                }
+            if (n > 0) BloodPools.Remove(pos, radius);
+            return n;
+        }
+
         public static void Blood(Vector3 pos, Vector3 normal, float size, int kind, Collider surface, float growTime = 0f, float fadeAfter = 0f)
         {
             if (!Settings.GoreEnabled) return;
