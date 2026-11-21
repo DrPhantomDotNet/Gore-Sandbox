@@ -2,13 +2,14 @@ using UnityEngine;
 
 namespace SolarEclipse
 {
-    /// <summary>Use it (or shoot it) and a soda can drops out.</summary>
+    /// <summary>Use it (or shoot it) and a soda can drops out. Gore Sandbox 2: enough hits break it (screen dies, cans spill).</summary>
     public sealed class VendingMachine : MonoBehaviour, IInteractable, IDamageable
     {
         float last;
         int damageCount;
-        public string Prompt => "Buy a soda (free!)";
-        public bool IsAlive => true;
+        bool broken;
+        public string Prompt => broken ? "Broken" : "Buy a soda (free!)";
+        public bool IsAlive => !broken;
 
         public static void Create(Transform parent, Vector3 pos, float yaw, Color color)
         {
@@ -35,14 +36,30 @@ namespace SolarEclipse
             go.AddComponent<VendingMachine>();
         }
 
-        public void Interact(GameObject user) => Dispense();
+        public void Interact(GameObject user) { if (!broken) Dispense(); }
 
         public void TakeDamage(DamageInfo info)
         {
             if (NetGuard.Intercept(this, info)) return;
+            if (broken) return;
             damageCount++;
             FX.Sparks(info.Point, info.Normal, 8);
+            if (damageCount >= 15) { Break(); return; }
             if (damageCount % 3 == 0) Dispense();
+        }
+
+        void Break()
+        {
+            broken = true;
+            var front = transform.Find("Front");
+            if (front != null) { var r = front.GetComponent<Renderer>(); if (r != null) r.sharedMaterial = Mats.Glass; }
+            AudioManager.Play("glass_break", transform.position, 1f);
+            FX.Sparks(transform.TransformPoint(new Vector3(0, 1.2f, 0.45f)), transform.forward, 30);
+            for (int i = 0; i < 8; i++)
+            {
+                var can = PropFactory.Spawn("can", transform.TransformPoint(new Vector3(Random.Range(-0.35f, 0.25f), Random.Range(0.6f, 1.7f), 0.55f)), Random.rotation);
+                if (can != null) RB.SetVel(can, transform.forward * Random.Range(1f, 3f) + Random.insideUnitSphere);
+            }
         }
 
         void Dispense()

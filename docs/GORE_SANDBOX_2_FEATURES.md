@@ -820,8 +820,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 775. [x] Conveyor into furnace
 776. [x] Furnace
 777. [x] Freezer room
-778. Shark tank
-779. Piranha pool
+778. [x] Shark tank
+779. [x] Piranha pool
 780. Bear trap (improved)
 781. [x] Landmines
 782. [x] Claymore mines
@@ -838,7 +838,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 793. [x] Wheelchair
 794. Shopping trolley (improved)
 795. [x] Office chair (rolling)
-796. Vending machine (breakable)
+796. [x] Vending machine (breakable)
 797. [x] Fire hydrant (water jet when broken)
 798. [x] Traffic lights (working)
 799. [x] Street lamps (breakable)

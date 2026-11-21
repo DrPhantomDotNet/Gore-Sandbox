@@ -30,6 +30,7 @@ namespace SolarEclipse
             add("trafficlight", "Traffic Light", "A working traffic light.", "warning", TrafficLight.Create);
             add("streetlamp", "Street Lamp", "A tall lamp that lights up the night. Shoot the bulb out.", "bulb", StreetLampProp.Create);
             add("propspawner", "Prop Spawner", "Spits out a prop every few seconds. Press E to change which prop.", "plus", PropSpawner.Create);
+            Traps4.Register(add); // part 3 (World/Traps4.cs)
         }
 
         internal static readonly Color Wood = new Color(0.45f, 0.3f, 0.18f);
