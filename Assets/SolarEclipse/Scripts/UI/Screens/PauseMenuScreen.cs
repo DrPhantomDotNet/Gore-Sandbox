@@ -77,7 +77,7 @@ namespace SolarEclipse
 
         static Rect Next() { var r = new Rect(0, row * 62 + scrollY, width, 56); row++; return r; }
 
-        public static int Rows(int tab) => tab == 0 ? 19 : tab == 1 ? 13 : tab == 2 ? 7 : 6;
+        public static int Rows(int tab) => tab == 0 ? 20 : tab == 1 ? 13 : tab == 2 ? 7 : 6;
 
         public static void Draw(Rect view, int tab)
         {
@@ -108,6 +108,7 @@ namespace SolarEclipse
                     UI.Toggle(Next(), "Stop time", ref TimeStop.Active, "Freeze every Goredoll and prop around you, even mid-air. Hit them, then turn it off and watch.");
                     UI.Toggle(Next(), "Eclipse on next day map", ref Rules.ForceEclipse, "Start a Solar Eclipse a few seconds into the next daytime outdoor map.");
                     UI.Toggle(Next(), "Explosive bullets", ref Rules.ExplosiveBullets, "Every bullet impact explodes.");
+                    UI.Toggle(Next(), "Guns can jam", ref Rules.GunJams, "Realism: about 1 shot in 170 jams the gun. Press R to clear it.");
                     UI.Slider(Next(), "Movement speed", ref Rules.PlayerSpeedMultiplier, 0.25f, 4f, "0.00", null, "×");
                     UI.Slider(Next(), "Jump height", ref Rules.JumpMultiplier, 0.25f, 4f, "0.00", null, "×");
                     if (p != null && UI.Button(Next(), "Heal to full", ButtonKind.Ghost, IconFactory.Get("heart"))) { p.Health.Revive(); AudioManager.Ui("ui_success"); }

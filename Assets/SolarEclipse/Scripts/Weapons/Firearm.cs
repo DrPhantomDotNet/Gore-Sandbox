@@ -42,6 +42,7 @@ namespace SolarEclipse
         // ---- subclass hooks (Weapons/Guns2: pump shotgun, sniper, revolver, minigun, harpoon gun)
         /// <summary>False blocks firing (pump/bolt cycling, minigun spin-up).</summary>
         protected virtual bool CanShoot => true;
+        bool jammed;
         /// <summary>Whether a casing flies out on every shot (revolvers keep theirs).</summary>
         protected virtual bool EjectOnFire => true;
         /// <summary>False: the gun plays its own sounds (flamethrower, beams).</summary>
@@ -204,7 +205,10 @@ namespace SolarEclipse
                 if (burstLeft > 0) wantsFire = true;
             }
             if (Reloading && Def.ShellReload && f.Fire && Ammo > 0) { reloadT = -1f; if (handMag != null) handMag.gameObject.SetActive(false); }
-            if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot)
+            // GS2 jamming (Rules.GunJams): a jammed gun only clicks until you clear it with R.
+            if (jammed && f.Reload && !Reloading) { jammed = false; AudioManager.Play(Def.Charge ?? "slide_back", Eye, 0.8f, 1f, 0f); GameEvents.ShowToast("Jam cleared"); f.Reload = false; nextFire = Time.time + 0.4f; }
+            if (jammed && f.Fire) { AudioManager.Play("dry_fire", Eye, 0.6f, 0.85f, 0f); nextFire = Time.time + 0.25f; wantsFire = false; }
+            if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot && !jammed)
             {
                 bool vrDry = VRManualMag && !VRChambered;
                 if ((Ammo > 0 || InfAmmo) && !vrDry) Shoot();
@@ -324,6 +328,7 @@ namespace SolarEclipse
             CameraFX.Punch(0.55f * R * a, Random.Range(-0.35f, 0.35f) * R);
             CameraFX.Shake(0.03f * R);
             OnShot();
+            if (Rules.GunJams && !InfAmmo && Def.Kind == WeaponKind.Firearm && Random.value < 0.006f) { jammed = true; burstLeft = 0; GameEvents.ShowToast(Def.Name + " jammed! Press R to clear it."); }
         }
 
         // ------------------------------------------------------------------ Reloading

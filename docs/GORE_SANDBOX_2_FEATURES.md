@@ -629,7 +629,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 592. Chamber check animation
 593. [x] Weapon inspect animations for all guns
 594. Fire mode switch animations
-595. Jamming option (realism)
+595. [x] Jamming option (realism)
 596. [x] Overheating for miniguns
 597. Attachments: scopes, sights, lasers
 598. Attachments: suppressors, compensators
