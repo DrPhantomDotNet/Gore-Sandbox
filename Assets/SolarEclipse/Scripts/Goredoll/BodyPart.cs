@@ -21,6 +21,7 @@ namespace SolarEclipse
         public MeshRenderer Renderer;
         public Quaternion StartLocalRotation;
         public float Health, MaxHealth;
+        bool gutsOut;
         public bool Fractured, Destroyed, Severed, Gibbed, Sliced;
         public readonly List<Wound> Wounds = new List<Wound>();
         public GameObject OrgansVisual;
@@ -222,6 +223,9 @@ namespace SolarEclipse
                     float chance = (info.IsBallistic ? 0.35f : 0.5f) * (super ? 1.8f : unreal ? 1.3f : 1f);
                     if (Random.value < chance) GoreKit.KnockTeeth(this, info.Direction, Random.Range(1, super ? 7 : unreal ? 4 : 3));
                 }
+                // GS2: a deep cut or stab across the belly lets the intestines slide out (hanging from the wound).
+                if (Type == PartType.Abdomen && info.IsSharp && dmg > (super ? 22f : unreal ? 30f : 38f) && Settings.Organs && !gutsOut && !Severed && !Gibbed)
+                { gutsOut = true; OrganModels.Intestines(this, (info.Normal + Vector3.down * 0.5f).normalized, Body != null ? RB.Vel(Body) : Vector3.zero); }
                 if (w.Fracture && IsLimb && (super || (unreal && Random.value < 0.6f) || Random.value < 0.3f)) GoreKit.CompoundFracture(this, pos, info.Normal);
                 if (info.Type == DamageType.Explosion) GoreKit.Burn(this, Mathf.Clamp01(dmg / 60f));
                 if ((info.IsBallistic && dmg > 25f) || info.Type == DamageType.Explosion || (info.IsSharp && dmg > 30f)) GoreKit.ScreenSplat(pos, dmg / 40f);

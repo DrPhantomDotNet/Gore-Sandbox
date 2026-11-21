@@ -224,7 +224,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 203. [x] Slash wounds that open wider over time
 204. Deep cuts showing muscle underneath
 205. Very deep cuts exposing organs
-206. Intestines spilling from deep abdominal wounds
+206. [x] Intestines spilling from deep abdominal wounds
 207. Organs that can be pulled out with the Spawn Gun
 208. Detachable jaw
 209. Detachable ears and nose
@@ -233,8 +233,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 212. Eyes that can be destroyed or pop out
 213. Teeth knocked out (improved, per tooth)
 214. Skull fractures visible on the head
-215. Brain matter on head destruction
-216. Head explosion with skull fragments
+215. [x] Brain matter on head destruction
+216. [x] Head explosion with skull fragments
 217. Partial head destruction (half skull)
 218. Face peeling on extreme damage
 219. Ribcage exposed on chest destruction
