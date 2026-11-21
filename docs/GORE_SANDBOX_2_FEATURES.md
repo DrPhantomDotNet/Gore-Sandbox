@@ -263,9 +263,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 242. Decapitation leaves neck stump with spine
 243. Cut in half at the waist
 244. Vertical slicing (head to toe) with sharp weapons
-245. Wounds persist on severed parts
+245. [x] Wounds persist on severed parts
 246. [x] Severed limbs twitch for a few seconds
-247. Severed heads keep expression
+247. [x] Severed heads keep expression
 248. Clothes torn around wounds
 249. [x] Clothes soaked with blood spreading from wounds
 250. Blood-soaked hair
@@ -279,7 +279,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 258. [x] Corpse decay over time (pale, stiff, bloated)
 259. [x] Rigor mortis stiffening after a while
 260. [x] Flies around old corpses
-261. Corpse limit with fade-out
+261. [x] Corpse limit with fade-out
 262. Gore persistence setting per map
 263. Body piles that settle realistically
 264. Hanging corpses swing and drip
