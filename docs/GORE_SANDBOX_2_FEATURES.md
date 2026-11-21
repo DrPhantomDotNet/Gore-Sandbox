@@ -129,9 +129,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 112. Better window glass with reflections
 113. Emissive signs with flicker
 114. [x] Flickering broken lights
-115. Muzzle flash lights casting on walls
-116. Explosion light flashes
-117. Fire light flicker
+115. [x] Muzzle flash lights casting on walls
+116. [x] Explosion light flashes
+117. [x] Fire light flicker
 118. Flashlight with realistic falloff
 119. Light cookies for lamps (patterns)
 120. Glass shatter with sharp shards
@@ -143,12 +143,12 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 126. [x] Rain droplets on the camera lens
 127. Heat haze over fire and explosions
 128. Smoke that lingers and drifts
-129. Graphics presets Low/Medium/High/Ultra
+129. [x] Graphics presets Low/Medium/High/Ultra
 130. [x] Auto-detect best preset on first launch
 131. Render scale slider
 132. [x] FPS limiter (30/60/90/120/unlimited)
 133. [x] V-sync toggle
-134. Shadow distance slider
+134. [x] Shadow distance slider
 135. [x] Decal limit slider
 136. [x] Ragdoll limit slider
 137. Particle quality slider
@@ -622,7 +622,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 585. Bullet penetration through thin walls
 586. Ricochets off metal
 587. Tracers on automatic weapons
-588. Muzzle smoke after firing
+588. [x] Muzzle smoke after firing
 589. Casings ejecting with physics
 590. Empty magazines dropping
 591. Tactical vs empty reloads

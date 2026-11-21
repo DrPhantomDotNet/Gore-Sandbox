@@ -232,9 +232,20 @@ namespace SolarEclipse
             return true;
         }
 
+        Light glow;
+        void OnDestroy() { if (glow != null) Destroy(glow.gameObject); }
+
         void Update()
         {
             if (d == null || Time.time > until) { Destroy(this); return; }
+            // GS2: burning bodies light up their surroundings with a flickering fire glow.
+            if (glow == null && d.Parts.TryGetValue(PartType.Chest, out var ch) && ch != null)
+            {
+                glow = new GameObject("Fire Light").AddComponent<Light>();
+                glow.transform.SetParent(ch.transform, false); glow.transform.localPosition = Vector3.up * 0.2f;
+                glow.type = LightType.Point; glow.color = new Color(1f, 0.5f, 0.15f); glow.range = 6f; glow.shadows = LightShadows.None;
+            }
+            if (glow != null) glow.intensity = (1.4f + Mathf.PerlinNoise(Time.time * 9f, GetInstanceID() * 0.1f) * 1.4f) * Mathf.Clamp01(until - Time.time);
             int k = 0;
             foreach (var part in d.Parts.Values)
             {
