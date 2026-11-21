@@ -58,6 +58,7 @@ namespace SolarEclipse
         public bool batterySaver = false;      // phones: cap at 30 FPS
         public bool soundIndicators = false;   // accessibility: show where loud sounds come from (UI/SoundIndicators.cs)
         public bool monoAudio = false;         // accessibility: everything mixed to mono
+        public bool dynamicMusic = true;       // combat music when fights break out (Audio/DynamicMusic.cs)
         public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)
         // VR (Scripts/VR): Windows + SteamVR / OpenXR
         public int vrMode = 0;                  // 0 auto (when SteamVR is running), 1 always try, 2 never
