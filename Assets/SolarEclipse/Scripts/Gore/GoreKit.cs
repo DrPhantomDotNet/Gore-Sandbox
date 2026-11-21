@@ -116,12 +116,15 @@ namespace SolarEclipse
         {
             foreach (var m in ownMeshes) if (m != null) Object.Destroy(m);
             ownMeshes.Clear();
+            burnLevel.Clear();
             Pools.Clear();
             Splats.Clear();
         }
         static readonly Color Char = new Color(0.07f, 0.05f, 0.04f);
 
         /// <summary>Darkens a body part toward charred black (explosions). amount 0..1 per call, adds up.</summary>
+        static readonly Dictionary<Mesh, float> burnLevel = new Dictionary<Mesh, float>();
+        static readonly Color BurnRed = new Color(0.78f, 0.22f, 0.16f);
         public static void Burn(BodyPart part, float amount)
         {
             if (part == null || !Settings.GoreEnabled || amount <= 0f || part.Gibbed) return;
@@ -140,11 +143,15 @@ namespace SolarEclipse
             var cols = mesh.colors;
             if (cols == null || cols.Length == 0) return;
             float k = Mathf.Clamp01(amount) * (Settings.SuperUltra ? 1f : 0.7f);
+            // GS2 burn stages: light burns turn the skin an angry red first; deeper burning chars it black.
+            burnLevel.TryGetValue(mesh, out var level); level += amount; burnLevel[mesh] = level;
+            var target = level < 0.35f ? BurnRed : Char;
+            if (level < 0.35f) k *= 0.6f;
             for (int i = 0; i < cols.Length; i++)
             {
                 // Uneven: some spots burn faster (noise from the vertex index).
                 float local = k * (0.6f + 0.8f * Mathf.PerlinNoise(i * 0.137f, 0.5f));
-                var c = Color.Lerp(cols[i], Char, Mathf.Clamp01(local));
+                var c = Color.Lerp(cols[i], target, Mathf.Clamp01(local));
                 c.a = cols[i].a;
                 cols[i] = c;
             }

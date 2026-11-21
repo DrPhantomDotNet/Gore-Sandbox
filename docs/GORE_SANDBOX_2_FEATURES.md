@@ -245,7 +245,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 224. [x] Bruises aging: red, purple, blue, yellow
 225. Swelling around blunt hits
 226. [x] Black eyes from face punches
-227. Burns: red skin, blisters, charred black
+227. [x] Burns: red skin, blisters, charred black
 228. Burned clothes falling apart
 229. [x] Frostbite blue skin (freeze ray)
 230. Acid burns that eat through skin
