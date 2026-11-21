@@ -305,9 +305,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 282. Blood splatter shape by impact angle
 283. [x] Mist from high-velocity impacts
 284. [x] Blood on the camera lens when close
-285. Blood on weapons after melee hits
+285. [x] Blood on weapons after melee hits
 286. Blood on the player's hands/gloves
-287. Clean blood off weapons (inspect key)
+287. [x] Clean blood off weapons (inspect key)
 288. [x] Blood colour options (red, dark, green, blue)
 289. Blood viscosity setting
 290. Blood on water surfaces spreads
