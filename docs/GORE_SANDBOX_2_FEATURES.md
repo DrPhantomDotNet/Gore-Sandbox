@@ -27,14 +27,14 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 14. [x] Loading progress bar shaped like an ECG line
 15. [x] Splash warning screen: "Contains extreme gore" with age note
 16. [x] Gore level picker on the very first launch
-17. First-launch language/graphics quick setup
+17. [x] First-launch language/graphics quick setup
 18. Animated studio "SolarEclipse Productions" card
 19. [x] Version + build number on the title card
 20. [x] Seasonal intro variants (Halloween, Christmas)
 21. Random intro scene each launch (morgue, alley, hospital)
 22. [x] Film grain + chromatic aberration in cinematics
 23. [x] Letterbox bars for cinematic moments
-24. Cinematic subtitles style
+24. [x] Cinematic subtitles style
 25. [x] Credits reel reachable from the menu
 26. [x] "What's new" popup after updating
 27. Trailer mode button in Extras (unlisted)
