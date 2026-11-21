@@ -54,6 +54,7 @@ namespace SolarEclipse
         public bool vibration = true;         // phones: vibrate when you get hurt (Player/PlayerHealth.cs)         // CONTINUE card on the main menu      // 0 operating room (GS2), 1 classic stage (Game/MenuBackdrop.cs)
         public bool flashReduction = false;    // GS2 accessibility: dim screen flashes (explosions, lightning)
         public bool hideOrgans = false, noGibs = false, noFlies = false; // GS2 gore filter per element
+        public int gibLifetime = 1;           // 0 short, 1 normal, 2 long, 3 until the gib limit
         public bool batterySaver = false;      // phones: cap at 30 FPS
         public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)
         // VR (Scripts/VR): Windows + SteamVR / OpenXR

@@ -345,8 +345,27 @@ namespace SolarEclipse
     /// <summary>Bloody chunk: drips for a few seconds and splats when it lands.</summary>
     public sealed class Gib : MonoBehaviour
     {
-        float born, lastSplat;
-        void Awake() { born = Time.time; }
+        float born, lastSplat, lastSmear, wallStick;
+        Rigidbody rb;
+        void Awake() { born = Time.time; rb = GetComponent<Rigidbody>(); }
+
+        // Gore Sandbox 2: smears while sliding along the floor; sticks to walls for a moment, then slides down.
+        void OnCollisionStay(Collision c)
+        {
+            if (rb == null || c.collider.gameObject.layer == Layers.Ragdoll || Time.time - lastSmear < 0.12f || Time.time - born > 40f) return;
+            var v = RB.Vel(rb);
+            if (v.sqrMagnitude < 0.8f) return;
+            lastSmear = Time.time;
+            var cp = c.GetContact(0);
+            Decals.Blood(cp.point, cp.normal, Random.Range(0.08f, 0.16f), 1, c.collider, 0f, 0f);
+        }
+
+        void FixedUpdate()
+        {
+            if (wallStick <= 0f || rb == null) return;
+            wallStick -= Time.fixedDeltaTime;
+            rb.AddForce(-Physics.gravity * (wallStick > 0.6f ? 0.97f : 0.7f), ForceMode.Acceleration); // sticks, then slowly slides
+        }
 
         void Update()
         {
@@ -360,6 +379,7 @@ namespace SolarEclipse
             var cp = c.GetContact(0);
             AudioManager.Play("splat", cp.point, Mathf.Clamp01(c.relativeVelocity.magnitude / 8f), Random.Range(0.9f, 1.2f), 1f, 1f, 20f);
             if (c.collider.gameObject.layer != Layers.Ragdoll) Decals.Blood(cp.point, cp.normal, Random.Range(0.15f, 0.4f), 0, c.collider);
+            if (Mathf.Abs(cp.normal.y) < 0.4f && c.relativeVelocity.magnitude > 5f && c.rigidbody == null && rb != null) { wallStick = Random.Range(0.8f, 1.8f); RB.SetVel(rb, Vector3.zero); }
         }
     }
 

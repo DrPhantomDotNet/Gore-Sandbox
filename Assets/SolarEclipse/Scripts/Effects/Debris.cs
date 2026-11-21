@@ -11,9 +11,11 @@ namespace SolarEclipse
         static readonly int[] counts = new int[4];
         public const int GroupGeneric = 0, GroupCasing = 1, GroupGib = 2, GroupMag = 3;
         public static int Count => items.Count;
+        static readonly float[] GibMul = { 0.4f, 1f, 3f };
 
         public static void Register(GameObject go, float lifetime, int group = GroupGeneric)
         {
+            if (group == GroupGib) lifetime = Settings.Data.gibLifetime >= 3 ? 1e9f : lifetime * GibMul[Mathf.Clamp(Settings.Data.gibLifetime, 0, 2)]; // Settings > Gore > Gibs last
             items.Add(new Item { Go = go, Expire = Time.time + lifetime, Group = group });
             counts[group]++;
             int cap = group == GroupCasing ? Settings.Data.maxCasings : group == GroupGib ? Settings.Data.maxGibs : 80;

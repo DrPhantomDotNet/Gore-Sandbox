@@ -121,6 +121,7 @@ namespace SolarEclipse
                     if (UI.Slider(Next(), "Max blood decals", ref fd, 50, 2000, "0")) { d.maxDecals = Mathf.RoundToInt(fd); changed = true; }
                     float fg = d.maxGibs;
                     if (UI.Slider(Next(), "Max gibs", ref fg, 0, 400, "0")) { d.maxGibs = Mathf.RoundToInt(fg); changed = true; }
+                    changed |= UI.Selector(Next(), "Gibs last", ref d.gibLifetime, new[] { "Short", "Normal", "Long", "Until the limit" }, "How long body pieces stay before they shrink away.");
                     changed |= UI.Toggle(Next(), "Hit markers", ref d.hitmarkers);
                     changed |= UI.Toggle(Next(), "Damage numbers", ref d.damageNumbers);
                     changed |= UI.Toggle(Next(), "Kill feed", ref d.killFeed);
@@ -177,7 +178,7 @@ namespace SolarEclipse
                 case 1: return 7;
                 case 2: return 14;
                 case 3: return 9;
-                case 4: return 13;
+                case 4: return 14;
                 case 6: return 12;
                 case 7: return 13;
                 default: return 17;

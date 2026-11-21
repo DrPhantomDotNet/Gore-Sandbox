@@ -255,10 +255,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 234. Degloving injuries (extreme)
 235. Gibs that look like real meat chunks
 236. Gib variety: bone, organ, muscle, skin pieces
-237. Gibs leave blood trails when sliding
-238. Gibs stick to walls briefly then slide
-239. Gibs can be picked up and thrown
-240. Gib cleanup timer setting
+237. [x] Gibs leave blood trails when sliding
+238. [x] Gibs stick to walls briefly then slide
+239. [x] Gibs can be picked up and thrown
+240. [x] Gib cleanup timer setting
 241. Dismemberment by heavy blunt force
 242. Decapitation leaves neck stump with spine
 243. Cut in half at the waist
