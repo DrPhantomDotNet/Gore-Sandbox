@@ -681,8 +681,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 642. Chainsaw (improved, with fuel)
 643. [x] Kukri
 644. Cleaver (improved)
-645. Butterfly knife
-646. Bayonet
+645. [x] Butterfly knife
+646. [x] Bayonet
 647. [x] Rapier
 648. [x] Longsword
 649. [x] Claymore (two-handed)
@@ -691,8 +691,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 652. [x] Warhammer
 653. [x] Halberd
 654. [x] Trident
-655. Whip
-656. Nunchucks
+655. [x] Whip
+656. [x] Nunchucks
 657. Brass knuckles
 658. [x] Taser baton
 659. Riot shield (bash)

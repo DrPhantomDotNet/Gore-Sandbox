@@ -72,6 +72,14 @@ namespace SolarEclipse
                 new MeleeSpec { Head = MeleeHead.Baton, SwingTime = 0.36f, Reach = 1.75f, Launch = 4f, CrushChance = 0.05f, HandleLen = 0.25f, HeadLen = 0.35f, HeadColor = Dark, HandleColor = Dark, SwingSound = Swing, FleshSound = "zap", WorldSound = "blunt_world" });
             Add("extinguisher", "Fire Extinguisher", "hammer", "A heavy red cylinder. Clumsy, slow, devastating. RMB = overhead.", 55, 60, 6f, true,
                 new MeleeSpec { Head = MeleeHead.Extinguisher, TwoHanded = true, SwingTime = 0.6f, Reach = 1.7f, Launch = 8f, CrushChance = 0.35f, HeadColor = new Color(0.78f, 0.08f, 0.06f), HandleColor = Dark, SwingSound = Heavy, FleshSound = "pan_bonk", WorldSound = "pan_bonk" });
+            Add("butterfly", "Butterfly Knife", "knife", "Flip it open, slash fast. Tiny blade, lots of cuts. RMB = stab.", 22, 6, 0.2f, false,
+                new MeleeSpec { Head = MeleeHead.CombatKnife, Blade = true, RmbStab = true, SwingTime = 0.2f, Reach = 1.45f, CutChance = 0.15f, Bleeds = true, HandleLen = 0.13f, HeadLen = 0.11f, HeadColor = Steel, HandleColor = Gold, SwingSound = "whoosh_small", FleshSound = "slice", WorldSound = "knife_hit_hard" });
+            Add("bayonet", "Bayonet", "knife", "A long military blade made for thrusting. Deep stabs that go through. RMB = lunge.", 38, 10, 0.5f, false,
+                new MeleeSpec { Head = MeleeHead.CombatKnife, Blade = true, RmbStab = true, SwingTime = 0.3f, Reach = 1.8f, Pierce = 2, CutChance = 0.15f, Bleeds = true, HandleLen = 0.13f, HeadLen = 0.3f, HeadColor = new Color(0.4f, 0.42f, 0.4f), HandleColor = Wood, SwingSound = "whoosh_small", FleshSound = "stab", WorldSound = "knife_hit_hard" });
+            Add("nunchucks", "Nunchucks", "hammer", "Two sticks and a chain. Very fast, very loud, very painful. RMB = overhead.", 20, 22, 0.5f, false,
+                new MeleeSpec { Head = MeleeHead.Flail, SwingTime = 0.22f, Reach = 1.6f, Launch = 4f, CrushChance = 0.08f, HandleLen = 0.3f, HeadLen = 0.3f, HeadColor = new Color(0.12f, 0.1f, 0.08f), HandleColor = new Color(0.12f, 0.1f, 0.08f), SwingSound = "whoosh_small", FleshSound = "blunt_flesh", WorldSound = "blunt_world" });
+            Add("whip", "Bullwhip", "cut", "Long leather whip with a cracking tip. Huge reach, cuts skin open. RMB = overhead crack.", 18, 6, 0.6f, false,
+                new MeleeSpec { Head = MeleeHead.Flail, SwingTime = 0.45f, Reach = 3.4f, Launch = 2f, CutChance = 0.05f, Bleeds = true, HandleLen = 0.25f, HeadLen = 0.9f, HeadColor = Leather, HandleColor = Leather, SwingSound = "whoosh_small", FleshSound = "slice", WorldSound = "blunt_world" });
         }
 
         public static void AppendDefs(List<WeaponDef> all) { Define(); foreach (var d in defs) if (!all.Exists(w => w.Id == d.Id)) all.Add(d); }
