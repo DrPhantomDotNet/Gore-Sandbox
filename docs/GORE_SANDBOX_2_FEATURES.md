@@ -79,7 +79,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 64. [x] Pause menu quick toggles (slow-mo, noclip, god mode)
 65. New HUD: minimal health/ammo bottom corners
 66. [x] HUD scale and opacity sliders
-67. HUD hides automatically in photo mode
+67. [x] HUD hides automatically in photo mode
 68. Kill feed with weapon icons (multiplayer)
 69. [x] Damage indicator arcs on screen edges
 70. Hit markers with headshot variant
@@ -575,7 +575,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 ## 12. Player Movement & Feel (40)
 541. Weighty camera with inertia
 542. Head bob tied to footsteps
-543. Landing camera dip by fall height
+543. [x] Landing camera dip by fall height
 544. Sliding when sprinting + crouch
 545. Vaulting over low walls
 546. Climbing ledges
@@ -593,7 +593,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 558. Weapon lowers near walls
 559. Third-person toggle for all weapons
 560. Shoulder swap in third person
-561. Free-look (hold key)
+561. [x] Free-look (hold key)
 562. [x] Fall damage with broken legs (limp)
 563. Player bleeding and bandaging
 564. Player limb damage (arm shot = shaky aim)

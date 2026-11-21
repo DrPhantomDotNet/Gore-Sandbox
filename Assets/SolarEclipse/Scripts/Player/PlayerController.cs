@@ -24,6 +24,7 @@ namespace SolarEclipse
         public bool LockLook;
 
         const float StandHeight = 1.8f, CrouchHeight = 1.15f, EyeStand = 1.64f, EyeCrouch = 1.02f;
+        float freeYaw;
         float yaw, pitch, eye = EyeStand, bob, stepAccum, maxFall, recoverPitch, fovCurrent, deathTilt, kickCooldown;
         Vector3 velocity, spawnPos, lastPos;
         Vector2 recoil;
@@ -191,7 +192,10 @@ namespace SolarEclipse
             else if (!LockLook)
             {
                 float sens = Inventory.Current != null && Inventory.Current.IsAiming ? Settings.Data.adsSensitivity : 1f;
-                yaw += f.Look.x * sens;
+                // GS2 free-look: hold Left Alt to look around without turning your body (snaps back on release).
+                bool freeLook = !Application.isMobilePlatform && Input.GetKey(KeyCode.LeftAlt) && Settings.Data.pushToTalkKey != (int)KeyCode.LeftAlt;
+                if (freeLook) freeYaw = Mathf.Clamp(freeYaw + f.Look.x * sens, -110f, 110f);
+                else { freeYaw = MathX.Damp(freeYaw, 0f, 14f, dt); yaw += f.Look.x * sens; }
                 pitch = Mathf.Clamp(pitch - f.Look.y * sens, -88f, 88f);
             }
             if (f.Noclip && OWDirector.AllowNoclip) SetNoclip(!Noclip);
@@ -453,7 +457,7 @@ namespace SolarEclipse
 
             transform.rotation = Quaternion.Euler(0, yaw, 0);
             float roll = deathTilt * 70f + (Health.DamageFlash * 3f * Mathf.Sin(Time.time * 30f));
-            CamPivot.localRotation = Quaternion.Euler(pitch - recoil.x * 0.65f + shakeRot.x, recoil.y * 0.65f + shakeRot.y, roll + shakeRot.z);
+            CamPivot.localRotation = Quaternion.Euler(pitch - recoil.x * 0.65f + shakeRot.x, recoil.y * 0.65f + shakeRot.y + freeYaw, roll + shakeRot.z);
 
             float aimMul = Inventory.Current != null ? Mathf.Lerp(1f, Inventory.Current.AimFov, Inventory.Current.AimWeight) : 1f;
             float targetFov = (d.fov + (Sprinting ? 6f : 0f)) * aimMul;
