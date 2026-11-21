@@ -20,6 +20,7 @@ namespace SolarEclipse
             add("gravityzone", "Gravity Zone", "A field that flips gravity: everything inside floats up. Press E to switch it on/off.", "arrow_down", GravityZone.Create);
             add("oilslick", "Oil Slick", "A slippery puddle of oil. Goredolls that walk into it go down.", "drop", Slick.Oil);
             add("icepatch", "Ice Patch", "A sheet of ice. Goredolls slip and slide on it.", "snow", Slick.Ice);
+            add("ecgmonitor", "ECG Monitor", "A bedside monitor: shows the nearest Goredoll's heart rate, blood pressure and oxygen, and beeps with every heartbeat.", "heart", EcgMonitor.Create);
         }
 
         /// <summary>Walls of a box-shaped tank as separate colliders (Machines.Part gives each part one box collider).</summary>
@@ -283,6 +284,67 @@ namespace SolarEclipse
                     if (pel != null && pel.Body != null) pel.Body.AddForce(RB.Vel(rb).normalized * 3f + Vector3.up, ForceMode.VelocityChange);
                     if (p.Doll.Voice != null) p.Doll.Voice.Say("v_whoa", 0.9f, false);
                 }
+            }
+        }
+    }
+
+    /// <summary>Bedside monitor: reads the nearest Goredoll within 3 m; live numbers shown over it when you're close; beeps per heartbeat.</summary>
+    public sealed class EcgMonitor : MonoBehaviour
+    {
+        Goredoll patient; float nextScan, nextBeat; Transform screen;
+        static bool hooked;
+        static readonly System.Collections.Generic.List<EcgMonitor> all = new System.Collections.Generic.List<EcgMonitor>();
+
+        public static GameObject Create(Vector3 pos, Quaternion rot)
+        {
+            var go = Machines.Root("ECG Monitor", pos, rot);
+            Machines.Part(go.transform, "Stand", mb => { mb.Color = Machines.Steel; mb.Cylinder(new Vector3(0, 0, 0), new Vector3(0, 0.05f, 0), 0.3f, 0.3f, 16); mb.Cylinder(new Vector3(0, 0.05f, 0), new Vector3(0, 1.2f, 0), 0.025f, 0.025f, 8); mb.SetColor(new Color(0.85f, 0.86f, 0.88f)); mb.BevelBox(new Vector3(0, 1.38f, 0), new Vector3(0.42f, 0.32f, 0.14f), 0.02f); });
+            var scr = Machines.Part(go.transform, "Screen", mb => { mb.Color = Color.white; mb.Box(new Vector3(0, 1.38f, 0.072f), new Vector3(0.36f, 0.25f, 0.01f)); }, Mats.Glow(new Color(0.1f, 0.35f, 0.18f), 1f), false);
+            var m = go.AddComponent<EcgMonitor>(); m.screen = scr.transform;
+            return go;
+        }
+
+        void OnEnable() { all.Add(this); if (!hooked) { hooked = true; UIRoot.HudLayer += DrawAll; } }
+        void OnDisable() { all.Remove(this); }
+
+        void Update()
+        {
+            if (Time.time >= nextScan)
+            {
+                nextScan = Time.time + 1f; patient = null; float best = 9f;
+                foreach (var d in Goredoll.All)
+                {
+                    if (d == null) continue;
+                    float dd = (d.Position - transform.position).sqrMagnitude;
+                    if (dd < best) { best = dd; patient = d; }
+                }
+            }
+            if (patient == null) return;
+            var v = patient.Vitals;
+            if (patient.IsDead) { if (Time.time >= nextBeat) { nextBeat = Time.time + 2.5f; AudioManager.Play("c4_beep", transform.position + Vector3.up * 1.4f, 0.35f, 0.6f, 1f, 1f, 12f); } return; }
+            if (Time.time >= nextBeat) { nextBeat = Time.time + 60f / Mathf.Max(20f, v.HeartRate); AudioManager.Play("c4_beep", transform.position + Vector3.up * 1.4f, 0.3f, v.SpO2 < 88f ? 0.8f : 1.1f, 1f, 1f, 12f); }
+        }
+
+        static void DrawAll()
+        {
+            var p = PlayerController.Instance;
+            if (p == null || p.Cam == null) return;
+            foreach (var m in all)
+            {
+                if (m == null || m.screen == null) continue;
+                var top = m.transform.position + Vector3.up * 1.7f;
+                float dist = Vector3.Distance(p.Cam.transform.position, top);
+                if (dist > 7f) continue;
+                var sp = p.Cam.WorldToScreenPoint(top);
+                if (sp.z < 0.1f) continue;
+                var g = new Vector2(sp.x / UI.Scale, (Screen.height - sp.y) / UI.Scale);
+                var r = new Rect(g.x - 120, g.y - 96, 240, 92);
+                UI.Rounded(r, new Color(0.01f, 0.05f, 0.03f, 0.85f), true);
+                if (m.patient == null) { UI.Label(r, "NO PATIENT", 18, new Color(0.3f, 1f, 0.45f), TextAnchor.MiddleCenter, FontStyle.Bold); continue; }
+                var v = m.patient.Vitals; bool dead = m.patient.IsDead;
+                UI.Label(new Rect(r.x + 10, r.y + 4, 220, 26), dead ? "HR 0  ASYSTOLE" : "HR " + Mathf.RoundToInt(v.HeartRate) + " bpm", 19, new Color(0.3f, 1f, 0.45f), TextAnchor.MiddleLeft, FontStyle.Bold);
+                UI.Label(new Rect(r.x + 10, r.y + 32, 220, 26), "BP " + (dead ? "0/0" : Mathf.RoundToInt(v.Systolic) + "/" + Mathf.RoundToInt(v.Diastolic)), 18, new Color(1f, 0.4f, 0.4f), TextAnchor.MiddleLeft, FontStyle.Bold);
+                UI.Label(new Rect(r.x + 10, r.y + 60, 220, 26), "SpO2 " + (dead ? "--" : Mathf.RoundToInt(v.SpO2) + "%"), 18, new Color(0.4f, 0.8f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
             }
         }
     }

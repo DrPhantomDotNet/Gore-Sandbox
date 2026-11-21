@@ -321,7 +321,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 298. Bubbling blood from lung wounds
 299. Blood bubbles at mouth when breathing
 300. [x] Bleeding stops when heart stops
-301. Blood volume shown in the wound inspector
+301. [x] Blood volume shown in the wound inspector
 302. Blood decals limit by graphics level
 303. Blood cleanup tool (mop)
 304. [x] Hose that washes blood away
@@ -372,12 +372,12 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 347. Surgery mode: remove bullets
 348. Surgery mode: reattach severed limbs (fictional)
 349. X-ray scanner tool
-350. ECG monitor prop showing live vitals
+350. [x] ECG monitor prop showing live vitals
 351. Medical chart screen per Goredoll
 352. Body temperature readout
 353. Pupil response check
 354. [x] Glasgow coma score display (improved)
-355. Triage tag tool (colours)
+355. [x] Triage tag tool (colours)
 356. Autopsy mode on corpses
 357. Organ weight/condition report in autopsy
 358. Educational tooltips (real anatomy facts)
