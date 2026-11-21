@@ -452,7 +452,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 423. [x] Tinnitus ring after explosions
 424. [x] Muffled hearing after explosions
 425. Reverb zones per room size
-426. Occlusion: sounds behind walls muffled
+426. [x] Occlusion: sounds behind walls muffled
 427. [x] Dynamic music that rises with action
 428. Calm, tense and combat music layers
 429. Map-specific music themes

@@ -123,6 +123,17 @@ namespace SolarEclipse
             I.busOf[s] = bus;
             I.baseVolume[s] = volume;
             s.volume = volume * BusVolume(bus);
+            // GS2 occlusion: a wall between you and a 3D sound muffles it (low-pass) and makes it quieter.
+            bool occluded = false;
+            if (spatial > 0.5f && followTarget == null)
+            {
+                var cam = Camera.main;
+                if (cam != null && (cam.transform.position - position).sqrMagnitude > 4f)
+                    occluded = Physics.Linecast(cam.transform.position, position + (cam.transform.position - position).normalized * 0.4f, Layers.WorldMask, QueryTriggerInteraction.Ignore); // stop short: impacts sit on the wall itself
+            }
+            var lp = s.GetComponent<AudioLowPassFilter>();
+            if (occluded) { if (lp == null) lp = s.gameObject.AddComponent<AudioLowPassFilter>(); lp.cutoffFrequency = 1600f; lp.enabled = true; I.baseVolume[s] = volume * 0.6f; s.volume = volume * 0.6f * BusVolume(bus); }
+            else if (lp != null) lp.enabled = false;
             if (followTarget != null) I.follow[s] = followTarget; else I.follow.Remove(s);
             s.Play();
             return s;
