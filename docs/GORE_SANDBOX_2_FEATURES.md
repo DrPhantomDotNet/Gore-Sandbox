@@ -1176,7 +1176,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1113. Kill sounds unlocks
 1114. [x] Statistics page (everything tracked)
 1115. Lifetime stats graphs
-1116. Daily login reward (no money)
+1116. [x] Daily login reward (no money)
 1117. Weekly goals
 1118. Seasonal events with rewards
 1119. Collection book (NPCs, weapons, maps seen)

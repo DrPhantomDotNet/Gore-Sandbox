@@ -17,6 +17,8 @@ namespace SolarEclipse
             { Stats.Inspections, 2f }, { Stats.Revives, 10f }, { Stats.MapsPlayed, 15f }, { Stats.Ducks, 50f }, { Stats.EasterEggs, 100f },
             { Stats.Distance, 0.02f }, { Stats.PlaySeconds, 0.05f }, { "headlocks", 5f }, { "neck_snaps", 15f }, { "defibs", 25f }, { "tourniquets", 10f },
             { "photos", 2f }, { "grabs", 1f },
+            // GS2
+            { "daily_login", 150f }, { "bandages", 5f }, { "disarms", 15f }, { "finishers", 20f }, { "welds", 2f }, { "lightning", 10f },
         };
 
         static readonly string[] Titles = { "Rookie", "Intern", "Brawler", "Butcher", "Field Medic", "Surgeon", "Executioner", "Reaper", "Nightmare", "Legend", "Solar Eclipse" };
@@ -51,6 +53,26 @@ namespace SolarEclipse
                 Toasts.Show("LEVEL UP", "Level " + after + "  -  " + Title, new Color(1f, 0.78f, 0.16f));
                 AudioManager.Ui("ui_success");
             }
+        }
+    }
+
+    /// <summary>GS2 daily login bonus: the first time you play each day you get XP, more for a streak of days in a row (no money).</summary>
+    public static class DailyLogin
+    {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        static void Check()
+        {
+            var today = System.DateTime.Now.Date;
+            string last = PlayerPrefs.GetString("gs2_last_login", "");
+            if (last == today.ToString("yyyy-MM-dd")) return;
+            int streak = PlayerPrefs.GetInt("gs2_login_streak", 0);
+            streak = last == today.AddDays(-1).ToString("yyyy-MM-dd") ? streak + 1 : 1;
+            PlayerPrefs.SetString("gs2_last_login", today.ToString("yyyy-MM-dd"));
+            PlayerPrefs.SetInt("gs2_login_streak", streak);
+            PlayerPrefs.Save();
+            float mult = 1f + Mathf.Min(streak - 1, 10) * 0.2f;
+            Stats.Add("daily_login", mult);
+            Toasts.Show("DAILY BONUS", "+" + Mathf.RoundToInt(150f * mult) + " XP" + (streak > 1 ? "  -  " + streak + " days in a row!" : "  -  come back tomorrow for more"), new Color(1f, 0.78f, 0.16f));
         }
     }
 }
