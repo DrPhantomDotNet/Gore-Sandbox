@@ -15,6 +15,7 @@ namespace SolarEclipse
         public string DeathCause = "";
         public float Bleed;           // GS2: HP lost per second until bandaged (H / tap the label)
         float nextBleedDrip;
+        static int bandagedThisSession;
 
         public bool IsAlive => !Dead;
 
@@ -59,6 +60,7 @@ namespace SolarEclipse
             if (Dead || Bleed <= 0f) return;
             Bleed = 0f;
             Stats.Add("bandages");
+            if (++bandagedThisSession >= 5) EasterEggs.Found("Walking Wounded", "Bandaged yourself 5 times in one session.");
             AudioManager.Play2D("whoosh_small", 0.6f, 0.6f, AudioBus.Sfx);
             GameEvents.ShowToast("Bandaged. The bleeding stopped.");
         }

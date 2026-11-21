@@ -158,6 +158,7 @@ namespace SolarEclipse
         }
 
         /// <summary>Washes blood (and paint) off within a radius (Super Soaker). Returns how many decals were removed.</summary>
+        static int washed;
         public static int Wash(Vector3 pos, float radius)
         {
             int n = 0; float r2 = radius * radius;
@@ -169,6 +170,7 @@ namespace SolarEclipse
                     d.Go.SetActive(false); d.Active = false; n++;
                 }
             if (n > 0) BloodPools.Remove(pos, radius);
+            washed += n; if (washed >= 100) EasterEggs.Found("Spotless", "Washed 100 blood stains away.");
             return n;
         }
 

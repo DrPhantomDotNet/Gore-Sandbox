@@ -14,7 +14,7 @@ namespace SolarEclipse
         static TimeStop inst;
         sealed class Saved { public Vector3 V, W; public Vector3 Pending; public bool WasKinematic; }
         readonly Dictionary<Rigidbody, Saved> frozen = new Dictionary<Rigidbody, Saved>();
-        bool on; float nextScan;
+        bool on; float nextScan; static int stopsThisSession;
         static readonly Collider[] Hits = new Collider[512];
         static readonly int Mask = Layers.Mask(Layers.Ragdoll, Layers.Props, Layers.Debris);
 
@@ -32,7 +32,7 @@ namespace SolarEclipse
         void Update()
         {
             bool want = Active && !NetState.IsClient && PlayerController.Instance != null;
-            if (want && !on) { on = true; Stats.Add("timestops"); AudioManager.Play2D("tinnitus", 0.25f, 0.6f, AudioBus.Sfx); CameraFX.Flash(new Color(0.6f, 0.7f, 1f), 0.25f); }
+            if (want && !on) { on = true; Stats.Add("timestops"); if (++stopsThisSession >= 3) EasterEggs.Found("Time Bender", "Stopped time 3 times in one session."); AudioManager.Play2D("tinnitus", 0.25f, 0.6f, AudioBus.Sfx); CameraFX.Flash(new Color(0.6f, 0.7f, 1f), 0.25f); }
             if (on && want && Time.unscaledTime >= nextScan) { nextScan = Time.unscaledTime + 0.25f; Scan(); }
             if (on && !want) Release();
         }

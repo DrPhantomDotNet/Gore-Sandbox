@@ -214,6 +214,7 @@ namespace SolarEclipse
         void BuildSlaughterhouse()
         {
             scene = 2;
+            EasterEggs.Found("Meat Locker", "Picked the slaughterhouse as your main menu.");
             var root = transform;
             MapLighting.Apply(TimeOfDay.Night, true, root);
             RenderSettings.fog = true; RenderSettings.fogMode = FogMode.ExponentialSquared;

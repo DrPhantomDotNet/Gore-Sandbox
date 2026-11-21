@@ -293,6 +293,7 @@ namespace SolarEclipse
                     if (i == cps.Count - 1 && !done)
                     {
                         done = true; float t = Time.time - Mathf.Max(0f, start);
+                        if (t < 60f) EasterEggs.Found("Free Runner", "Finished the Parkour Race in under a minute.");
                         if (best <= 0f || t < best) { best = t; PlayerPrefs.SetFloat("parkour_best", t); Banner("NEW RECORD", t.ToString("0.00") + " s", 8f); }
                         else Banner("FINISH", t.ToString("0.00") + " s", 8f);
                         AudioManager.Ui("ui_success");
@@ -330,6 +331,7 @@ namespace SolarEclipse
             if ((new Vector2(pos.x, pos.z) - new Vector2(GameModes3.MazeExit.x, GameModes3.MazeExit.z)).sqrMagnitude < 4f)
             {
                 done = true; float t = Time.time - start;
+                if (t < 90f) EasterEggs.Found("Minotaur Who?", "Escaped the maze in under 90 seconds.");
                 if (best <= 0f || t < best) { best = t; PlayerPrefs.SetFloat("maze_best", t); Banner("ESCAPED - NEW RECORD", t.ToString("0.0") + " s", 8f); }
                 else Banner("ESCAPED", t.ToString("0.0") + " s", 8f);
                 AudioManager.Ui("ui_success");
@@ -438,7 +440,7 @@ namespace SolarEclipse
             if (p.IsDead) { over = true; Banner("ELIMINATED", kills + " kills. Restart the map to try again.", 10f); return; }
             int alive = 0;
             foreach (var d in Goredoll.All) if (d != null && !d.IsDead && d.Vitals.Conscious) alive++;
-            if (alive == 0) { over = true; PlayerPrefs.SetInt("ffa_wins", PlayerPrefs.GetInt("ffa_wins", 0) + 1); Banner("LAST ONE STANDING", kills + " kills in " + (Time.time - start).ToString("0") + " s", 10f); AudioManager.Ui("ui_success"); }
+            if (alive == 0) { over = true; EasterEggs.Found("Last One Standing", "Won a Free-for-all."); PlayerPrefs.SetInt("ffa_wins", PlayerPrefs.GetInt("ffa_wins", 0) + 1); Banner("LAST ONE STANDING", kills + " kills in " + (Time.time - start).ToString("0") + " s", 10f); AudioManager.Ui("ui_success"); }
         }
 
         protected override void OnDollDied(Goredoll d, object attacker) { if (GameModes2.ByMe(attacker)) kills++; }

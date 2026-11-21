@@ -110,6 +110,7 @@ namespace SolarEclipse
                     if (Time.time < nextBite || !Traps2.Cool(hit, p, 1.5f)) continue;
                     nextBite = Time.time + 1.3f; lunge = 0.6f; lungeTo = p.transform.position;
                     Machines.Hurt(p, 45f, DamageType.Slash, Random.onUnitSphere, this, "Shark");
+                    EasterEggs.Found("Fresh Meat", "Fed someone to the shark.");
                     BloodFX.Burst(p.transform.position, Vector3.up, 3f, new Color(0.45f, 0.02f, 0.02f));
                     AudioManager.Play("blade_chop", p.transform.position, 1f, 0.7f);
                     if (p.CanSever && p.Doll.Dismember != null && Random.value < 0.4f) p.Doll.Dismember.Sever(p, p.transform.position, Random.onUnitSphere, false);

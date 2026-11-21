@@ -1295,7 +1295,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1224. [x] Retro graphics filter
 1225. [x] Black-and-white noir mode
 1226. Cartoon outline mode
-1227. Easter eggs (10 new secrets)
+1227. [x] Easter eggs (10 new secrets)
 1228. Hidden dev room
 1229. Secret weapon unlocked by a code
 1230. Credits easter egg minigame

@@ -142,6 +142,7 @@ namespace SolarEclipse
             }
             Burning.Apply(best, 6f, null);
             Stats.Add("lightning");
+            EasterEggs.Found("Act of God", "Watched lightning strike a Goredoll.");
             Decals.Scorch(at, Vector3.up, 1.6f, null);
             CameraFX.Shake(0.25f);
             return at;
@@ -158,6 +159,7 @@ namespace SolarEclipse
                 baseSky = RenderSettings.ambientSkyColor; baseEq = RenderSettings.ambientEquatorColor; baseGround = RenderSettings.ambientGroundColor; baseFog = RenderSettings.fogColor;
                 baseSun = MapLighting.Sun != null ? MapLighting.Sun.intensity : -1f;
                 Toasts.Show("SOLAR ECLIPSE", "The sky is going dark...", new Color(1f, 0.55f, 0.3f));
+                EasterEggs.Found("Totality", "Saw a total solar eclipse.");
                 AudioManager.Play2D("bell", 0.4f, 0.5f, AudioBus.Sfx);
             }
             // 20 s to totality, 25 s of darkness, 20 s back.
