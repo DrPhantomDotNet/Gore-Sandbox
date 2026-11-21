@@ -307,7 +307,7 @@ namespace SolarEclipse
             // Multiplayer never pauses: other players keep playing while your menu is open.
             bool paused = !NetState.Active && (UIRoot.AnyPausesTime || State == GameState.Loading);
             Time.timeScale = paused ? 0f : scale;
-            if (!paused) Time.fixedDeltaTime = (1f / 60f) * Mathf.Min(1f, scale);
+            if (!paused) Time.fixedDeltaTime = Rules.PhysicsStep * Mathf.Min(1f, scale);
             AudioListener.pause = paused && State == GameState.Playing;
 
             // ----- cursor

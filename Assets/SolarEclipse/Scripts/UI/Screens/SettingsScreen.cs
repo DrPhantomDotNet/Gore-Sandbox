@@ -66,6 +66,8 @@ namespace SolarEclipse
                     changed |= UI.Slider(Next(), "Render distance", ref d.renderDistance, 80, 1000, "0", null, " m");
                     changed |= UI.Slider(Next(), "Brightness", ref d.brightness, 0.5f, 1.6f, "0.00");
                     changed |= UI.Toggle(Next(), "Distance fog", ref d.fog);
+                    { int pi = d.physicsHz <= 30 ? 0 : d.physicsHz <= 60 ? 1 : d.physicsHz <= 90 ? 2 : 3;
+                      if (UI.Selector(Next(), "Physics rate", ref pi, new[] { "30 Hz (fast phones)", "60 Hz (default)", "90 Hz", "120 Hz (smoothest)" }, "How often physics updates each second. Higher looks smoother but costs more.")) { d.physicsHz = new[] { 30, 60, 90, 120 }[pi]; changed = true; } }
                     changed |= UI.Toggle(Next(), "Show FPS", ref d.showFps);
                     changed |= UI.Toggle(Next(), "Detailed stats overlay", ref d.detailedStats);
                     break;
@@ -183,7 +185,7 @@ namespace SolarEclipse
         // GS2: reset one tab to defaults (field names of SettingsData shown on each tab).
         static readonly string[][] TabFields =
         {
-            new[] { "qualityLevel", "fullscreen", "vsync", "targetFps", "shadowQuality", "shadowDistance", "antiAliasing", "fov", "viewmodelFov", "renderDistance", "brightness", "fog", "showFps", "detailedStats" },
+            new[] { "qualityLevel", "fullscreen", "vsync", "targetFps", "shadowQuality", "shadowDistance", "antiAliasing", "fov", "viewmodelFov", "renderDistance", "brightness", "fog", "physicsHz", "showFps", "detailedStats" },
             new[] { "masterVolume", "sfxVolume", "voiceVolume", "musicVolume", "ambienceVolume", "uiVolume", "dynamicMusic", "monoAudio" },
             new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "autoFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
             new[] { "headBob", "storyDifficulty", "unlockAll", "screenShake", "viewmodel", "subtitles", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
@@ -211,7 +213,7 @@ namespace SolarEclipse
         {
             switch (tab)
             {
-                case 0: return 14;
+                case 0: return 15;
                 case 1: return 9;
                 case 2: return 15;
                 case 3: return 12;

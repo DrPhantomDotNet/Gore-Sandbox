@@ -783,8 +783,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 740. Wheels for contraptions
 741. Physics gun beam improved
 742. [x] Gravity zones
-743. Slow-motion physics accuracy fix
-744. Physics substep setting
+743. [x] Slow-motion physics accuracy fix
+744. [x] Physics substep setting
 745. [x] Physics object limit setting
 746. Sleep/freeze far objects for performance
 747. [x] Destruction debris cleanup

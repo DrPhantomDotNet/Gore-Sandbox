@@ -17,6 +17,8 @@ namespace SolarEclipse
         public static float DamageMultiplier = 1f, BleedMultiplier = 1f, NpcHealthMultiplier = 1f, BulletForceMultiplier = 1f;
         public static float PlayerSpeedMultiplier = 1f, JumpMultiplier = 1f, NpcSpeedMultiplier = 1f, AiAggression = 0f, GravityScale = 1f;
         static float timeScale = 1f;
+        /// <summary>GS2: base physics step from Settings > Graphics > Physics rate (30-120 Hz).</summary>
+        public static float PhysicsStep => 1f / Mathf.Clamp(Settings.Data.physicsHz, 30, 120);
 
         public static float TimeScale
         {
@@ -25,7 +27,7 @@ namespace SolarEclipse
             {
                 timeScale = Mathf.Clamp(value, 0.05f, 3f);
                 Time.timeScale = timeScale;
-                Time.fixedDeltaTime = (1f / 60f) * Mathf.Min(1f, timeScale);
+                Time.fixedDeltaTime = PhysicsStep * Mathf.Min(1f, timeScale);
             }
         }
 
