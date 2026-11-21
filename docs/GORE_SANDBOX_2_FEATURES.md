@@ -786,7 +786,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 743. [x] Slow-motion physics accuracy fix
 744. [x] Physics substep setting
 745. [x] Physics object limit setting
-746. Sleep/freeze far objects for performance
+746. [x] Sleep/freeze far objects for performance
 747. [x] Destruction debris cleanup
 748. Debris stays option
 749. [x] Physics stats overlay
