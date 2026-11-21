@@ -168,6 +168,9 @@ namespace SolarEclipse
             target = Color.Lerp(target, new Color(0.86f, 0.84f, 0.84f), loss);           // pallor
             target = Color.Lerp(target, new Color(0.78f, 0.82f, 0.98f), hypoxia * 0.85f); // cyanosis
             target = Color.Lerp(target, new Color(0.8f, 0.8f, 0.84f), dead);              // waxy, bloodless
+            if (v.State == LifeState.Dead) // decay: after 5 minutes a slow green-grey discolouration sets in
+                target = Color.Lerp(target, new Color(0.72f, 0.78f, 0.66f), Mathf.Clamp01((Time.time - v.TimeOfDeath - 300f) / 600f) * 0.8f);
+            if (doll.GetComponent<Frozen>() != null) target = Color.Lerp(target, new Color(0.62f, 0.78f, 1f), 0.85f); // frostbite (freeze ray)
             if (Mathf.Abs(target.r - current.r) + Mathf.Abs(target.g - current.g) + Mathf.Abs(target.b - current.b) < 0.004f) return;
             current = Color.Lerp(current, target, 0.35f);
             foreach (var r in skin)

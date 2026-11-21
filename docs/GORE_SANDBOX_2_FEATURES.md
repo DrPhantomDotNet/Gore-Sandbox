@@ -247,7 +247,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 226. [x] Black eyes from face punches
 227. Burns: red skin, blisters, charred black
 228. Burned clothes falling apart
-229. Frostbite blue skin (freeze ray)
+229. [x] Frostbite blue skin (freeze ray)
 230. Acid burns that eat through skin
 231. Electrical burns with entry marks
 232. Bite wounds (zombies, dogs)
@@ -276,7 +276,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 255. Gore censor option: black silhouettes
 256. "Unreal gore" mode: exaggerated sprays
 257. "Realistic gore" mode: anatomically accurate
-258. Corpse decay over time (pale, stiff, bloated)
+258. [x] Corpse decay over time (pale, stiff, bloated)
 259. [x] Rigor mortis stiffening after a while
 260. [x] Flies around old corpses
 261. Corpse limit with fade-out
