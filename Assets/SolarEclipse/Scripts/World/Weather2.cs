@@ -28,6 +28,15 @@ namespace SolarEclipse
             go.transform.SetParent(worldRoot, false);
             var w = go.AddComponent<WeatherExtras>();
             w.def = def; w.opt = opt;
+            // GS2 reverb that matches the space (one big zone covering the map).
+            var preset = def.Id == "sewers" ? AudioReverbPreset.SewerPipe : def.Id == "colosseum" || def.Id == "arena" ? AudioReverbPreset.Arena
+                : def.Id == "subway" ? AudioReverbPreset.StoneCorridor : def.Id == "warehouse" || def.Id == "containerport" ? AudioReverbPreset.Hangar
+                : def.Indoor ? AudioReverbPreset.Room : (AudioReverbPreset?)null;
+            if (preset.HasValue)
+            {
+                var rz = go.AddComponent<AudioReverbZone>();
+                rz.reverbPreset = preset.Value; rz.minDistance = 400f; rz.maxDistance = 500f;
+            }
             bool outdoorDay = !def.Indoor && opt != null && opt.Time == TimeOfDay.Day && Weather.Supported(def);
             if (outdoorDay && (Random.value < 0.12f || Rules.ForceEclipse)) w.eclipseAt = Time.time + (Rules.ForceEclipse ? 8f : Random.Range(60f, 200f));
         }

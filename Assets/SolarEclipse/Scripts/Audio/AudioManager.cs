@@ -120,6 +120,7 @@ namespace SolarEclipse
             s.maxDistance = maxDistance;
             s.pitch = pitch * Time.timeScale < 0.99f ? pitch * Mathf.Lerp(0.6f, 1f, Time.timeScale) : pitch;
             s.loop = false;
+            s.reverbZoneMix = bus == AudioBus.Ui || bus == AudioBus.Music ? 0f : 1f; // menu clicks don't echo in the sewers
             I.busOf[s] = bus;
             I.baseVolume[s] = volume;
             s.volume = volume * BusVolume(bus);
