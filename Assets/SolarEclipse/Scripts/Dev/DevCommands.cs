@@ -151,6 +151,18 @@ namespace SolarEclipse
             R("colliders", "World", "Shows physics colliders.", a => Flip(ref Rules.ShowColliders, "Colliders", a), "[on|off]");
             R("wireframe", "World", "Wireframe rendering.", a => Flip(ref CameraOverlays.Wireframe, "Wireframe", a), "[on|off]");
             R("xray", "World", "See organs through skin.", a => Flip(ref Rules.Xray, "X-ray", a), "[on|off]");
+            R("debug", "General", "Engine debug overlay (also F7). With a layer name toggles that layer: perf bones colliders physics ai vitals probe noise player net log xray, or 'all' / 'none'.", a =>
+            {
+                if (a.Length == 0) { DebugOverlay.Toggle(); return; }
+                string l = a[0].ToLowerInvariant();
+                if (!DebugOverlay.Enabled) DebugOverlay.Toggle();
+                if (l == "xray") { Flip(ref Rules.Xray, "X-ray", new string[0]); return; }
+                if (l == "all" || l == "none") { foreach (var k in new System.Collections.Generic.List<string>(DebugOverlay.Layers.Keys)) DebugOverlay.Layers[k] = l == "all"; Log("Debug layers: " + l); return; }
+                if (!DebugOverlay.Layers.ContainsKey(l)) { Log("Layers: " + string.Join(" ", DebugOverlay.Layers.Keys) + " xray"); return; }
+                bool v = !DebugOverlay.Layers[l];
+                if (a.Length > 1) v = a[1] == "1" || a[1].ToLowerInvariant() == "on";
+                DebugOverlay.Layers[l] = v; Log("Debug " + l + ": " + (v ? "ON" : "OFF"));
+            }, "[layer] [on|off]");
             R("fog", "World", "Toggles fog.", a => { RenderSettings.fog = !RenderSettings.fog; Log("Fog " + RenderSettings.fog); }, "");
             R("clear_decals", "World", "Removes blood and bullet holes.", a => { Decals.ClearAll(); BloodFX.Clear(); }, "");
             R("clear_debris", "World", "Removes casings, mags and gibs.", a => Debris.ClearAll(), "");

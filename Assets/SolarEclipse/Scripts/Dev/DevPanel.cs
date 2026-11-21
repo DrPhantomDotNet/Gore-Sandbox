@@ -59,6 +59,7 @@ namespace SolarEclipse
 
         static readonly (string label, string cmd)[] Quick =
         {
+            ("DEBUG OVERLAY", "debug"), ("Debug: bones", "debug bones"), ("Debug: colliders", "debug colliders"), ("Debug: physics", "debug physics"), ("Debug: X-ray", "debug xray"), ("Debug: all layers", "debug all"),
             ("God mode", "god"), ("Noclip", "noclip"), ("No fall damage", "nofall"), ("AI ignore me", "ai_ignore"), ("Freeze AI", "ai_freeze"),
             ("AI thoughts", "ai_thoughts"), ("Infinite ammo", "ammo"), ("Instant reload", "fast_reload"), ("Give all weapons", "give_all"), ("Refill ammo", "refill"), ("OW cash +$100K", "cash_add 100000"), ("OW cash +$1M", "cash_add 1000000"), ("OW cash +$100M", "cash_add 100000000"),
             ("Heal me", "heal"), ("Respawn", "respawn"), ("TP to aim", "tp_aim"), ("TP to spawn", "tp_spawn"), ("Launch me", "launch_me"),
