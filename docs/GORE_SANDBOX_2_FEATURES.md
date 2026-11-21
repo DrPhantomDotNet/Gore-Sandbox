@@ -380,7 +380,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 355. [x] Triage tag tool (colours)
 356. Autopsy mode on corpses
 357. Organ weight/condition report in autopsy
-358. Educational tooltips (real anatomy facts)
+358. [x] Educational tooltips (real anatomy facts)
 359. Medical realism toggle (realistic vs arcade)
 360. [x] Immortal Goredoll option for testing
 

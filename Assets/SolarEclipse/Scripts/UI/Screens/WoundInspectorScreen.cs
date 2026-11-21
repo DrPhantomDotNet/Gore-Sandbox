@@ -112,7 +112,34 @@ namespace SolarEclipse
                 if (UI.Hit(rr)) { selected = sel ? (PartType?)null : kv.Key; AudioManager.Ui("ui_click"); }
             }
             UI.Label(new Rect(area.x, area.yMax - 40, area.width, 30), selected.HasValue ? Anatomy.Parts[selected.Value].Medical + " — click again for all" : "Click a body part to filter", 14, UI.Muted, TextAnchor.MiddleCenter);
+            if (selected.HasValue && Facts.TryGetValue(selected.Value, out var fact)) // GS2: real anatomy facts
+            {
+                var fr = new Rect(area.x + 6, area.yMax - 112, area.width - 12, 70);
+                UI.Rounded(fr, new Color(0, 0, 0, 0.55f), true);
+                UI.Label(new Rect(fr.x + 8, fr.y + 4, fr.width - 16, fr.height - 8), fact, 13, UI.Accent2, TextAnchor.MiddleLeft, FontStyle.Italic, true, true);
+            }
         }
+
+        static readonly System.Collections.Generic.Dictionary<PartType, string> Facts = new System.Collections.Generic.Dictionary<PartType, string>
+        {
+            { PartType.Head, "The skull is 22 bones fused together. The brain uses about 20% of the body's oxygen while being 2% of its weight." },
+            { PartType.Neck, "The carotid arteries carry about 15% of the heart's output to the brain. Cut one and consciousness goes in seconds." },
+            { PartType.Chest, "The heart pumps about 5 litres a minute at rest. The 24 ribs protect it and the lungs, which hold about 6 litres of air." },
+            { PartType.Abdomen, "The small intestine is about 6 metres long. The liver, the largest internal organ, can regrow from a quarter of itself." },
+            { PartType.Pelvis, "The femoral arteries run through the groin: a cut there can lose a litre of blood in under a minute." },
+            { PartType.UpperArmL, "The humerus is the arm's only upper bone. The radial nerve wraps around it: break the bone and the hand can drop." },
+            { PartType.UpperArmR, "The humerus is the arm's only upper bone. The radial nerve wraps around it: break the bone and the hand can drop." },
+            { PartType.ForearmL, "Two bones, the radius and ulna, let the forearm twist. The tendons that move the fingers run just under the wrist skin." },
+            { PartType.ForearmR, "Two bones, the radius and ulna, let the forearm twist. The tendons that move the fingers run just under the wrist skin." },
+            { PartType.HandL, "Each hand has 27 bones. A quarter of all the bones in the body are in the hands." },
+            { PartType.HandR, "Each hand has 27 bones. A quarter of all the bones in the body are in the hands." },
+            { PartType.ThighL, "The femur is the longest and strongest bone in the body. A broken femur can hide over a litre of internal bleeding." },
+            { PartType.ThighR, "The femur is the longest and strongest bone in the body. A broken femur can hide over a litre of internal bleeding." },
+            { PartType.ShinL, "The tibia carries most of the body's weight; its front edge sits right under the skin, which is why shin kicks hurt so much." },
+            { PartType.ShinR, "The tibia carries most of the body's weight; its front edge sits right under the skin, which is why shin kicks hurt so much." },
+            { PartType.FootL, "Each foot has 26 bones and over 100 muscles, tendons and ligaments. The Achilles tendon is the body's strongest." },
+            { PartType.FootR, "Each foot has 26 bones and over 100 muscles, tendons and ligaments. The Achilles tendon is the body's strongest." },
+        };
 
         // ------------------------------------------------------------------ vitals
 
