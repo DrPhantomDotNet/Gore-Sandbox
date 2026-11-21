@@ -52,6 +52,12 @@ namespace SolarEclipse
             {
                 Toasts.Show("LEVEL UP", "Level " + after + "  -  " + Title, new Color(1f, 0.78f, 0.16f));
                 AudioManager.Ui("ui_success");
+                if (after % 5 == 0) // GS2 milestone: a new title every five levels
+                {
+                    Toasts.Show("MILESTONE: LEVEL " + after, "New title unlocked: " + Title.ToUpperInvariant(), new Color(1f, 0.55f, 0.15f));
+                    AudioManager.Ui("ui_achievement");
+                    CameraFX.Flash(new Color(1f, 0.85f, 0.3f), 0.25f);
+                }
             }
         }
     }

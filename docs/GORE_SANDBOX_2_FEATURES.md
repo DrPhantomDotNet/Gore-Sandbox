@@ -1190,7 +1190,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1127. Multiple save profiles
 1128. Achievements in multiplayer
 1129. Achievement toasts redesigned
-1130. Milestone celebrations
+1130. [x] Milestone celebrations
 
 ## 27. Mobile (30)
 1131. Touch controls redesigned
