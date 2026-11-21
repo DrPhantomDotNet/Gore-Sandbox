@@ -185,6 +185,8 @@ namespace SolarEclipse
             if (rt != null && !previewFailed) UI.Tex(new Rect(pv.x + 6, pv.y + 6, pv.width - 12, pv.height - 12), rt, Color.white, ScaleMode.ScaleToFit);
             else if (def != null) UI.Tex(new Rect(pv.x + 20, pv.y + 20, pv.width - 40, pv.height - 40), Hud.WeaponIcon(def), Color.white, ScaleMode.ScaleToFit);
             if (def != null) UI.Label(new Rect(pv.x + 16, pv.y + 8, pv.width - 32, 40), def.Name.ToUpperInvariant(), 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
+            if (def != null && UI.Button(new Rect(pv.xMax - 236, pv.yMax - 58, 224, 48), "SKIN: " + WeaponSkins.Names[WeaponSkins.Get(def.Id)], ButtonKind.Ghost, IconFactory.Get("diamond"), 17, true, "Colour finish for this gun (applies when you next take it out)."))
+            { WeaponSkins.Set(def.Id, (WeaponSkins.Get(def.Id) + 1) % WeaponSkins.Names.Length); changed.Add(weaponId); AudioManager.Ui("ui_tab"); }
             DrawStats(new Rect(mid.x, pv.yMax + 12, mid.width, mid.yMax - pv.yMax - 12 - 74), def);
             if (UI.Button(new Rect(mid.x, mid.yMax - 64, mid.width * 0.5f - 6, 64), "RESET", ButtonKind.Ghost, IconFactory.Get("refresh"), 22))
             {

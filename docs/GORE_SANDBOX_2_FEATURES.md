@@ -634,7 +634,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 597. Attachments: scopes, sights, lasers
 598. Attachments: suppressors, compensators
 599. Attachments: grips, stocks, extended mags
-600. Weapon skins (camo, gold, blood)
+600. [x] Weapon skins (camo, gold, blood)
 601. Weapon customisation bench
 602. Dual wielding pistols
 603. Akimbo SMGs
@@ -1169,7 +1169,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1106. Player card backgrounds
 1107. Player outfits for sandbox
 1108. Gloves skins for fighting styles
-1109. Weapon skins unlocks
+1109. [x] Weapon skins unlocks
 1110. Spawn gun skins
 1111. Blood colour unlocks
 1112. Death effect unlocks (fun)

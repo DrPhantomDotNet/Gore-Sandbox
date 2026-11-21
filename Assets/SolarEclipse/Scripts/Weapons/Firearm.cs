@@ -62,6 +62,7 @@ namespace SolarEclipse
         protected override void OnAttach()
         {
             Attachments.Apply(this); // saved sight / magazine / muzzle / grip / laser for this gun (before the ammo count)
+            WeaponSkins.Apply(Model, Def.Id); // GS2 skin (Weapons/WeaponSkins.cs)
             Ammo = Capacity + (OpenBolt || Def.ShellReload ? 0 : 1);
             auto = Def.Auto;
             burst = Def.Burst > 1 && !Def.Auto;
