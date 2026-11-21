@@ -880,15 +880,15 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 831. All existing maps remastered with new lighting
 832. New map: Abandoned Hospital (night)
 833. New map: Subway Tunnels (extended)
-834. New map: Shopping Mall
+834. [x] New map: Shopping Mall
 835. New map: Office Tower (30 floors)
-836. New map: Suburban Street
+836. [x] New map: Suburban Street
 837. [x] New map: Farm with barn
 838. [x] New map: Forest cabin
 839. [x] New map: Desert gas station
 840. [x] New map: Snowy mountain lodge
 841. [x] New map: Military base
-842. New map: Oil rig
+842. [x] New map: Oil rig
 843. New map: Cruise ship
 844. New map: Airport terminal
 845. [x] New map: Stadium
@@ -898,7 +898,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 849. [x] New map: Sewers
 850. [x] New map: Morgue
 851. [x] New map: Laboratory
-852. New map: Space station
+852. [x] New map: Space station
 853. [x] New map: Moon base (low gravity)
 854. [x] New map: Medieval village
 855. [x] New map: Arena colosseum
@@ -909,7 +909,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 860. [x] New map: Docks at night
 861. [x] New map: Flatgrass 2 (huge, empty)
 862. New map: Backrooms 2
-863. New map: Dream world
+863. [x] New map: Dream world
 864. Doors and rooms you can enter on every map
 865. Interactive elevators
 866. Light switches
