@@ -291,10 +291,31 @@ namespace SolarEclipse
         AudioSource buzz;
 
         public static void Attach(Goredoll d) { if (d != null && d.GetComponent<BodyDetails>() == null) d.gameObject.AddComponent<BodyDetails>().doll = d; }
+        float nextStumble, seizureUntil, nextSeizureKick; bool seized;
+        /// <summary>GS2: concussion (stumbling, moaning) and post-traumatic seizures from head trauma. Host only.</summary>
+        void Neuro()
+        {
+            var v = doll.Vitals;
+            if (v.State == LifeState.Dead || v.Undead) return;
+            if (v.Conscious && v.HeadTrauma > 0.25f && Time.time > nextStumble && doll.Ragdoll != null && doll.Ragdoll.IsStanding)
+            {
+                nextStumble = Time.time + Random.Range(2.5f, 6f);
+                if (Random.value < v.HeadTrauma * 0.6f) { doll.Ragdoll.Fall(1.2f); if (doll.Voice != null) doll.Voice.Say("v_moan", 0.8f, false); }
+            }
+            if (!seized && v.HeadTrauma > 0.6f && v.State == LifeState.Unconscious && Random.value < 0.002f) { seized = true; seizureUntil = Time.time + Random.Range(5f, 9f); }
+            if (Time.time < seizureUntil && Time.time > nextSeizureKick)
+            {
+                nextSeizureKick = Time.time + 0.07f;
+                foreach (var p in doll.Parts.Values)
+                    if (p != null && p.Body != null && !p.Severed && Random.value < 0.6f) p.Body.AddTorque(Random.insideUnitSphere * 1.8f, ForceMode.VelocityChange);
+            }
+        }
+
         public static void NoseHit(Goredoll d) { var b = d != null ? d.GetComponent<BodyDetails>() : null; if (b != null) b.noseUntil = Time.time + Random.Range(15f, 40f); }
 
         void Update()
         {
+            if (doll != null && !NetState.IsClient) Neuro();
             if (doll == null || !Settings.GoreEnabled) return;
             var v = doll.Vitals;
             bool alive = v.State != LifeState.Dead;

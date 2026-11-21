@@ -172,6 +172,9 @@ namespace SolarEclipse
             if (Type == PartType.Neck && info.IsBallistic) Stats.Add(Stats.NeckShots);
             if (v.Paralysis == Paralysis.Total && info.Amount > 0) v.HitsWhileParalyzed++;
             if (IsHead && info.Type == DamageType.Blunt) { v.HeadTrauma = Mathf.Clamp01(v.HeadTrauma + info.Amount / 90f); if (Random.value < 0.4f) BodyDetails.NoseHit(Doll); }
+            // GS2: heavy blunt force to the trunk ruptures something inside: hidden bleeding with no wound to show for it.
+            if ((info.Type == DamageType.Blunt || info.Type == DamageType.Crush || info.Type == DamageType.Fall) && info.Amount > 28f && (Type == PartType.Chest || Type == PartType.Abdomen || Type == PartType.Pelvis))
+                v.InternalBleed = Mathf.Min(25f, v.InternalBleed + (info.Amount - 20f) * 0.12f);
         }
 
         void PlayHitEffects(DamageInfo info, Wound w, float dmg)

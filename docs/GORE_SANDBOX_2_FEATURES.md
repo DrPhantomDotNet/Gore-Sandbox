@@ -340,22 +340,22 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 315. Nerve damage causes paralysis of a limb
 316. Spinal cord levels: neck, upper back, lower back
 317. Brain regions: speech, movement, consciousness
-318. Concussion with stumbling and confusion
+318. [x] Concussion with stumbling and confusion
 319. [x] Heart rate with real arrhythmias
 320. [x] Blood pressure readout
 321. [x] Breathing rate and depth
 322. [x] Collapsed lung (pneumothorax)
 323. Blood in lungs (hemothorax)
-324. Internal bleeding without visible wounds
+324. [x] Internal bleeding without visible wounds
 325. Liver and spleen ruptures
 326. Kidney damage
 327. Stomach and intestine damage
 328. [x] Shock stages I–IV
 329. Hypothermia and hyperthermia
-330. Pain that changes behaviour by severity
-331. Adrenaline that delays pain
+330. [x] Pain that changes behaviour by severity
+331. [x] Adrenaline that delays pain
 332. [x] Fainting from pain or blood sight
-333. Seizures from brain trauma
+333. [x] Seizures from brain trauma
 334. [x] Choking on blood
 335. Airway blocked by swelling
 336. [x] Oxygen level drives consciousness (improved)

@@ -24,6 +24,7 @@ namespace SolarEclipse
         public float LungDamage;       // 0..2
         public float AirwayBlood;      // 0..1 (neck/trachea injury → choking)
         public float HeadTrauma;       // 0..1
+        public float InternalBleed;    // ml/s of hidden bleeding into the chest/belly (GS2: heavy blunt hits)
         /// <summary>Airway squeezed shut (headlock choke, Weapons/FightingStyles.cs): 0..1, ends at ChokeUntil.</summary>
         public float Choke, ChokeUntil;
         public bool HeartDestroyed, BrainDestroyed, Decapitated;
@@ -82,7 +83,8 @@ namespace SolarEclipse
                 return;
             }
             float pumping = Mathf.Clamp(HeartRate / 80f, 0.2f, 2f) * Mathf.Clamp01(Systolic / 100f + 0.2f);
-            BloodLost = Mathf.Min(Anatomy.TotalBlood, BloodLost + totalBleed * pumping * dt);
+            BloodLost = Mathf.Min(Anatomy.TotalBlood, BloodLost + (totalBleed + InternalBleed) * pumping * dt);
+            InternalBleed = Mathf.MoveTowards(InternalBleed, 0f, dt * 0.02f); // slowly clots
             float f = BloodLossFraction;
 
             Adrenaline = Mathf.MoveTowards(Adrenaline, 0f, dt * 0.03f);
@@ -136,7 +138,7 @@ namespace SolarEclipse
         public void AddPain(float amount)
         {
             if (Rules.NoPain) return;
-            Pain = Mathf.Clamp(Pain + amount, 0, 100);
+            Pain = Mathf.Clamp(Pain + amount * (1f - Adrenaline * 0.4f), 0, 100); // GS2: adrenaline dulls pain
             Adrenaline = Mathf.Clamp01(Adrenaline + amount / 80f);
             // Very sudden extreme pain can make someone pass out briefly.
             if (amount > 55f && Random.value < 0.25f) faintTimer = Random.Range(3f, 8f);
