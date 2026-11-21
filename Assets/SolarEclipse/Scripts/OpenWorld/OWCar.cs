@@ -142,6 +142,7 @@ namespace SolarEclipse
             bodyGo.transform.SetParent(go.transform, false);
             bodyGo.AddComponent<MeshFilter>().sharedMesh = mb.ToMesh("Car_" + model.Id);
             bodyGo.AddComponent<MeshRenderer>().sharedMaterial = Mats.LitMetal;
+            go.AddComponent<CarDents>().Init(bodyGo.GetComponent<MeshFilter>().sharedMesh, bodyGo.transform, car); // GS2: crash dents
 
             var bc = go.AddComponent<BoxCollider>();
             bc.center = new Vector3(0, bodyY + (body == 11 ? 0.1f : CH * 0.3f), 0);
@@ -457,5 +458,45 @@ namespace SolarEclipse
             lastInput = Time.time;
         }
         float lastInput;
+    }
+
+    /// <summary>
+    /// GS2 car damage: hard hits push the body panels in around the impact point (the mesh is unique per car) and
+    /// cost the car health. Local visual on every machine; the health hit only on the host.
+    /// </summary>
+    public sealed class CarDents : MonoBehaviour
+    {
+        Mesh mesh; Transform body; OWCar car; Vector3[] verts; Vector3[] rest; float lastDent;
+        public void Init(Mesh m, Transform bodyT, OWCar c)
+        {
+            mesh = m; body = bodyT; car = c;
+            if (mesh != null) { verts = mesh.vertices; rest = (Vector3[])verts.Clone(); }
+        }
+
+        void OnCollisionEnter(Collision c)
+        {
+            if (mesh == null || verts == null) return;
+            float v = c.relativeVelocity.magnitude;
+            if (v < 7f || Time.time - lastDent < 0.15f) return;
+            if (c.rigidbody != null && c.rigidbody.mass < 30f) return; // bodies and small props don't dent steel
+            lastDent = Time.time;
+            var cp = c.GetContact(0);
+            var lp = body.InverseTransformPoint(cp.point);
+            var ln = body.InverseTransformDirection(cp.normal);
+            float depth = Mathf.Clamp((v - 7f) * 0.012f, 0.02f, 0.22f), radius = Mathf.Clamp(0.4f + v * 0.03f, 0.4f, 1.1f);
+            for (int i = 0; i < verts.Length; i++)
+            {
+                float d = (verts[i] - lp).magnitude;
+                if (d > radius) continue;
+                float k = 1f - d / radius; k *= k;
+                var moved = verts[i] + ln * depth * k; // contact normal points into the car
+                if ((moved - rest[i]).magnitude < 0.35f) verts[i] = moved;
+            }
+            mesh.vertices = verts;
+            mesh.RecalculateNormals();
+            AudioManager.Play("metal_impact", cp.point, Mathf.Clamp01(v / 20f), Random.Range(0.75f, 0.95f));
+            if (v > 14f) AudioManager.Play("glass_break", cp.point, 0.5f, 1.1f);
+            if (car != null && !NetState.IsClient) car.TakeDamage(new DamageInfo { Amount = (v - 7f) * 6f, Point = cp.point, Normal = cp.normal, Direction = -cp.normal, Type = DamageType.Crush, Weapon = "Crash" });
+        }
     }
 }

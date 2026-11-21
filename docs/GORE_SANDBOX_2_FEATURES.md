@@ -846,7 +846,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 
 ## 18. Vehicles (30)
 801. Better car handling
-802. Car damage: dents, broken glass
+802. [x] Car damage: dents, broken glass
 803. Car doors that open and fall off
 804. Car crashes throwing Goredolls through windshields
 805. Seatbelts option for passengers
