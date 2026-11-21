@@ -966,7 +966,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 913. Team Deathmatch
 914. Free-for-all
 915. Capture the Flag
-916. Infection
+916. [x] Infection
 917. Prop Hunt
 918. [x] Gun Game
 919. One in the Chamber

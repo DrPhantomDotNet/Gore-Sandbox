@@ -27,6 +27,9 @@ namespace SolarEclipse
             yield return Mode("maze", "Escape the Maze", "Mode - hedge maze", "grid", TimeOfDay.Night,
                 "A new random maze every time. Find the exit before the things hunting you in the dark find you.",
                 new[] { "Random maze", "Hunters", "Best time saved" }, new Color(0.05f, 0.08f, 0.05f), new Color(0.2f, 0.35f, 0.18f), new Color(0.5f, 1f, 0.4f), BuildMaze);
+            yield return Mode("infection", "Infection", "Mode - town square", "skull", TimeOfDay.Sunset,
+                "Two zombies in a crowded town square. Everyone they kill gets back up as one of them. Stop the outbreak before the whole town turns.",
+                new[] { "Spreading infection", "Crowd of 24", "Survivors saved" }, new Color(0.3f, 0.15f, 0.1f), new Color(0.35f, 0.4f, 0.25f), new Color(0.6f, 1f, 0.3f), BuildSquare);
         }
 
         // ------------------------------------------------------------------ maps
@@ -104,6 +107,25 @@ namespace SolarEclipse
             m.PlayerSpawn = SkyCheckpoints[0];
             m.Playable = new Bounds(new Vector3(0, 20, 100), new Vector3(120, 80, 260));
             m.KillY = -200f; // falling is handled by the mode (back to the checkpoint)
+        }
+
+        static void BuildSquare(MapBuilder m)
+        {
+            m.Options.StartingNpcs = 0;
+            m.Block("Square", new Vector3(-40, -1, -40), new Vector3(40, 0, 40), T(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.5f, 0.48f, 0.45f), 0.2f);
+            var tints = new[] { new Color(0.75f, 0.65f, 0.5f), new Color(0.6f, 0.45f, 0.4f), new Color(0.55f, 0.6f, 0.65f) };
+            for (int i = 0; i < 8; i++)
+            {
+                float a = i * Mathf.PI / 4f; var c = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * 30f;
+                m.Building(c - new Vector3(5, 0, 5), c + new Vector3(5, 9 + (i % 3) * 3, 5), i % 2 == 0 ? TextureFactory.Brick : TextureFactory.Plaster, tints[i % 3], true);
+            }
+            m.Cylinder("Fountain", Vector3.zero, 3f, 0.7f, T(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.6f, 0.6f, 0.62f), 24);
+            for (int i = 0; i < 6; i++) { float a = i * Mathf.PI / 3f + 0.4f; m.Box("Bench", new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * 9f + Vector3.up * 0.25f, Quaternion.Euler(0, a * Mathf.Rad2Deg, 0), new Vector3(2f, 0.5f, 0.6f), T(TextureFactory.Wood), SurfaceType.Wood, new Color(0.5f, 0.35f, 0.2f)); }
+            for (int i = 0; i < 6; i++) m.StreetLamp(Quaternion.Euler(0, i * 60f, 0) * new Vector3(0, 0, 16f), i * 60f + 180f, new Color(1f, 0.75f, 0.45f), 5f, 18f, 2f);
+            m.Root.gameObject.AddComponent<Infection>();
+            m.PlayerSpawn = new Vector3(0, 0.1f, -20f);
+            m.Playable = new Bounds(new Vector3(0, 5, 0), new Vector3(80, 20, 80));
+            m.Boundaries(new Bounds(new Vector3(0, 10, 0), new Vector3(52, 20, 52)));
         }
 
         public static Vector3 MazeExit;
@@ -319,6 +341,66 @@ namespace SolarEclipse
         protected override void DrawMode(float W, float H)
         {
             Panel(new Rect(W / 2 - 220, 20, 440, 50), (done ? "DONE" : (Time.time - start).ToString("0") + " s") + "    HUNTERS " + hunters + "    BEST " + (best > 0 ? best.ToString("0.0") + " s" : "-"));
+        }
+    }
+
+    // ====================================================================== Infection
+
+    public sealed class Infection : ModeBase
+    {
+        int saved, turned, zombieKills; float start; bool started, over, given;
+
+        void Start() { Banner("INFECTION", "Kill the zombies before they turn the whole town.", 5f); start = Time.time; }
+
+        void Update()
+        {
+            if (!given && PlayerController.Instance != null) { given = true; Give("shotgun", "glock", "machete"); }
+            if (!Host || over) return;
+            if (!started && Time.time - start > 2f)
+            {
+                started = true;
+                for (int i = 0; i < 24; i++)
+                {
+                    var at = new Vector3(Random.Range(-20f, 20f), 0.1f, Random.Range(-20f, 20f));
+                    if (at.magnitude < 4f) at += at.normalized * 5f;
+                    GoredollFactory.Spawn(at, Random.Range(0f, 360f), Random.value < 0.2f ? "Coward" : "Passive");
+                }
+                Zombies.Spawn(ZombieKind.Walker, new Vector3(18f, 0.1f, 18f), 225f);
+                Zombies.Spawn(ZombieKind.Runner, new Vector3(-18f, 0.1f, 18f), 135f);
+                return;
+            }
+            if (!started) return;
+            int humans = 0, zombies = 0;
+            foreach (var d in Goredoll.All) { if (d == null || d.IsDead) continue; if (d.Zombie != null) zombies++; else humans++; }
+            if (zombies == 0 && Time.time - start > 6f) { over = true; saved = humans; Banner("OUTBREAK STOPPED", saved + " survivors saved", 10f); AudioManager.Ui("ui_success"); if (saved > PlayerPrefs.GetInt("infection_best", 0)) PlayerPrefs.SetInt("infection_best", saved); }
+            else if (humans == 0 && Time.time - start > 6f) { over = true; Banner("THE TOWN IS GONE", "Everyone turned. Restart the map to try again.", 10f); }
+        }
+
+        protected override void OnDollDied(Goredoll d, object attacker)
+        {
+            if (d == null) return;
+            if (d.Zombie != null) { if (GameModes2.ByMe(attacker)) zombieKills++; return; }
+            var z = attacker as Goredoll;
+            if (z == null || z.Zombie == null || !Host || over) return;
+            turned++;
+            StartCoroutine(Turn(d));
+        }
+
+        System.Collections.IEnumerator Turn(Goredoll victim)
+        {
+            yield return new WaitForSeconds(Random.Range(3f, 6f));
+            if (victim == null || over) yield break;
+            var pos = victim.Position; pos.y = 0.1f;
+            victim.Despawn();
+            Zombies.Spawn(Random.value < 0.3f ? ZombieKind.Runner : ZombieKind.Walker, pos, Random.Range(0f, 360f));
+            Banner("SOMEONE TURNED", turned + " infected", 2f);
+        }
+
+        protected override void DrawMode(float W, float H)
+        {
+            int humans = 0, zombies = 0;
+            foreach (var d in Goredoll.All) { if (d == null || d.IsDead) continue; if (d.Zombie != null) zombies++; else humans++; }
+            Panel(new Rect(W / 2 - 260, 20, 520, 50), "HUMANS " + humans + "   ZOMBIES " + zombies + "   TURNED " + turned + "   BEST " + PlayerPrefs.GetInt("infection_best", 0));
         }
     }
 }
