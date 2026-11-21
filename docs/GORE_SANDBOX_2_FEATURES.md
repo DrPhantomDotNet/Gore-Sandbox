@@ -918,7 +918,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 869. Map hazards toggle
 870. Map spawn point editor
 871. Map minimap for big maps
-872. Map size info on the select screen
+872. [x] Map size info on the select screen
 873. Indoor/outdoor audio zones
 874. Destructible map parts
 875. Map secrets and easter eggs
