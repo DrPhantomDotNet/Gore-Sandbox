@@ -388,42 +388,42 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 361. Real recorded human voices (CC0 recordings)
 362. Male voice sets
 363. Female voice sets
-364. Each Goredoll keeps one voice for its life
-365. Pain grunts (light hits)
-366. Pain yells (medium hits)
-367. Agonised screams (severe injuries)
-368. Screams when on fire
-369. Screams when falling from height
-370. Gasps when hit or shocked
-371. Gasping for air when choking
+364. [x] Each Goredoll keeps one voice for its life
+365. [x] Pain grunts (light hits)
+366. [x] Pain yells (medium hits)
+367. [x] Agonised screams (severe injuries)
+368. [x] Screams when on fire
+369. [x] Screams when falling from height
+370. [x] Gasps when hit or shocked
+371. [x] Gasping for air when choking
 372. Choking and gurgling on blood
 373. Coughing, dry and wet
-374. Wheezing with lung damage
-375. Heavy breathing when hurt or running
-376. Panting after sprinting
+374. [x] Wheezing with lung damage
+375. [x] Heavy breathing when hurt or running
+376. [x] Panting after sprinting
 377. Crying and sobbing
-378. Whimpering when badly hurt
+378. [x] Whimpering when badly hurt
 379. Begging lines ("please", "no", "stop")
 380. Calling for help
-381. Death rattles and last breaths
-382. Moaning while unconscious-ish
-383. Fear screams when seeing gore
+381. [x] Death rattles and last breaths
+382. [x] Moaning while unconscious-ish
+383. [x] Fear screams when seeing gore
 384. Angry shouts when fighting back
 385. Effort grunts when getting up or climbing
 386. Vomiting sounds
 387. Spitting blood
 388. Laughing when calm (rare)
 389. Talking idle chatter (mumbled)
-390. Whistling and humming (real)
-391. Voice pitch varies by body size
+390. [x] Whistling and humming (real)
+391. [x] Voice pitch varies by body size
 392. Voice muffled when the head is covered
-393. Voice gets weaker with blood loss
+393. [x] Voice gets weaker with blood loss
 394. Voice stops with a destroyed jaw or throat
 395. [x] Subtitles for every voice line
 396. [x] Voice volume slider
 397. Voice language filter (no words / words)
 398. Distance and room echo on voices
-399. Zombie voices separate from human voices
+399. [x] Zombie voices separate from human voices
 400. Credits list for every recording used
 
 ## 9. Audio & Music (40)

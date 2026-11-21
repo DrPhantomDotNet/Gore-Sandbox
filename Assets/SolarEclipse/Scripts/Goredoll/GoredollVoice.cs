@@ -40,10 +40,18 @@ namespace SolarEclipse
             { "v_sneeze", new[] { "Achoo!" } },
         };
 
+        bool wasAlive = true, fallScream; float nextFireScream;
+
         public void Init(Goredoll d, Transform head, Transform chest)
         {
             doll = d;
             pitch = Random.Range(0.9f, 1.12f);
+            // GS2: bigger bodies have deeper voices, small ones higher (giants, minis).
+            if (head != null && d.Parts.TryGetValue(PartType.Pelvis, out var pel) && pel != null)
+            {
+                float size = Vector3.Distance(head.position, pel.transform.position) / 0.62f;
+                if (size > 0.1f) pitch = Mathf.Clamp(pitch / Mathf.Sqrt(size), 0.45f, 1.6f);
+            }
             voice = MakeSource(head, "Voice");
             breath = MakeSource(chest, "Breath");
             nextIdle = Time.time + Random.Range(6f, 20f);
@@ -83,7 +91,7 @@ namespace SolarEclipse
             if (c == null) return false;
             voice.clip = c;
             voice.pitch = pitch * Random.Range(0.96f, 1.04f) * Mathf.Lerp(0.6f, 1f, Time.timeScale);
-            AudioManager.ApplyBus(voice, AudioBus.Voice, volume);
+            AudioManager.ApplyBus(voice, AudioBus.Voice, volume * Mathf.Lerp(1f, 0.45f, Mathf.Clamp01(doll.Vitals.BloodLossFraction / 0.4f))); // weaker as they bleed out
             voice.Play();
             doll.Face?.Talk(c.length * 0.9f);
             if (Lines.TryGetValue(clip, out var lines)) ShowSubtitle(lines[Random.Range(0, lines.Length)], Mathf.Max(1.5f, c.length + 0.5f));
@@ -124,6 +132,13 @@ namespace SolarEclipse
         {
             if (doll == null) return;
             var v = doll.Vitals;
+            // GS2: a last breath / death rattle the moment they die (not when the head or brain is gone).
+            if (wasAlive && v.State == LifeState.Dead && !v.BrainDestroyed && !v.Decapitated && !Undead && voice != null)
+            {
+                var rattle = RealVoices.Get("v_death") ?? SoundBank.Get("v_death");
+                if (rattle != null) { voice.clip = rattle; voice.pitch = pitch * 0.92f; AudioManager.ApplyBus(voice, AudioBus.Voice, 0.7f); voice.Play(); }
+            }
+            wasAlive = v.State == LifeState.Alive;
             if (!CanVocalise)
             {
                 if (voice.isPlaying) voice.Stop();
@@ -132,6 +147,14 @@ namespace SolarEclipse
             }
 
             if (Undead) return;
+            // GS2: screaming while on fire, and while falling from a height.
+            if (Time.time > nextFireScream && doll.GetComponent<Burning>() != null) { nextFireScream = Time.time + Random.Range(1.2f, 2.4f); Say(Random.value < 0.7f ? "v_scream" : "v_argh", 1f); }
+            if (doll.Parts.TryGetValue(PartType.Pelvis, out var pp) && pp != null && pp.Body != null)
+            {
+                float vy = RB.Vel(pp.Body).y;
+                if (vy < -9f && !fallScream) { fallScream = true; Say("v_scream", 1f); }
+                else if (vy > -2f) fallScream = false;
+            }
             // Choking after neck wounds.
             if (Time.time < chokeUntil && Time.time > nextChoke)
             {
