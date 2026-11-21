@@ -209,83 +209,83 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 190. Sitting, leaning and lying idles
 
 ## 5. Gore & Wounds (80)
-191. Layered limb stumps: skin, fat, muscle, bone
-192. Bone marrow visible in cut bones
-193. Jagged torn stumps for explosions vs clean cuts for blades
-194. Hanging skin flaps on torn stumps
-195. Exposed tendons on wrists and ankles
-196. Muscle fibres stretching before tearing
+191. [x] Layered limb stumps: skin, fat, muscle, bone
+192. [x] Bone marrow visible in cut bones
+193. [x] Jagged torn stumps for explosions vs clean cuts for blades
+194. [x] Hanging skin flaps on torn stumps
+195. [x] Exposed tendons on wrists and ankles
+196. [x] Muscle fibres stretching before tearing
 197. [x] Entry wounds small and dark
 198. [x] Exit wounds larger with torn edges
 199. [x] Bullet wound size by calibre
-200. Shotgun wound patterns
-201. Grazes that leave long scrapes
-202. Stab wounds with slit shape
+200. [x] Shotgun wound patterns
+201. [x] Grazes that leave long scrapes
+202. [x] Stab wounds with slit shape
 203. [x] Slash wounds that open wider over time
-204. Deep cuts showing muscle underneath
-205. Very deep cuts exposing organs
+204. [x] Deep cuts showing muscle underneath
+205. [x] Very deep cuts exposing organs
 206. [x] Intestines spilling from deep abdominal wounds
-207. Organs that can be pulled out with the Spawn Gun
-208. Detachable jaw
-209. Detachable ears and nose
-210. Fingers that can be shot off
-211. Toes that can be cut off
-212. Eyes that can be destroyed or pop out
-213. Teeth knocked out (improved, per tooth)
-214. Skull fractures visible on the head
+207. [x] Organs that can be pulled out with the Spawn Gun
+208. [x] Detachable jaw
+209. [x] Detachable ears and nose
+210. [x] Fingers that can be shot off
+211. [x] Toes that can be cut off
+212. [x] Eyes that can be destroyed or pop out
+213. [x] Teeth knocked out (improved, per tooth)
+214. [x] Skull fractures visible on the head
 215. [x] Brain matter on head destruction
 216. [x] Head explosion with skull fragments
-217. Partial head destruction (half skull)
-218. Face peeling on extreme damage
-219. Ribcage exposed on chest destruction
-220. Spine visible on deep back wounds
+217. [x] Partial head destruction (half skull)
+218. [x] Face peeling on extreme damage
+219. [x] Ribcage exposed on chest destruction
+220. [x] Spine visible on deep back wounds
 221. [x] Broken bones bending limbs at wrong angles
-222. Compound fractures with bone poking through
+222. [x] Compound fractures with bone poking through
 223. [x] Bruises appearing over seconds
 224. [x] Bruises aging: red, purple, blue, yellow
-225. Swelling around blunt hits
+225. [x] Swelling around blunt hits
 226. [x] Black eyes from face punches
 227. [x] Burns: red skin, blisters, charred black
-228. Burned clothes falling apart
+228. [x] Burned clothes falling apart
 229. [x] Frostbite blue skin (freeze ray)
 230. [x] Acid burns that eat through skin
 231. [x] Electrical burns with entry marks
 232. [x] Bite wounds (zombies, dogs)
-233. Crush injuries flattening parts
-234. Degloving injuries (extreme)
-235. Gibs that look like real meat chunks
+233. [x] Crush injuries flattening parts
+234. [x] Degloving injuries (extreme)
+235. [x] Gibs that look like real meat chunks
 236. [x] Gib variety: bone, organ, muscle, skin pieces
 237. [x] Gibs leave blood trails when sliding
 238. [x] Gibs stick to walls briefly then slide
 239. [x] Gibs can be picked up and thrown
 240. [x] Gib cleanup timer setting
 241. [x] Dismemberment by heavy blunt force
-242. Decapitation leaves neck stump with spine
-243. Cut in half at the waist
-244. Vertical slicing (head to toe) with sharp weapons
+242. [x] Decapitation leaves neck stump with spine
+243. [x] Cut in half at the waist
+244. [x] Vertical slicing (head to toe) with sharp weapons
 245. [x] Wounds persist on severed parts
 246. [x] Severed limbs twitch for a few seconds
 247. [x] Severed heads keep expression
-248. Clothes torn around wounds
+248. [x] Clothes torn around wounds
 249. [x] Clothes soaked with blood spreading from wounds
-250. Blood-soaked hair
-251. Wound inspector shows every layer hit
-252. Wound inspector X-ray view
-253. Wound tooltips with medical names
-254. Gore level presets (0–6) reworked
-255. Gore censor option: black silhouettes
-256. "Unreal gore" mode: exaggerated sprays
-257. "Realistic gore" mode: anatomically accurate
+250. [x] Blood-soaked hair
+251. [x] Wound inspector shows every layer hit
+252. [x] Wound inspector X-ray view
+253. [x] Wound tooltips with medical names
+254. [x] Gore level presets (0–6) reworked
+255. [x] Gore censor option: black silhouettes
+256. [x] "Unreal gore" mode: exaggerated sprays
+257. [x] "Realistic gore" mode: anatomically accurate
 258. [x] Corpse decay over time (pale, stiff, bloated)
 259. [x] Rigor mortis stiffening after a while
 260. [x] Flies around old corpses
 261. [x] Corpse limit with fade-out
-262. Gore persistence setting per map
-263. Body piles that settle realistically
-264. Hanging corpses swing and drip
-265. Impaled bodies stay on spikes
-266. Bodies pinned to walls with bolts
-267. Bullet wounds bleed out of clothes holes
+262. [x] Gore persistence setting per map
+263. [x] Body piles that settle realistically
+264. [x] Hanging corpses swing and drip
+265. [x] Impaled bodies stay on spikes
+266. [x] Bodies pinned to walls with bolts
+267. [x] Bullet wounds bleed out of clothes holes
 268. [x] Arterial wounds spray in pulses
 269. [x] Venous wounds ooze steadily
 270. [x] Capillary wounds bead and drip

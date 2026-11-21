@@ -291,7 +291,23 @@ namespace SolarEclipse
         AudioSource buzz;
 
         public static void Attach(Goredoll d) { if (d != null && d.GetComponent<BodyDetails>() == null) d.gameObject.AddComponent<BodyDetails>().doll = d; }
-        float nextStumble, seizureUntil, nextSeizureKick; bool seized;
+        float nextStumble, seizureUntil, nextSeizureKick, nextHang, hair; bool seized;
+        /// <summary>GS2: bodies hanging off the ground (hooks, ropes, gallows) drip from the hands and feet; a bleeding head soaks the hair.</summary>
+        void Hanging()
+        {
+            if (Time.time < nextHang) return;
+            nextHang = Time.time + Random.Range(0.4f, 0.9f);
+            if (doll.Parts.TryGetValue(PartType.Head, out var hd) && hd != null && !hd.Gibbed && hd.BleedRate > 0.5f && hair < 0.9f) { hair += 0.08f; GoreDetail.BloodyHair(hd, 0.12f); }
+            bool freshCorpse = doll.IsDead && Time.time - doll.Vitals.TimeOfDeath < 300f;
+            if (doll.TotalBleed < 0.3f && !freshCorpse) return; // only bleeding bodies or fresh corpses drip
+            foreach (var t in new[] { PartType.FootL, PartType.FootR, PartType.HandL, PartType.HandR })
+            {
+                if (!doll.Parts.TryGetValue(t, out var bp) || bp == null || bp.Body == null || bp.Severed) continue;
+                var at = bp.Body.position;
+                if (Physics.Raycast(at, Vector3.down, 0.5f, Layers.WorldMask, QueryTriggerInteraction.Ignore)) continue; // touching the ground
+                if (Random.value < 0.45f) BloodFX.Drip(at + Vector3.down * 0.05f, Vector3.zero);
+            }
+        }
         /// <summary>GS2: concussion (stumbling, moaning) and post-traumatic seizures from head trauma. Host only.</summary>
         void Neuro()
         {
@@ -316,6 +332,7 @@ namespace SolarEclipse
         void Update()
         {
             if (doll != null && !NetState.IsClient) Neuro();
+            if (doll != null && Settings.GoreEnabled) Hanging();
             if (doll == null || !Settings.GoreEnabled) return;
             var v = doll.Vitals;
             bool alive = v.State != LifeState.Dead;

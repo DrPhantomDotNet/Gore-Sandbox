@@ -66,6 +66,14 @@ namespace SolarEclipse
         public void Talk(float seconds) { talkUntil = Time.time + seconds; }
         public void OpenMouth(float amount) { mouthTarget = Mathf.Max(mouthTarget, amount); }
 
+        /// <summary>GS2: the lower jaw was torn off: hide the lower lip and mouth.</summary>
+        public void LoseJaw()
+        {
+            if (lipLower != null) lipLower.gameObject.SetActive(false);
+            if (mouth != null) mouth.gameObject.SetActive(false);
+            lipLower = null; mouth = null;
+        }
+
         public void DestroyEye(bool left)
         {
             var e = left ? eyeL : eyeR;

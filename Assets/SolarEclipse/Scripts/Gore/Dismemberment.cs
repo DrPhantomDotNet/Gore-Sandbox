@@ -74,6 +74,12 @@ namespace SolarEclipse
             MarkSevered(part);
             Stump(parent, jointPos, dir, Radius(part) * 1.05f, parent.IsLimb || parent.Type == PartType.Chest || parent.Type == PartType.Pelvis);
             Stump(part, jointPos, -dir, Radius(part), true);
+            // GS2: torn (not cut) stumps are jagged with skin flaps; wrists and ankles show tendons; the neck shows the spine.
+            bool distal = part.Type == PartType.HandL || part.Type == PartType.HandR || part.Type == PartType.FootL || part.Type == PartType.FootR;
+            GoreDetail.StumpExtras(parent, jointPos, dir, Radius(part) * 1.05f, !sharp, distal);
+            GoreDetail.StumpExtras(part, jointPos, -dir, Radius(part), !sharp, false);
+            if (!sharp) GoreDetail.Fibres(parent, part, jointPos);
+            if (part.Type == PartType.Head || part.Type == PartType.Neck) Vertebrae(parent, jointPos, dir);
             var w = AmputationWound(parent, parent.transform.InverseTransformPoint(jointPos), parent.transform.InverseTransformDirection(dir), sharp ? "Blade" : "Ballistic trauma", part.Type);
             doll.Bleeding.AddStump(parent, parent.transform.InverseTransformPoint(jointPos), parent.transform.InverseTransformDirection(dir), w);
             var pieceWound = new Wound { Kind = WoundKind.Amputation, Part = part.Type, BleedRate = 15f, Arterial = false, LocalPoint = Vector3.zero, LocalNormal = Vector3.up };
@@ -354,6 +360,80 @@ namespace SolarEclipse
             mb.SetColor(new Color(0.5f, 0.08f, 0.1f), 0.7f);
             mb.Cylinder(Vector3.up * 0.028f, Vector3.up * 0.029f, 0.007f, 0.007f, 8);
             return boneMesh = mb.ToMesh("BoneStub");
+        }
+    
+        // ------------------------------------------------------------------ GS2: spine, half head, waist, head to toe
+
+        public bool Bisected, Split;
+
+        void Vertebrae(BodyPart on, Vector3 worldPos, Vector3 outward)
+        {
+            if (on == null) return;
+            var t = on.transform;
+            for (int i = 0; i < 2; i++)
+            {
+                var go = new GameObject("Neck Vertebra");
+                go.layer = Layers.Ragdoll;
+                go.transform.SetParent(t, false);
+                go.transform.position = worldPos + outward * (0.012f + i * 0.02f);
+                go.transform.rotation = Quaternion.FromToRotation(Vector3.up, outward);
+                go.transform.localScale = Vector3.one / Mathf.Max(0.01f, t.lossyScale.x);
+                go.AddComponent<MeshFilter>().sharedMesh = OrganModels.Vertebra();
+                go.AddComponent<MeshRenderer>().sharedMaterial = Mats.Lit;
+            }
+        }
+
+        /// <summary>Half the head destroyed (big rounds that don't pop the whole head). Synced to clients.</summary>
+        public void HalfHead(BodyPart head, Vector3 point, Vector3 dir)
+        {
+            if (head == null || head.Gibbed || !Settings.Dismemberment || StoryHooks.NoDismember(head)) return;
+            if (Forward(5, head, point, dir, false)) return;
+            if (head.GetComponent<HalfHeadDone>() != null) return;
+            head.gameObject.AddComponent<HalfHeadDone>();
+            GoreDetail.PartialHead(head, dir);
+            Stats.Add(GoreKit.StatHeads);
+        }
+        sealed class HalfHeadDone : MonoBehaviour { }
+
+        /// <summary>Cut in half at the waist: the belly comes away from the pelvis. Synced to clients.</summary>
+        public void Bisect(BodyPart abdomen, Vector3 point, Vector3 dir)
+        {
+            if (Bisected || abdomen == null || abdomen.Joint == null || abdomen.Severed || abdomen.Gibbed || !Settings.Dismemberment || StoryHooks.NoDismember(abdomen)) return;
+            if (Forward(3, abdomen, point, dir, true)) return;
+            Bisected = true;
+            var pelvis = abdomen.Parent;
+            var jointPos = abdomen.transform.position;
+            var up = (abdomen.Col.bounds.center - jointPos).normalized;
+            Destroy(abdomen.Joint);
+            abdomen.Joint = null;
+            MarkSevered(abdomen);
+            float r = Radius(abdomen);
+            Stump(pelvis, jointPos, up, r, true);
+            Stump(abdomen, jointPos, -up, r, true);
+            GoreDetail.StumpExtras(pelvis, jointPos, up, r, true, false);
+            Vertebrae(pelvis, jointPos, up);
+            if (Settings.Organs) OrganModels.Intestines(abdomen, -up + Random.insideUnitSphere * 0.3f, RB.Vel(abdomen.Body));
+            var w = AmputationWound(pelvis, pelvis.transform.InverseTransformPoint(jointPos), pelvis.transform.InverseTransformDirection(up), "Transection at the waist", PartType.Abdomen);
+            doll.Bleeding.AddStump(pelvis, pelvis.transform.InverseTransformPoint(jointPos), pelvis.transform.InverseTransformDirection(up), w);
+            RB.SetVel(abdomen.Body, RB.Vel(abdomen.Body) + up * 2f + dir * 2f);
+            Consequences(abdomen, jointPos, up);
+            doll.Vitals.Die("Cut in half");
+            GameEvents.Kill(doll.DisplayName + " was cut in half", new Color(1f, 0.3f, 0.3f));
+        }
+
+        /// <summary>Split head to toe by one enormous downward blow. Synced to clients.</summary>
+        public void VerticalSplit(BodyPart hit, Vector3 point, Vector3 dir)
+        {
+            if (Split || hit == null || !Settings.Dismemberment || StoryHooks.NoDismember(hit)) return;
+            if (Forward(4, hit, point, dir, true)) return;
+            Split = true;
+            // The cutting plane contains the blow (down) and the doll's facing: its normal is the body's left-right axis.
+            Vector3 normal = Vector3.right;
+            if (doll.Parts.TryGetValue(PartType.Chest, out var ch) && ch != null) normal = ch.transform.right;
+            var center = doll.Parts.TryGetValue(PartType.Pelvis, out var pv) && pv != null ? pv.transform.position : point;
+            GoreDetail.VerticalSplitVisual(doll, new Vector3(center.x, point.y, center.z), normal);
+            Stats.Add(Stats.Slices);
+            GameEvents.Kill(doll.DisplayName + " was split in two", new Color(1f, 0.3f, 0.3f));
         }
     }
 }

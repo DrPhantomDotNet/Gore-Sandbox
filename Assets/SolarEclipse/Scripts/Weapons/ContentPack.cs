@@ -259,6 +259,7 @@ namespace SolarEclipse
             var p = list[Random.Range(0, list.Count)];
             if (p == null || p.Gibbed) return;
             GoreKit.Burn(p, 0.14f);
+            if (Random.value < 0.25f) GoreDetail.ClothScrap(p); // GS2: burnt clothing comes away
             if (!d.IsDead)
             {
                 p.TakeDamage(new DamageInfo { Amount = 5f, Type = DamageType.Generic, Point = p.transform.position, Direction = Vector3.up, Normal = Vector3.up, Source = src, Weapon = "Fire" });

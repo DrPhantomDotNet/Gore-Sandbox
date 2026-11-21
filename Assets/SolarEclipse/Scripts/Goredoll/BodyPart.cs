@@ -222,15 +222,17 @@ namespace SolarEclipse
                 if (Type == PartType.Neck && w.Arterial) cell = 13;
                 float rot = info.Type == DamageType.Slash ? Vector3.SignedAngle(transform.right, info.Direction, info.Normal) : -1f;
                 if (rot < 0 && rot != -1f) rot += 360f;
+                GameObject wd = null;
                 if (w.Kind != WoundKind.Blunt)
                 {
-                    var wd = Decals.Wound(pos, info.Normal, cell, size, Col, rot);
+                    wd = Decals.Wound(pos, info.Normal, cell, size, Col, rot);
                     if (w.Kind == WoundKind.Laceration && dmg > 8f) WoundGape.Begin(wd, Mathf.Clamp(dmg / 25f, 0.25f, 0.7f)); // cuts pull open (Gore/GoreRework2.cs)
                     else if ((w.Kind == WoundKind.Graze || (w.Kind == WoundKind.Laceration && dmg <= 8f)) && Settings.GoreEnabled && !Rules.NoBleeding) WoundBead.Begin(wd); // small cuts bead and drip
                 }
                 else if (dmg > 2.5f) Bruise.Begin(Decals.Wound(pos, info.Normal, cell, size * Mathf.Clamp(dmg / 15f, 0.5f, 1.4f), Col, rot)); // bruises age red > purple > blue > yellow (Gore/GoreRework.cs)
                 if (w.Kind == WoundKind.Blunt && IsHead && dmg > 6f) BlackEye.Maybe(this, pos); // punches to the face (Gore/GoreRework2.cs)
                 if (info.Weapon != null && info.Weapon.IndexOf("bite", System.StringComparison.OrdinalIgnoreCase) >= 0) BiteMark.Place(this, pos, info.Normal); // two arcs of tooth marks
+                GoreDetail.OnWound(this, w, info, dmg, pos, wd); // GS2 gore expansion (Gore/GoreRework3.cs)
                 if (w.BleedRate > 0.5f) Doll.Bleeding.AddEmitter(this, w);
 
                 // The Gore Update (Gore/GoreKit.cs)
@@ -269,6 +271,8 @@ namespace SolarEclipse
             {
                 // Big rounds at close range pop heads (The Gore Update: easier on Unreal, any big hit on Super Ultra).
                 if (IsHead && (dmg > (super ? 60f : extreme ? 110f : 140f) || info.Type == DamageType.Admin) && Random.value < (super ? 1f : extreme ? 0.9f : 0.6f)) { Doll.Dismember.Gib(this, info.Direction); return; }
+                // GS2: a big round that doesn't pop the whole head takes half of it away.
+                if (IsHead && !Doll.IsDead && Settings.Organs && dmg > (super ? 35f : extreme ? 65f : 85f) && Random.value < 0.45f) { Doll.Dismember.HalfHead(this, info.Point, info.Direction); return; }
                 if (CanSever && (Health < -MaxHealth * (super ? 0f : extreme ? 0.2f : 0.55f) || Rules.AlwaysDismember)) { Doll.Dismember.Sever(this, info.Point, info.Normal, false); return; }
                 // Overkill: shooting the dead keeps breaking them apart.
                 if (extreme && Doll.IsDead && Random.value < (super ? 0.45f : 0.2f))
@@ -277,6 +281,12 @@ namespace SolarEclipse
                     if (Gibbable && Health < -MaxHealth * (super ? 0.5f : 1.5f)) { Doll.Dismember.Gib(this, info.Direction); return; }
                 }
             }
+            // GS2: cut in half at the waist (huge blade blows or blasts to the belly), or split head to toe by a downward blow.
+            if (Type == PartType.Abdomen && Doll.Parts.TryGetValue(PartType.Pelvis, out var pel) && pel != null && !Doll.Dismember.Bisected
+                && ((info.IsSharp && dmg > (super ? 50f : extreme ? 80f : 120f)) || (info.Type == DamageType.Explosion && dmg > MaxHealth * (super ? 0.8f : 1.4f))) && Random.value < 0.6f)
+            { Doll.Dismember.Bisect(this, info.Point, info.Direction); return; }
+            if ((IsHead || Type == PartType.Chest) && info.IsSharp && info.Direction.y < -0.55f && dmg > (super ? 70f : extreme ? 110f : 160f) && !Doll.Dismember.Split && Random.value < 0.5f)
+            { Doll.Dismember.VerticalSplit(this, info.Point, info.Direction); return; }
             // GS2: heavy blunt force tears a broken limb off (sledgehammers, cars, falls, super kicks).
             if ((info.Type == DamageType.Blunt || info.Type == DamageType.Fall) && IsLimb && Fractured && CanSever && dmg > MaxHealth * (super ? 0.4f : extreme ? 0.6f : 0.9f) && Random.value < (super ? 0.8f : 0.45f))
             { Doll.Dismember.Sever(this, info.Point, info.Normal, false); return; }

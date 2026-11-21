@@ -85,10 +85,47 @@ namespace SolarEclipse
         }
 
         /// <summary>Medical-style narrative of the injury.</summary>
+        /// <summary>GS2: the clinical name of this injury.</summary>
+        public string MedicalTerm
+        {
+            get
+            {
+                switch (Kind)
+                {
+                    case WoundKind.GunshotEntry: return ThroughAndThrough ? "perforating GSW, entry" : "penetrating GSW";
+                    case WoundKind.GunshotExit: return "GSW exit wound";
+                    case WoundKind.Graze: return "tangential GSW (abrasion)";
+                    case WoundKind.Laceration: return Damage > 45f ? "deep incised wound" : "incised wound";
+                    case WoundKind.Stab: return "penetrating stab wound";
+                    case WoundKind.Blunt: return Fracture ? "contusion with fracture" : "contusion / haematoma";
+                    case WoundKind.Burn: return Damage > 40f ? "full-thickness burn" : "partial-thickness burn";
+                    case WoundKind.Crush: return "crush injury";
+                    case WoundKind.Amputation: return "traumatic amputation";
+                    default: return "avulsion / degloving";
+                }
+            }
+        }
+
+        /// <summary>GS2: which tissue layers the injury went through, from what we know about it.</summary>
+        public string Layers
+        {
+            get
+            {
+                var l = new List<string> { "skin" };
+                if (Damage > 6f || Penetrating) l.Add("fat");
+                if (Damage > 14f || Penetrating || Kind == WoundKind.Amputation) l.Add("muscle");
+                if (Fracture || Kind == WoundKind.Amputation) l.Add("bone");
+                if (Organs.Count > 0) l.Add("organs");
+                if (Kind == WoundKind.Blunt && !Fracture) return "skin, soft tissue (closed)";
+                return string.Join(", ", l);
+            }
+        }
+
         public string Describe()
         {
             var sb = new StringBuilder();
             sb.Append(KindName).Append(" to the ").Append(Location).Append('.');
+            sb.Append(" [").Append(MedicalTerm).Append("] Layers: ").Append(Layers).Append('.'); // GS2
             if (ThroughAndThrough) sb.Append(" Through-and-through; exit wound present.");
             else if (Kind == WoundKind.GunshotEntry && Penetrating) sb.Append(" Projectile retained.");
             if (Fracture) sb.Append(" Underlying fracture of the ").Append(BoneName).Append('.');

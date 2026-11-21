@@ -190,6 +190,9 @@ namespace SolarEclipse
                     var wp = part.transform.TransformPoint(lp); var wd = part.transform.TransformDirection(ld);
                     if (kind == 0) d.Dismember.Sever(part, wp, wd, sharp);
                     else if (kind == 1) d.Dismember.Slice(part, wp, wd);
+                    else if (kind == 3) d.Dismember.Bisect(part, wp, wd);       // GS2
+                    else if (kind == 4) d.Dismember.VerticalSplit(part, wp, wd);
+                    else if (kind == 5) d.Dismember.HalfHead(part, wp, wd);
                     else d.Dismember.Gib(part, wd);
                     FreeSeveredParts(d);
                     break;
@@ -401,6 +404,9 @@ namespace SolarEclipse
                     if (d == null || !d.Parts.TryGetValue(pt, out var part) || part == null) break;
                     if (kind == 0) d.Dismember.Sever(part, point, dir, sharp);
                     else if (kind == 1) d.Dismember.Slice(part, point, dir);
+                    else if (kind == 3) d.Dismember.Bisect(part, point, dir);
+                    else if (kind == 4) d.Dismember.VerticalSplit(part, point, dir);
+                    else if (kind == 5) d.Dismember.HalfHead(part, point, dir);
                     else if (CreativeOk(p)) d.Dismember.Gib(part, dir);
                     break;
                 }

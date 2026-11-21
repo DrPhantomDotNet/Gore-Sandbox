@@ -14,7 +14,7 @@ namespace SolarEclipse
         public const string StatTeeth = "teeth_lost", StatHeads = "heads_popped", StatPools = "blood_pools", StatBones = "compound_fractures", StatCharred = "charred";
 
         /// <summary>How many more chunks big gore makes (High 1x, Unreal 1.6x, Super Ultra 2.5x).</summary>
-        public static float ChunkMul => Settings.SuperUltra ? 2.5f : Settings.Unreal ? 1.6f : 1f;
+        public static float ChunkMul => Settings.Data.realisticGore ? 0.8f : Settings.SuperUltra ? 2.5f : Settings.Unreal ? 1.6f : 1f;
 
         static bool registered;
 
@@ -56,6 +56,7 @@ namespace SolarEclipse
         /// <summary>Blood thrown onto whatever is behind the hit (exit wounds, big hits): a splat plus droplets.</summary>
         public static void WallSpray(Vector3 point, Vector3 dir, float damage)
         {
+            if (Settings.Data.realisticGore) damage *= 0.5f;
             if (!Settings.GoreEnabled || dir.sqrMagnitude < 0.0001f) return;
             dir.Normalize();
             float reach = Mathf.Clamp(1.5f + damage / 25f, 1.5f, 6f) * (Settings.SuperUltra ? 1.5f : 1f);
@@ -123,23 +124,32 @@ namespace SolarEclipse
         static readonly Color Char = new Color(0.07f, 0.05f, 0.04f);
 
         /// <summary>Darkens a body part toward charred black (explosions). amount 0..1 per call, adds up.</summary>
+        static bool OwnsMesh(BodyPart part) { var mf = part != null ? part.GetComponent<MeshFilter>() : null; return mf != null && mf.sharedMesh != null && ownMeshes.Contains(mf.sharedMesh); }
+
+        /// <summary>A private, writable copy of the part's mesh (shared meshes are never edited). Freed on the next map.</summary>
+        public static Mesh OwnMesh(BodyPart part)
+        {
+            var mf = part != null ? part.GetComponent<MeshFilter>() : null;
+            if (mf == null || mf.sharedMesh == null) return null;
+            var mesh = mf.sharedMesh;
+            if (ownMeshes.Contains(mesh)) return mesh;
+            if (!mesh.isReadable) return null;
+            mesh = Object.Instantiate(mesh);
+            mesh.name = mf.sharedMesh.name + " (gore)";
+            mf.sharedMesh = mesh;
+            ownMeshes.Add(mesh);
+            return mesh;
+        }
+
         static readonly Dictionary<Mesh, float> burnLevel = new Dictionary<Mesh, float>();
         static readonly Color BurnRed = new Color(0.78f, 0.22f, 0.16f);
         public static void Burn(BodyPart part, float amount)
         {
             if (part == null || !Settings.GoreEnabled || amount <= 0f || part.Gibbed) return;
-            var mf = part.GetComponent<MeshFilter>();
-            if (mf == null || mf.sharedMesh == null) return;
-            var mesh = mf.sharedMesh;
-            if (!ownMeshes.Contains(mesh))
-            {
-                if (!mesh.isReadable) return;
-                mesh = Object.Instantiate(mesh);
-                mesh.name = mf.sharedMesh.name + " (burnt)";
-                mf.sharedMesh = mesh;
-                ownMeshes.Add(mesh);
-                Stats.Add(StatCharred);
-            }
+            bool fresh = !OwnsMesh(part);
+            var mesh = OwnMesh(part);
+            if (mesh == null) return;
+            if (fresh) Stats.Add(StatCharred);
             var cols = mesh.colors;
             if (cols == null || cols.Length == 0) return;
             float k = Mathf.Clamp01(amount) * (Settings.SuperUltra ? 1f : 0.7f);
@@ -166,6 +176,7 @@ namespace SolarEclipse
         /// <summary>Blood hits the camera when gore happens close to it.</summary>
         public static void ScreenSplat(Vector3 worldPos, float amount)
         {
+            if (Settings.Data.realisticGore) return; // GS2 realistic mode: no blood on the camera
             if (!Settings.GoreEnabled || !Settings.Data.bloodOnScreen) return;
             var cam = Camera.main;
             if (cam == null) return;

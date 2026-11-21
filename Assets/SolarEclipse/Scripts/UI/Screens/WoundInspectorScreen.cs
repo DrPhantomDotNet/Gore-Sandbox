@@ -65,6 +65,8 @@ namespace SolarEclipse
             var r = UI.Centered(Mathf.Min(1500, UI.VW - 60), Mathf.Min(940, UI.VH - 60));
             UI.Panel(r, "Patient: " + doll.DisplayName, a);
             var v = doll.Vitals;
+            if (UI.Button(new Rect(r.x + 260, r.y + 18, 150, 44), Rules.Xray ? "X-RAY ON" : "X-RAY", Rules.Xray ? ButtonKind.Primary : ButtonKind.Ghost, IconFactory.Get("bones"), 16, true, "See the skeleton and organs through the skin (GS2)."))
+            { Rules.Xray = !Rules.Xray; AudioManager.Ui("ui_tab"); }
             UI.Label(new Rect(r.x + 420, r.y + 22, r.width - 450, 36), doll.StatusLine, 20, doll.IsDead ? UI.Bad : v.State == LifeState.Unconscious ? UI.Warn : UI.Good, TextAnchor.MiddleRight);
 
             DrawBodyMap(new Rect(r.x + 24, r.y + 80, 340, r.height - 170));

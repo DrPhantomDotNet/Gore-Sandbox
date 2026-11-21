@@ -80,8 +80,12 @@ namespace SolarEclipse
         /// <summary>Zombie: no breathing, pain cries, chatter or coughing (zombie sounds come from ZombieBrain).</summary>
         public bool Undead;
 
+        /// <summary>GS2: the lower jaw was torn off, so no more voice lines (breathing still plays).</summary>
+        public bool Mute;
+
         public bool Say(string clip, float volume = 1f, bool interrupt = true)
         {
+            if (Mute) return false;
             if (Proxy && !NetState.ApplyingRemote) return false;
             if (Undead && (clip == null || !clip.StartsWith("z_"))) return false; // zombies only make zombie sounds
             if (!CanVocalise || voice == null) return false;

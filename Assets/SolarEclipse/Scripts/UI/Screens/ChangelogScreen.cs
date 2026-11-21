@@ -18,6 +18,12 @@ namespace SolarEclipse
 • Bruises that age, black eyes, slash wounds that gape open, small cuts that bead and drip, bite marks, burn stages, electrical burns
 • Intestines spill from deep belly wounds, heavy blows tear broken limbs off, gibs smear blood and stick to walls
 • Blood trails behind crawling and dragged bodies, blood on melee weapons (R wipes it), corpses discolour and stiffen, flies after a while
+• Torn limbs leave jagged stumps with skin flaps, tendons at the wrist and ankle, and muscle fibres that stretch and snap. Decapitations show the spine
+• Jaws, ears, noses, fingers and toes come off. Skulls crack, half a head can be blown away, faces peel, hands deglove, ribs and spine show through
+• Cut in half at the waist, or split head to toe by a huge downward blow. Deep cuts show muscle, very deep ones show organs you can pull out with the Spawn Gun
+• Long grazes, slit-shaped stab wounds, swelling, crushed and flattened parts, torn clothes around wounds, blood-soaked hair, burnt clothes falling away
+• Bodies stay impaled on spikes, hanging bodies drip, piles of bodies settle. Wound inspector shows layers hit, medical terms and an X-ray button
+• New gore settings: Realistic gore, Gore censor (black silhouettes), how long blood stains last
 <b>BODIES AND ANATOMY</b>
 • Skin turns pale with blood loss, blue without oxygen, frostbitten when frozen. Goredolls breathe, tremble in shock, cry, clutch their wounds
 • Internal bleeding, concussion, seizures, tendon cuts, nerve damage, body temperature and hypothermia, adrenaline

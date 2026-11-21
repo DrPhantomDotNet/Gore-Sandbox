@@ -165,6 +165,7 @@ namespace SolarEclipse
             go.AddComponent<Surface>().Type = SurfaceType.Flesh;
             var s = go.AddComponent<Spawned>(); s.DisplayName = name;
             Debris.Register(go, lifetime, Debris.GroupGib);
+            GoreDetail.Censor(go); // GS2 censor: black silhouettes
             return go;
         }
 

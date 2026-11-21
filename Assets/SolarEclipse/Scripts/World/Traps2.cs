@@ -89,6 +89,8 @@ namespace SolarEclipse
                 if (v > 1.5f && Traps2.Cool(hit, p, 0.6f))
                 {
                     Machines.Hurt(p, 15f + v * 12f, DamageType.Stab, Vector3.down, this, "Spike Pit");
+                    if (v > 3f && (p.Type == PartType.Chest || p.Type == PartType.Abdomen || p.Type == PartType.Pelvis || p.Type == PartType.ThighL || p.Type == PartType.ThighR) && rb.GetComponent<FixedJoint>() == null)
+                    { var j = rb.gameObject.AddComponent<FixedJoint>(); j.connectedBody = GetComponent<Rigidbody>(); j.breakForce = 6000f; } // GS2: impaled, stays on the spikes
                     BloodFX.Spurt(rb.position, Vector3.up, 1.5f);
                     AudioManager.Play("stab", rb.position, 0.9f);
                 }
@@ -124,6 +126,7 @@ namespace SolarEclipse
                 var p = TriggerZone.PartOf(rb);
                 if (p == null || p.Doll == null || !Traps2.Cool(hit, p, 0.5f)) continue;
                 Machines.Hurt(p, 28f, DamageType.Stab, transform.forward, this, "Spike Wall");
+                if (Random.value < 0.35f && rb.GetComponent<FixedJoint>() == null) { var j = rb.gameObject.AddComponent<FixedJoint>(); j.connectedBody = GetComponent<Rigidbody>(); j.breakForce = 4000f; } // GS2: pinned on the spikes
                 rb.AddForce(transform.forward * 8f, ForceMode.VelocityChange);
                 BloodFX.Spurt(rb.position, -transform.forward, 1.2f);
             }

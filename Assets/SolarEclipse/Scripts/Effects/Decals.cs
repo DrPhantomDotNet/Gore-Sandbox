@@ -176,6 +176,7 @@ namespace SolarEclipse
 
         public static void Blood(Vector3 pos, Vector3 normal, float size, int kind, Collider surface, float growTime = 0f, float fadeAfter = 0f)
         {
+            if (fadeAfter <= 0f && Settings.Data.goreFade > 0) fadeAfter = Settings.Data.goreFade == 1 ? 600f : 180f; // GS2 gore persistence
             if (!Settings.GoreEnabled) return;
             int cell = kind == 0 ? Random.Range(0, 6) : kind == 1 ? Random.Range(6, 10) : kind == 2 ? Random.Range(10, 13) : Random.Range(13, 16);
             var col = Settings.BloodColor;
@@ -255,7 +256,8 @@ namespace SolarEclipse
             var d = Acquire(false);
             d.Kind = DecalKind.Wound;
             float rot = rotation >= 0 ? rotation : Random.Range(0, 360f);
-            var tint = Color.Lerp(Color.white, Settings.BloodColor * 1.8f, Settings.Data.bloodColor == 0 ? 0f : 0.6f);
+            var tint = Color.Lerp(Color.white, Settings.BloodColor * 1.8f, Settings.Data.bloodColor == 0 && !Settings.Data.goreCensor ? 0f : 0.6f);
+            if (Settings.Data.goreCensor) tint = new Color(0.05f, 0.05f, 0.05f);
             tint.a = 1;
             var oldBruise = d.Go != null ? d.Go.GetComponent<Bruise>() : null;
             if (oldBruise != null) oldBruise.enabled = false; // recycled decal: stop ageing the previous bruise

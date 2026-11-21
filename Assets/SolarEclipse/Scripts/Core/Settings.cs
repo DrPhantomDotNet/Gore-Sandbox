@@ -58,6 +58,9 @@ namespace SolarEclipse
         public int colorBlind = 0;              // GS2: 0 off, 1 protanopia, 2 deuteranopia, 3 tritanopia (Player/ScreenFx.cs)
         public bool flashReduction = false;    // GS2 accessibility: dim screen flashes (explosions, lightning)
         public bool hideOrgans = false, noGibs = false, noFlies = false; // GS2 gore filter per element
+        public bool goreCensor = false;         // GS2: blood and body pieces become black silhouettes
+        public bool realisticGore = false;      // GS2: anatomically accurate amounts (no exaggerated sprays or screen splats)
+        public int goreFade = 0;                // GS2: blood stains last forever / 10 min / 3 min
         public int gibLifetime = 1;           // 0 short, 1 normal, 2 long, 3 until the gib limit
         public bool batterySaver = false;      // phones: cap at 30 FPS
         public int physicsHz = 60;              // GS2: physics steps per second (higher = smoother ragdolls, slower phones)
@@ -100,9 +103,9 @@ namespace SolarEclipse
             "A little blood. No dismemberment.",
             "Blood and wounds. No dismemberment.",
             "Blood, wounds and dismemberment.",
-            "Everything: dismemberment, organs, lots of blood. (Default)",
-            "Over the top: extra blood, extra gore, everything breaks.",
-            "MAXIMUM: rivers of blood, heads pop, teeth fly, bones break through, guts everywhere.",
+            "Everything: dismemberment, organs, torn stumps, deep wounds, lots of blood. (Default)",
+            "Over the top: extra blood, heads come apart easier, waist cuts and head-to-toe splits happen more.",
+            "MAXIMUM: rivers of blood, faces peel, hands deglove, heads pop, teeth fly, bones break through, guts everywhere.",
         };
         public static readonly string[] BloodColorNames = { "Red", "Dark Red", "Alien Green", "Robot Blue", "Black Oil", "Bubblegum", "Rainbow" };
         static readonly Color[] BloodColors =
@@ -122,6 +125,7 @@ namespace SolarEclipse
             get
             {
                 if (BloodColorOverride != null) return BloodColorOverride();
+                if (Data.goreCensor) return new Color(0.03f, 0.03f, 0.03f); // GS2 censor: black
                 int i = Mathf.Clamp(Data.bloodColor, 0, BloodColors.Length - 1);
                 if (i == BloodColors.Length - 1) return Color.HSVToRGB(Mathf.Repeat(Time.time * 0.15f, 1f), 0.9f, 0.7f);
                 return BloodColors[i];
@@ -136,7 +140,7 @@ namespace SolarEclipse
         public static bool Unreal => Data.goreLevel >= 5;
         public static bool SuperUltra => Data.goreLevel >= 6; // Gore/GoreKit.cs
         static readonly float[] bloodByLevel = { 0f, 0.2f, 0.45f, 0.75f, 1f, 1.8f, 3f };
-        public static float BloodScale => bloodByLevel[UnityEngine.Mathf.Clamp(Data.goreLevel, 0, 6)] * Data.bloodAmount;
+        public static float BloodScale => bloodByLevel[UnityEngine.Mathf.Clamp(Data.goreLevel, 0, 6)] * Data.bloodAmount * (Data.realisticGore ? 0.7f : 1f);
 
         public static bool TouchControlsActive
             => Data.touchMode == 1 || (Data.touchMode == 0 && (Application.isMobilePlatform || Input.touchSupported && Input.touchCount > 0 && !Input.mousePresent));
