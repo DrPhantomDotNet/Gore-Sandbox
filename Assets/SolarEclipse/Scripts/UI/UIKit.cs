@@ -18,9 +18,9 @@ namespace SolarEclipse
         public static readonly Color Accent = new Color(0.86f, 0.11f, 0.13f);
         public static readonly Color Accent2 = new Color(1f, 0.55f, 0.16f);
         public static readonly Color PanelColor = new Color(0.06f, 0.06f, 0.08f, 0.9f);
-        public static readonly Color PanelLight = new Color(0.13f, 0.13f, 0.16f, 0.95f);
+        public static Color PanelLight => Settings.Data.highContrast ? new Color(0.04f, 0.04f, 0.05f, 1f) : new Color(0.13f, 0.13f, 0.16f, 0.95f); // GS2 high contrast
         public static readonly Color TextColor = new Color(0.95f, 0.94f, 0.92f);
-        public static readonly Color Muted = new Color(0.62f, 0.62f, 0.66f);
+        public static Color Muted => Settings.Data.highContrast ? new Color(0.9f, 0.9f, 0.92f) : new Color(0.62f, 0.62f, 0.66f);
         public static readonly Color Good = new Color(0.35f, 0.85f, 0.4f);
         public static readonly Color Warn = new Color(1f, 0.8f, 0.25f);
         public static readonly Color Bad = new Color(1f, 0.3f, 0.3f);

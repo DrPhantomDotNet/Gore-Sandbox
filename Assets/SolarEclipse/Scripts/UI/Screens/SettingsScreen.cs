@@ -144,6 +144,7 @@ namespace SolarEclipse
                     break;
                 case 5:
                     changed |= UI.Slider(Next(), "Interface scale", ref d.uiScale, 0.7f, 1.4f, "0.00");
+                    changed |= UI.Toggle(Next(), "High-contrast interface", ref d.highContrast, "Brighter secondary text and solid dark panels, easier to read.");
                     changed |= UI.Slider(Next(), "HUD size", ref d.hudScale, 0.6f, 1.5f, "0.00", "Health, ammo, hotbar and compass size in game.", "x");
                     changed |= UI.Slider(Next(), "HUD opacity", ref d.hudOpacity, 0.2f, 1f, "0.00", "How see-through the in-game HUD is.");
                     if (!Application.isMobilePlatform && UI.Toggle(Next(), "Use built-in game font", ref d.builtinFont, "Turn on if text looks broken. Phones always use it."))
@@ -192,7 +193,7 @@ namespace SolarEclipse
             new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "autoFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
             new[] { "headBob", "storyDifficulty", "aiDifficulty", "unlockAll", "screenShake", "viewmodel", "subtitles", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
             new[] { "goreLevel", "bloodColor", "bloodAmount", "bloodOnScreen", "hideOrgans", "noGibs", "noFlies", "colorBlind", "flashReduction", "maxDecals", "maxGibs", "gibLifetime", "hitmarkers", "damageNumbers", "killFeed" },
-            new[] { "uiScale", "hudScale", "hudOpacity", "autoUpdate", "playIntro", "pauseOnFocusLoss", "vibration", "batterySaver", "filmLook", "menuScene", "showChat", "crosshairStyle", "crosshairColor", "crosshairSize" },
+            new[] { "uiScale", "highContrast", "hudScale", "hudOpacity", "autoUpdate", "playIntro", "pauseOnFocusLoss", "vibration", "batterySaver", "filmLook", "menuScene", "showChat", "crosshairStyle", "crosshairColor", "crosshairSize" },
             new[] { "voiceMode", "pushToTalkKey", "micGain", "voiceThreshold", "incomingVoiceVolume", "proximityVoice" },
             new[] { "vrMode", "vrSnapTurn", "vrSnapAngle", "vrTurnSpeed", "vrHandDirection", "vrManualReload", "vrGunAngle", "vrHeightOffset" },
         };
@@ -222,7 +223,7 @@ namespace SolarEclipse
                 case 4: return 15;
                 case 6: return 12;
                 case 7: return 13;
-                default: return 19;
+                default: return 20;
             }
         }
 

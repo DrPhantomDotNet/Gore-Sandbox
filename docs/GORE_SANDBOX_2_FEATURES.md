@@ -1226,7 +1226,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 
 ## 28. Accessibility, Settings & Performance (30)
 1161. [x] Colour-blind modes
-1162. High-contrast UI
+1162. [x] High-contrast UI
 1163. UI text size slider
 1164. Subtitle size and background options
 1165. [x] Sound indicators for deaf players
