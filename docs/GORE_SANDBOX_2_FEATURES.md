@@ -127,7 +127,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 110. Decal grime on walls and corners
 111. Distance-based texture blending to hide tiling
 112. Better window glass with reflections
-113. Emissive signs with flicker
+113. [x] Emissive signs with flicker
 114. [x] Flickering broken lights
 115. [x] Muzzle flash lights casting on walls
 116. [x] Explosion light flashes
@@ -464,7 +464,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 435. [x] Audio visualiser for deaf players (sound indicators)
 436. [x] Slow-motion audio pitch shift
 437. Underwater audio filter
-438. Radio prop playing music
+438. [x] Radio prop playing music
 439. Phone ringtones (Open World)
 440. Sound previews in the spawn menu
 

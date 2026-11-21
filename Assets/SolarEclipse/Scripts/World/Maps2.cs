@@ -460,7 +460,8 @@ namespace SolarEclipse
             l.type = LightType.Point; l.range = 16f; l.intensity = 1.8f; l.color = new Color(1f, 0.95f, 0.85f); l.shadows = LightShadows.Soft; m.Lamps.Add(l);
             m.Building(new Vector3(-10, 0, 6), new Vector3(10, 4.5f, 16), TextureFactory.Plaster, new Color(0.92f, 0.85f, 0.7f), true);
             m.Box("Sign Pole", new Vector3(18, 5, -28), Quaternion.identity, new Vector3(0.4f, 10f, 0.4f), Mats.LitMetal, SurfaceType.Metal, new Color(0.5f, 0.5f, 0.5f));
-            m.Box("Sign", new Vector3(18, 10.5f, -28), Quaternion.identity, new Vector3(5f, 2f, 0.3f), Mats.Glow(new Color(0.95f, 0.45f, 0.15f), 0.9f), SurfaceType.Metal, null);
+            var sign = m.Box("Sign", new Vector3(18, 10.5f, -28), Quaternion.identity, new Vector3(5f, 2f, 0.3f), Mats.Glow(new Color(0.95f, 0.45f, 0.15f), 0.9f), SurfaceType.Metal, null);
+            if (sign != null) sign.AddComponent<SignFlicker>(); // a dying neon tube
             for (int i = 0; i < 20; i++) m.Rock(new Vector3(Random.Range(-80f, 80f), 0, Random.Range(-10f, 80f)) + (Random.value < 0.5f ? new Vector3(0, 0, 0) : new Vector3(0, 0, -110f)), Random.Range(0.6f, 2.2f));
             for (int i = 0; i < 14; i++)
             {
@@ -518,6 +519,20 @@ namespace SolarEclipse
             m.PlayerSpawn = new Vector3(0, 0.1f, -14f);
             m.NpcSpawns.AddRange(new[] { new Vector3(0, 0.1f, 0), new Vector3(-10, 0.1f, -4), new Vector3(15, 0.1f, 10), new Vector3(-20, 0.1f, 20), new Vector3(5, 0.1f, -20) });
             m.Playable = new Bounds(new Vector3(0, 10, 0), new Vector3(156, 40, 156));
+        }
+    }
+
+    /// <summary>GS2: emissive signs that stutter like an old neon tube (blink off for a moment every few seconds).</summary>
+    public sealed class SignFlicker : MonoBehaviour
+    {
+        Renderer r; float next, offUntil;
+        void Start() { r = GetComponent<Renderer>(); next = Time.time + Random.Range(1f, 5f); }
+        void Update()
+        {
+            if (r == null) return;
+            if (Time.time >= next) { next = Time.time + Random.Range(1.5f, 7f); offUntil = Time.time + Random.Range(0.05f, 0.5f); }
+            bool off = Time.time < offUntil && Mathf.PerlinNoise(Time.time * 35f, 0.3f) > 0.45f;
+            if (r.enabled == off) r.enabled = !off;
         }
     }
 }
