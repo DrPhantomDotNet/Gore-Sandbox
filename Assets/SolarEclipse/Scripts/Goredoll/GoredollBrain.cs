@@ -350,6 +350,16 @@ namespace SolarEclipse
                 case AiAction.Idle:
                     Thought = "chilling";
                     if (Time.time - actionTime > 4f) body.Pose = PoseMode.LookAround;
+                    // GS2: small talk. Two calm Goredolls standing close turn to each other and chat.
+                    if (Time.time > nextChat)
+                    {
+                        nextChat = Time.time + Random.Range(2f, 4f);
+                        chatWith = null;
+                        foreach (var g in Goredoll.All)
+                            if (g != null && g != doll && !g.IsDead && g.Brain != null && g.Brain.IsCalm && (g.Position - Pelvis).sqrMagnitude < 9f) { chatWith = g; break; }
+                        if (chatWith != null && Random.value < 0.5f) doll.Voice.Say(Random.value < 0.4f ? "v_huh" : Random.value < 0.5f ? "v_hum" : "v_hey", 0.55f, false);
+                    }
+                    if (chatWith != null && chatWith && !chatWith.IsDead) { Thought = "chatting with " + chatWith.DisplayName; FaceTowards(chatWith.Position); body.Pose = PoseMode.Idle; }
                     break;
                 case AiAction.Wander:
                     Thought = "going for a walk";
@@ -478,7 +488,7 @@ namespace SolarEclipse
             if (Fear > 0.8f) SetAction(AiAction.Flee);
         }
 
-        float nextThrow, nextCheer;
+        float nextThrow, nextCheer, nextChat; Goredoll chatWith;
         static readonly Collider[] ThrowHits = new Collider[16];
         /// <summary>GS2: angry Goredolls throw a light prop lying next to them at whoever they're fighting.</summary>
         void TryThrowProp(Vector3 target)

@@ -413,7 +413,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 386. Vomiting sounds
 387. Spitting blood
 388. Laughing when calm (rare)
-389. Talking idle chatter (mumbled)
+389. [x] Talking idle chatter (mumbled)
 390. [x] Whistling and humming (real)
 391. [x] Voice pitch varies by body size
 392. Voice muffled when the head is covered
@@ -497,7 +497,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 466. [x] Fainting when seeing gore (sensitive ones)
 467. [x] Investigating sounds
 468. Looking at the player when spoken to
-469. Talking to each other (ambient)
+469. [x] Talking to each other (ambient)
 470. Sitting on chairs and benches
 471. Using elevators and stairs
 472. Opening and closing doors
