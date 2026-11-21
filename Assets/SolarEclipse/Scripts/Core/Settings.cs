@@ -53,6 +53,7 @@ namespace SolarEclipse
         public string lastMapId = "";
         public bool pauseOnFocusLoss = true;  // Game/FocusPause.cs
         public bool vibration = true;         // phones: vibrate when you get hurt (Player/PlayerHealth.cs)         // CONTINUE card on the main menu      // 0 operating room (GS2), 1 classic stage (Game/MenuBackdrop.cs)
+        public int subtitleSize = 1, subtitleBg = 1; // GS2: subtitles small/normal/large/huge, background none/dim/solid
         public bool highContrast = false;       // GS2: brighter secondary text, solid panels (UI/UIKit.cs)
         public int colorBlind = 0;              // GS2: 0 off, 1 protanopia, 2 deuteranopia, 3 tritanopia (Player/ScreenFx.cs)
         public bool flashReduction = false;    // GS2 accessibility: dim screen flashes (explosions, lightning)

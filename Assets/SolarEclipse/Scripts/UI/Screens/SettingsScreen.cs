@@ -105,6 +105,8 @@ namespace SolarEclipse
                     changed |= UI.Slider(Next(), "Screen shake", ref d.screenShake, 0, 2, "0.00");
                     changed |= UI.Toggle(Next(), "Show viewmodel", ref d.viewmodel);
                     changed |= UI.Toggle(Next(), "Goredoll speech subtitles", ref d.subtitles);
+                    changed |= UI.Selector(Next(), "Subtitle size", ref d.subtitleSize, new[] { "Small", "Normal", "Large", "Huge" });
+                    changed |= UI.Selector(Next(), "Subtitle background", ref d.subtitleBg, new[] { "None", "Dim", "Solid" });
                     changed |= UI.Toggle(Next(), "Goredoll name tags", ref d.npcNames);
                     changed |= UI.Toggle(Next(), "Tutorial hints", ref d.tutorialHints);
                     changed |= UI.Toggle(Next(), "Kill streak announcer", ref d.killStreakAnnouncer, "DOUBLE KILL, KILLING SPREE, GODLIKE... banners and stingers.");
@@ -191,7 +193,7 @@ namespace SolarEclipse
             new[] { "qualityLevel", "fullscreen", "vsync", "targetFps", "shadowQuality", "shadowDistance", "antiAliasing", "fov", "viewmodelFov", "renderDistance", "brightness", "fog", "physicsHz", "showFps", "detailedStats" },
             new[] { "masterVolume", "sfxVolume", "voiceVolume", "musicVolume", "ambienceVolume", "uiVolume", "dynamicMusic", "monoAudio" },
             new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "autoFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
-            new[] { "headBob", "storyDifficulty", "aiDifficulty", "unlockAll", "screenShake", "viewmodel", "subtitles", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
+            new[] { "headBob", "storyDifficulty", "aiDifficulty", "unlockAll", "screenShake", "viewmodel", "subtitles", "subtitleSize", "subtitleBg", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
             new[] { "goreLevel", "bloodColor", "bloodAmount", "bloodOnScreen", "hideOrgans", "noGibs", "noFlies", "colorBlind", "flashReduction", "maxDecals", "maxGibs", "gibLifetime", "hitmarkers", "damageNumbers", "killFeed" },
             new[] { "uiScale", "highContrast", "hudScale", "hudOpacity", "autoUpdate", "playIntro", "pauseOnFocusLoss", "vibration", "batterySaver", "filmLook", "menuScene", "showChat", "crosshairStyle", "crosshairColor", "crosshairSize" },
             new[] { "voiceMode", "pushToTalkKey", "micGain", "voiceThreshold", "incomingVoiceVolume", "proximityVoice" },
@@ -219,7 +221,7 @@ namespace SolarEclipse
                 case 0: return 15;
                 case 1: return 9;
                 case 2: return 15;
-                case 3: return 13;
+                case 3: return 15;
                 case 4: return 15;
                 case 6: return 12;
                 case 7: return 13;

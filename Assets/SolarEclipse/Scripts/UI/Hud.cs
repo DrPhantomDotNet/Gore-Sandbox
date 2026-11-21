@@ -286,10 +286,12 @@ namespace SolarEclipse
                 if (d.subtitles && doll.Voice != null && Time.time < doll.Voice.SubtitleUntil && !string.IsNullOrEmpty(doll.Voice.Subtitle) && dist < 18f)
                 {
                     string text = doll.Voice.Subtitle;
-                    float tw = Mathf.Min(UI.TextWidth(text, 16) + 20, 420);
-                    var r = new Rect(g.x - tw / 2, y - 76, tw, 28);
-                    UI.Rounded(r, new Color(0, 0, 0, 0.55f * a), true);
-                    UI.Label(r, text, 16, new Color(1f, 0.95f, 0.8f, a), TextAnchor.MiddleCenter, FontStyle.Italic);
+                    int fs = d.subtitleSize == 0 ? 14 : d.subtitleSize == 2 ? 22 : d.subtitleSize == 3 ? 28 : 16; // GS2 subtitle size + background
+                    float tw = Mathf.Min(UI.TextWidth(text, fs) + 20, 640);
+                    var r = new Rect(g.x - tw / 2, y - 64 - fs * 0.75f, tw, fs + 12);
+                    float bg = d.subtitleBg == 0 ? 0f : d.subtitleBg == 2 ? 0.9f : 0.55f;
+                    if (bg > 0f) UI.Rounded(r, new Color(0, 0, 0, bg * a), true);
+                    UI.Label(r, text, fs, new Color(1f, 0.95f, 0.8f, a), TextAnchor.MiddleCenter, FontStyle.Italic);
                 }
             }
         }
