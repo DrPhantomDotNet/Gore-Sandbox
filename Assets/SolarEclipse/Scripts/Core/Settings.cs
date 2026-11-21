@@ -58,7 +58,8 @@ namespace SolarEclipse
         public int gibLifetime = 1;           // 0 short, 1 normal, 2 long, 3 until the gib limit
         public bool batterySaver = false;      // phones: cap at 30 FPS
         public int physicsHz = 60;              // GS2: physics steps per second (higher = smoother ragdolls, slower phones)
-        public int storyDifficulty = 1;         // GS2: 0 easy, 1 normal, 2 hard (damage you take in story mode)
+        public int storyDifficulty = 1;
+        public int aiDifficulty = 1;            // GS2: 0 easy, 1 normal, 2 hard (armed Goredolls' aim)         // GS2: 0 easy, 1 normal, 2 hard (damage you take in story mode)
         public bool unlockAll = false;          // GS2: every locked map available (Settings > Gameplay)
         public float hudScale = 1f, hudOpacity = 1f; // GS2: HUD size and transparency (UI/Hud.cs)
         public bool soundIndicators = false;   // accessibility: show where loud sounds come from (UI/SoundIndicators.cs)

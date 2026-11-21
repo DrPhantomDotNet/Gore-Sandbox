@@ -524,7 +524,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 493. Reloading behind cover
 494. Throwing grenades (armed AI)
 495. [x] Retreating when hurt
-496. AI difficulty slider
+496. [x] AI difficulty slider
 497. [x] AI aggression slider (improved)
 498. AI vision cone debug view
 499. [x] AI thought bubbles debug option

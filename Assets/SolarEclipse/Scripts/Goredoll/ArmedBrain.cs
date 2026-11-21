@@ -247,6 +247,7 @@ namespace SolarEclipse
         }
 
         bool disarmed;
+        static readonly float[] AiAim = { 1.8f, 1f, 0.6f }; // GS2 AI difficulty: easy aims worse, hard aims better
         /// <summary>GS2: a hard hit to the gun hand knocks the weapon out of it.</summary>
         public void Disarm() { if (!dropped && !disarmed) { disarmed = true; Stats.Add("disarms"); } }
 
@@ -588,7 +589,7 @@ namespace SolarEclipse
 
             float armFn = Mathf.Min(Fn(PartType.UpperArmR), Fn(PartType.ForearmR), Fn(PartType.HandR));
             float focus = Mathf.Clamp01((Time.time - acquiredAt) / 3f);
-            float spread = (soldier ? 1.5f : 2.4f) * (1f + mind.Fear * 1.5f) * (moving ? 1.6f : 1f) * (1f + (1f - armFn) * 2f) * Mathf.Lerp(1.3f, 0.7f, focus);
+            float spread = (soldier ? 1.5f : 2.4f) * AiAim[Mathf.Clamp(Settings.Data.aiDifficulty, 0, 2)] * (1f + mind.Fear * 1.5f) * (moving ? 1.6f : 1f) * (1f + (1f - armFn) * 2f) * Mathf.Lerp(1.3f, 0.7f, focus);
             var r = Random.insideUnitCircle * spread;
             dir = Quaternion.LookRotation(dir) * Quaternion.Euler(r.y, r.x, 0f) * Vector3.forward;
 
