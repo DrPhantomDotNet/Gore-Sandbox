@@ -595,7 +595,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 560. Shoulder swap in third person
 561. [x] Free-look (hold key)
 562. [x] Fall damage with broken legs (limp)
-563. Player bleeding and bandaging
+563. [x] Player bleeding and bandaging
 564. Player limb damage (arm shot = shaky aim)
 565. [x] Player pain effects (blurry, red edges)
 566. Player death cam: ragdoll from third person

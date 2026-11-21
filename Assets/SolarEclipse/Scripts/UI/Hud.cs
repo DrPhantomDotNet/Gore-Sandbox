@@ -405,6 +405,14 @@ namespace SolarEclipse
             // Stamina (Player/PlayerFeel.cs): a thin bar under the health bar while it isn't full.
             if (PlayerFeel.Stamina < 0.999f) { UI.Fill(new Rect(bar.x, bar.y + 14, bar.width, 4), new Color(1, 1, 1, 0.1f)); UI.Fill(new Rect(bar.x, bar.y + 14, bar.width * PlayerFeel.Stamina, 4), PlayerFeel.CanSprint ? new Color(0.95f, 0.85f, 0.4f, 0.8f) : new Color(0.9f, 0.3f, 0.2f, 0.8f)); }
             if (PlayerFeel.Limping) UI.Label(new Rect(r.x + 130, r.y + 4, 190, 30), "LIMPING", 14, UI.Warn, TextAnchor.MiddleRight);
+            if (h.Bleed > 0f && !h.Dead) // GS2 player bleeding: tap (or press H) to bandage
+            {
+                var br = new Rect(r.x, r.y - 44, 340, 38);
+                float pulse = 0.6f + 0.4f * Mathf.Sin(Time.time * 6f);
+                UI.Rounded(br, new Color(0.45f, 0.02f, 0.02f, 0.55f + 0.25f * pulse), true);
+                UI.Label(br, Settings.TouchControlsActive ? "BLEEDING - TAP TO BANDAGE" : "BLEEDING - PRESS H TO BANDAGE", 16, Color.white, TextAnchor.MiddleCenter, FontStyle.Bold);
+                if (UI.Hit(br)) h.Bandage();
+            }
 
             // Damage direction indicator.
             float since = Time.time - h.LastDamageTime;

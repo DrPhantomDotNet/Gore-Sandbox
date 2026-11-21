@@ -13,6 +13,8 @@ namespace SolarEclipse
         public float LastDamageTime = -99f;
         public float RespawnAt;
         public string DeathCause = "";
+        public float Bleed;           // GS2: HP lost per second until bandaged (H / tap the label)
+        float nextBleedDrip;
 
         public bool IsAlive => !Dead;
 
@@ -33,6 +35,8 @@ namespace SolarEclipse
 #endif
             CameraFX.Punch(-info.Amount * 0.15f, Random.Range(-1f, 1f) * info.Amount * 0.1f);
             AudioManager.Play2D("player_hurt", 0.8f, Random.Range(0.95f, 1.05f), AudioBus.Sfx);
+            if (Settings.GoreEnabled && !Rules.NoBleeding && info.Amount > 10f && (info.IsBallistic || info.Type == DamageType.Slash || info.Type == DamageType.Stab || info.Type == DamageType.Buckshot))
+                Bleed = Mathf.Min(3f, Bleed + info.Amount * 0.02f);
             if (Current <= 0) Die(info.Type == DamageType.Fall ? "Fell to your death" : info.Type == DamageType.Explosion ? "Blown up" : info.Weapon ?? "Killed");
         }
 
@@ -47,8 +51,18 @@ namespace SolarEclipse
             AudioManager.Play2D("v_death", 0.8f, 1.1f, AudioBus.Sfx);
         }
 
+        /// <summary>GS2: wrap your wounds. Stops the bleeding.</summary>
+        public void Bandage()
+        {
+            if (Dead || Bleed <= 0f) return;
+            Bleed = 0f;
+            AudioManager.Play2D("whoosh_small", 0.6f, 0.6f, AudioBus.Sfx);
+            GameEvents.ShowToast("Bandaged. The bleeding stopped.");
+        }
+
         public void Revive()
         {
+            Bleed = 0f;
             Dead = false;
             Current = Max;
             DamageFlash = 0;
@@ -57,7 +71,17 @@ namespace SolarEclipse
         void Update()
         {
             DamageFlash = Mathf.MoveTowards(DamageFlash, 0, Time.deltaTime * 1.2f);
-            if (!Dead && Current < Max && Time.time - LastDamageTime > 6f) Current = Mathf.Min(Max, Current + Time.deltaTime * 5f);
+            if (Rules.Invincible) Bleed = 0f;
+            if (!Dead && Bleed > 0f)
+            {
+                Current -= Bleed * Time.deltaTime;
+                Bleed = Mathf.MoveTowards(Bleed, 0f, Time.deltaTime * 0.015f); // small wounds slowly clot
+                if (Time.time >= nextBleedDrip && Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out var gh, 2.5f, Layers.DecalMask, QueryTriggerInteraction.Ignore))
+                { nextBleedDrip = Time.time + Mathf.Lerp(1.6f, 0.3f, Bleed / 3f); Decals.Blood(gh.point, gh.normal, Random.Range(0.06f, 0.14f), 0, gh.collider); }
+                if (!Application.isMobilePlatform && Input.GetKeyDown(KeyCode.H) && Settings.Data.pushToTalkKey != (int)KeyCode.H) Bandage();
+                if (Current <= 0f) { Die("Bled out"); return; }
+            }
+            else if (!Dead && Current < Max && Time.time - LastDamageTime > 6f) Current = Mathf.Min(Max, Current + Time.deltaTime * 5f);
         }
     }
 }
