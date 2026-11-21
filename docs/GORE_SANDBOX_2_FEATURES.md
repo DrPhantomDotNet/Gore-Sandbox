@@ -430,7 +430,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 401. New impact sounds per material
 402. Flesh impact layers (thud + wet + crack)
 403. Bone break crunch variety
-404. Squelch sounds for gibs
+404. [x] Squelch sounds for gibs
 405. Blood drip sounds
 406. Blood spray hiss
 407. Gun sounds with indoor/outdoor tails
@@ -438,10 +438,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 409. [x] Bullet whizz-bys near your head
 410. Shell casings bouncing per surface
 411. Reload sound layers per weapon
-412. Melee swing whooshes by weight
-413. Footsteps per surface (concrete, metal, grass, wood, blood)
+412. [x] Melee swing whooshes by weight
+413. [x] Footsteps per surface (concrete, metal, grass, wood, blood)
 414. Cloth rustle when moving
-415. Body fall thuds by height
+415. [x] Body fall thuds by height
 416. Ambient room tones per map
 417. Wind, rain and thunder ambience
 418. Distant city ambience

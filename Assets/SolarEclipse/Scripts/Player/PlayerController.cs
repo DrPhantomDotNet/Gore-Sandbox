@@ -321,6 +321,7 @@ namespace SolarEclipse
             }
             AudioManager.Play(clip, transform.position, crouching ? 0.25f : sprint ? 0.8f : 0.5f, Random.Range(0.9f, 1.1f), 0.6f);
             GameEvents.EmitNoise(transform.position, crouching ? 2f : sprint ? 12f : 6f, 0f, this);
+            if (BloodPools.In(transform.position)) AudioManager.Play("splat", transform.position, crouching ? 0.12f : 0.3f, Random.Range(1.2f, 1.5f), 0.6f); // GS2: wet squelch in blood
         }
 
         void OnControllerColliderHit(ControllerColliderHit hit)
