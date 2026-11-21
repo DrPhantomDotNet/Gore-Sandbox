@@ -36,6 +36,18 @@ namespace SolarEclipse
         void OnDisable() { if (Current == this) Current = null; RestoreLight(); Physiology.AmbientCold = 0f; }
 
         bool Cold => opt != null && (opt.Weather == WeatherKind.Snow || opt.Weather == WeatherKind.Hail) || (def != null && def.Id != null && (def.Id.Contains("snow") || def.Id.Contains("lodge") || def.Id.Contains("arctic")));
+        bool Wet => opt != null && (opt.Weather == WeatherKind.Rain || opt.Weather == WeatherKind.Thunderstorm);
+        float nextRainWash;
+        /// <summary>GS2: rain slowly washes old blood off open ground (anything under a roof stays).</summary>
+        void RainWash(Vector3 cp)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                var p = cp + new Vector3(Random.Range(-18f, 18f), 4f, Random.Range(-18f, 18f));
+                if (Physics.Raycast(p + Vector3.up * 30f, Vector3.down, out var h, 40f, Layers.WorldMask, QueryTriggerInteraction.Ignore) && h.normal.y > 0.7f)
+                    Decals.Wash(h.point, 1.2f);
+            }
+        }
         bool Windy => opt != null && (opt.Weather == WeatherKind.Thunderstorm || opt.Weather == WeatherKind.Sandstorm || opt.Weather == WeatherKind.Hail);
 
         void Update()
@@ -49,6 +61,7 @@ namespace SolarEclipse
             if (Cold && !NetState.IsClient && Time.time >= nextShiver) { nextShiver = Time.time + 0.15f; Shiver(); }
             if (eclipseAt > 0f) Eclipse();
             if (def.Indoor) Dust(cp);
+            if (Wet && !def.Indoor && Time.time >= nextRainWash) { nextRainWash = Time.time + 2.5f; RainWash(cp); }
         }
 
         // ------------------------------------------------------------------ indoor dust

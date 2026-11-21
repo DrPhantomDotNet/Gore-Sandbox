@@ -311,7 +311,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 288. [x] Blood colour options (red, dark, green, blue)
 289. Blood viscosity setting
 290. Blood on water surfaces spreads
-291. Blood in rain gets washed thin
+291. [x] Blood in rain gets washed thin
 292. [x] Coughing blood spray
 293. [x] Vomiting (poison, gut wounds)
 294. [x] Drooling blood from mouth
