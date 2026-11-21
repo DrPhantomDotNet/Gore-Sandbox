@@ -39,7 +39,9 @@ namespace SolarEclipse
             }
             if (def.Id == "moonbase" && !NetState.IsClient) { w.savedGravity = Rules.GravityScale; Rules.GravityScale = 0.17f; Rules.ApplyGravity(); w.moon = true; } // a sixth of Earth's gravity
             bool outdoorDay = !def.Indoor && opt != null && opt.Time == TimeOfDay.Day && Weather.Supported(def);
-            if (outdoorDay && (Random.value < 0.12f || Rules.ForceEclipse)) w.eclipseAt = Time.time + (Rules.ForceEclipse ? 8f : Random.Range(60f, 200f));
+            var rng = new System.Random(GameManager.I != null ? GameManager.I.CurrentSeed ^ 0x5EC1 : 1); // map seed: every player gets the same eclipse
+            bool roll = rng.NextDouble() < 0.12; float when = 60f + (float)rng.NextDouble() * 140f;
+            if (outdoorDay && (roll || Rules.ForceEclipse)) w.eclipseAt = Time.time + (Rules.ForceEclipse ? 8f : when);
         }
 
         void OnEnable() { Current = this; }

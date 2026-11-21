@@ -77,6 +77,8 @@ namespace SolarEclipse
         public static bool Has(string id) { Define(); return id != null && (guns.ContainsKey(id) || melee.ContainsKey(id)); }
 
         public static GunSpec SpecOf(string id) { Define(); return id != null && guns.TryGetValue(id, out var g) ? g.Spec : null; }
+        /// <summary>GS2 special round kind for a gun id (gl, rail, taser, paint, water, flare) or null. Used by multiplayer.</summary>
+        public static string SpecialOf(string id) { Define(); return id != null && guns.TryGetValue(id, out var g) && g.Extra != null ? g.Extra.Special : null; }
 
         public static Weapon Create(WeaponDef def)
         {

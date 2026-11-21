@@ -60,6 +60,7 @@ namespace SolarEclipse
                     first = null;
                     break;
                 case 1: // paint
+                    if (NetState.Active) { GameEvents.ShowToast("Paint isn't shared over the network yet, so it's singleplayer only."); return; }
                     var rends = hit.collider.GetComponentsInChildren<Renderer>();
                     if (rends.Length == 0 && hit.collider.attachedRigidbody != null) rends = hit.collider.attachedRigidbody.GetComponentsInChildren<Renderer>();
                     if (mpb == null) mpb = new MaterialPropertyBlock();
@@ -82,6 +83,7 @@ namespace SolarEclipse
                     AudioManager.Play("sg_tick", hit.point, 0.5f, 1.4f);
                     break;
                 case 3: // spray: a big splat of paint on any surface
+                    if (NetState.Active) { GameEvents.ShowToast("Spray isn't shared over the network yet, so it's singleplayer only."); return; }
                     Decals.Paint(hit.point, hit.normal, Random.Range(0.5f, 0.8f), Palette[colour], hit.collider);
                     AudioManager.Play("hiss", hit.point, 0.5f, 1.1f);
                     break;

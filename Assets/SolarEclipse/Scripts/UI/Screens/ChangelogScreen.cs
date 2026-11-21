@@ -5,7 +5,45 @@ namespace SolarEclipse
     public sealed class ChangelogScreen : UIScreen
     {
         const string Text =
-@"<b><size=30>v0.13.0 — THE FIGHT UPDATE</size></b>
+@"<b><size=30>v2.0.0 — GORE SANDBOX 2</size></b>
+<color=#ff9a40>The biggest update ever: a new intro and main menu, deeper gore and anatomy, 22 new maps, 14 new game modes, new weapons, new Goredolls, 200 new achievements and a lot more.</color>
+<b>PRESENTATION</b>
+• New cinematic morgue intro and the GORE SANDBOX 2 title (with Halloween, Christmas and New Year variants)
+• New main menu with live 3D scenes: operating room, slaughterhouse, rainy alley or the classic stage. Blood drips down the menu
+• CONTINUE and QUICK PLAY buttons, player level and XP bar, ""What's new"" after every update
+• Map select: search, favourites, sort (A-Z, most played, newest) and filters
+• Film look, sharper textures on PC (cracked concrete, wood knots, rust, mortar), drifting clouds, dust in indoor air, flickering lights and neon
+<b>GORE AND BLOOD</b>
+• Blood pools darken as they dry, bloody footprints, blood soaking into clothes, dirt and grass, freezing in the cold, washing away in the rain
+• Bruises that age, black eyes, slash wounds that gape open, small cuts that bead and drip, bite marks, burn stages, electrical burns
+• Intestines spill from deep belly wounds, heavy blows tear broken limbs off, gibs smear blood and stick to walls
+• Blood trails behind crawling and dragged bodies, blood on melee weapons (R wipes it), corpses discolour and stiffen, flies after a while
+<b>BODIES AND ANATOMY</b>
+• Skin turns pale with blood loss, blue without oxygen, frostbitten when frozen. Goredolls breathe, tremble in shock, cry, clutch their wounds
+• Internal bleeding, concussion, seizures, tendon cuts, nerve damage, body temperature and hypothermia, adrenaline
+• Wound inspector: triage tag, temperature, anatomy facts. New medical tools: morphine, chest seal, splint, transfusion, defibrillator
+• Voices: screams when burning or falling, death rattles, deeper voices for giants, weaker voices as they bleed out
+<b>AI</b>
+• Grudges, fear of screams and fire, retreating when hurt, throwing props at you, chatting with each other, cheering at fist fights
+• Paramedics and doctors treat the injured. Hit an armed Goredoll's gun hand to disarm them. Police come when someone calls them
+• 29 new Goredoll types including crash test dummy, mannequin and cyborg
+<b>WEAPONS AND FIGHTING</b>
+• 8 fighting styles (boxing, karate, kung fu, muay thai, wrestling, taekwondo, brawler, sumo) with combos, finishers, stamina, a move list and stats
+• 24 new melee weapons, new guns plus a grenade launcher, railgun, taser, paintball marker, Super Soaker and flare gun
+• Tool Gun (weld, paint, light, spray), weapon skins, bullet drop, minigun overheating, optional gun jamming
+<b>WORLD</b>
+• 22 new maps: Morgue, Skyline, Sewers, Junkyard, Laboratory, Colosseum, Medieval Village, Container Port, Flatgrass 2, Farm, Desert Gas Station, Forest Cabin, Mountain Lodge, Military Base, Stadium, Moon Base, Haunted Mansion, Suburban Street, Oil Rig, Shopping Mall, Space Station, Dream World
+• 14 new modes: Gun Game, Ragdoll Olympics, Doctor, Trap Gauntlet, Assassin, King of the Hill, Last Man Standing, Boss Rush, Parkour Race, Escape the Maze, Free-for-all, One in the Chamber, Fight Night, Infection
+• Weather: blood rain, sandstorms, hail, lightning that strikes, wind gusts, breath fog, a rare solar eclipse
+• 40+ new traps and props: shark tank, piranha pool, operating table, ECG monitor, balloons, thrusters, gravity zone, oil and ice, and more. 8 new vehicles with crash dents. Time Stop power
+<b>PLAYER</b>
+• Stamina, limping, bleeding (H or tap to bandage), ringing ears after blasts, free-look (Left Alt), dynamic combat music, sounds muffled behind walls, room reverb
+<b>PROGRESS AND SETTINGS</b>
+• Player levels, 200 new achievements, daily and weekly challenges, daily login bonus, profile backup codes, 10 new easter eggs
+• Accessibility: colour-blind modes, high contrast, subtitle size, sound indicators, reduce flashes, mono audio, gore filters
+• HUD size and opacity, physics rate, AI and story difficulty, battery saver, auto-fire and pinch zoom on phones
+
+<b><size=30>v0.13.0 — THE FIGHT UPDATE</size></b>
 <color=#ff9a40>A new weapon category, FIGHTING STYLES, starting with Boxing: fight in third person with your own animated body. Plus grab and throw Goredolls with your bare hands.</color>
 <b>BOXING (Spawn menu > Weapons > FIGHTING STYLES)</b>
 • The camera moves behind you and you see yourself: boxer stance, footwork, red gloves, every move animated

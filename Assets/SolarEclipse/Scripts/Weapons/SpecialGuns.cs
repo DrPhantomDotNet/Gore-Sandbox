@@ -18,12 +18,12 @@ namespace SolarEclipse
         {
             switch (kind)
             {
-                case "gl": if (authority) Grenade40.Launch(muzzle + dir * 0.3f, dir * 32f + Vector3.up * 1.5f, w); return true;
+                case "gl": Grenade40.Launch(muzzle + dir * 0.3f, dir * 32f + Vector3.up * 1.5f, w, authority); return true;
                 case "rail": Rail(w, origin, dir, muzzle, authority); return true;
                 case "taser": Taser(w, origin, dir, muzzle, authority); return true;
                 case "paint": Paint(origin, dir, authority); return true;
                 case "water": Water(origin, dir, muzzle, authority); return true;
-                case "flare": if (authority) Flare.Launch(muzzle + dir * 0.3f, dir * 45f, w); return true;
+                case "flare": Flare.Launch(muzzle + dir * 0.3f, dir * 45f, w, authority); return true;
             }
             return false;
         }
@@ -149,9 +149,10 @@ namespace SolarEclipse
     /// <summary>40mm grenade: flies on a ballistic arc and explodes on the first hit (after 4 m arming distance it explodes harder).</summary>
     public sealed class Grenade40 : MonoBehaviour
     {
-        object src; Vector3 start; bool done; float born;
+        object src; Vector3 start; bool done, real; float born;
 
-        public static void Launch(Vector3 pos, Vector3 vel, object source)
+        /// <param name="authority">False on machines that only draw it: it flies the same arc but the host's explosion is the real one.</param>
+        public static void Launch(Vector3 pos, Vector3 vel, object source, bool authority = true)
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "40mm Grenade";
@@ -161,7 +162,7 @@ namespace SolarEclipse
             var rb = go.AddComponent<Rigidbody>();
             rb.mass = 0.25f; rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             RB.SetVel(rb, vel);
-            var g = go.AddComponent<Grenade40>(); g.src = source; g.start = pos; g.born = Time.time;
+            var g = go.AddComponent<Grenade40>(); g.src = source; g.start = pos; g.born = Time.time; g.real = authority;
         }
 
         void OnCollisionEnter(Collision c)
@@ -169,6 +170,7 @@ namespace SolarEclipse
             if (done || Time.time - born < 0.03f) return;
             done = true;
             bool armed = (transform.position - start).sqrMagnitude > 16f;
+            if (!real) { Destroy(gameObject); return; } // the host's explosion reaches everyone
             if (armed) Explosion.Create(transform.position, 5f, 120f, src, 1.2f);
             else { AudioManager.Play("thump_heavy", transform.position, 0.8f, 1f); FX.Sparks(transform.position, Vector3.up, 6); }
             Destroy(gameObject);
@@ -180,9 +182,9 @@ namespace SolarEclipse
     /// <summary>Flare round: a burning red light that ignites Goredolls it hits and burns for 25 seconds.</summary>
     public sealed class Flare : MonoBehaviour
     {
-        object src; float born; bool stuck; Light glow;
+        object src; float born; bool stuck, real; Light glow;
 
-        public static void Launch(Vector3 pos, Vector3 vel, object source)
+        public static void Launch(Vector3 pos, Vector3 vel, object source, bool authority = true)
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             go.name = "Flare";
@@ -191,7 +193,7 @@ namespace SolarEclipse
             go.layer = Layers.Debris;
             var rb = go.AddComponent<Rigidbody>(); rb.mass = 0.1f; rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             RB.SetVel(rb, vel);
-            var f = go.AddComponent<Flare>(); f.src = source; f.born = Time.time;
+            var f = go.AddComponent<Flare>(); f.src = source; f.born = Time.time; f.real = authority;
             f.glow = new GameObject("Flare Light").AddComponent<Light>();
             f.glow.transform.SetParent(go.transform, false);
             f.glow.type = LightType.Point; f.glow.color = new Color(1f, 0.2f, 0.1f); f.glow.range = 18f; f.glow.intensity = 3f; f.glow.shadows = LightShadows.None;
@@ -201,7 +203,7 @@ namespace SolarEclipse
         {
             if (stuck) return;
             var bp = c.collider.GetComponent<BodyPart>();
-            if (bp != null && bp.Doll != null && !NetState.IsClient)
+            if (bp != null && bp.Doll != null && real && !NetState.IsClient)
             {
                 Burning.Apply(bp.Doll, 10f, src);
                 bp.TakeDamage(new DamageInfo { Amount = 12f, Type = DamageType.Generic, Point = transform.position, Direction = Vector3.down, Normal = Vector3.up, Weapon = "Flare" });

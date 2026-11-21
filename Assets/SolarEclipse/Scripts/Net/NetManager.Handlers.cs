@@ -316,6 +316,7 @@ namespace SolarEclipse
             AudioManager.Play(def.FireSound ?? "gun_glock", muzzle, 1f, Random.Range(0.96f, 1.04f), 1f, 3f, 150f);
             if (Guns2.IsHarpoon(def)) { foreach (var d in dirs) Harpoon.Launch(origin + d * 0.35f, d, def, null, false); return; } // visual-only harpoon
             if (Mods.ModWeapons.IsMod(def)) { Mods.ModWeapons.FireRemote(def, origin, dirs, null, muzzle, false, 0); return; }
+            if (ArsenalPack.SpecialOf(def.Id) is string sp) { foreach (var d in dirs) SpecialGuns.Fire(null, sp, origin, d, muzzle, false); return; } // GS2: visual copy of special rounds
             for (int i = 0; i < dirs.Count; i++) Ballistics.Fire(origin, dirs[i], def, null, muzzle, def.Kind == WeaponKind.Admin ? DamageType.Admin : DamageType.Bullet, def.Pellets == 1 || i % 3 == 0, false);
         }
 
@@ -426,6 +427,7 @@ namespace SolarEclipse
                     Ballistics.BeginShot();
                     if (Guns2.IsHarpoon(def)) foreach (var d in dirs) Harpoon.Launch(origin + d * 0.35f, d, def, src, true); // host-side pinning
                     else if (Mods.ModWeapons.IsMod(def)) Mods.ModWeapons.FireRemote(def, origin, dirs, src, muzzle, true, Layers.RemoteShootMask);
+                    else if (ArsenalPack.SpecialOf(def.Id) is string sp) foreach (var d in dirs) SpecialGuns.Fire(null, sp, origin, d, muzzle, true); // GS2 special guns
                     else
                     for (int i = 0; i < dirs.Count; i++) Ballistics.Fire(origin, dirs[i], def, src, muzzle, DamageType.Bullet, def.Pellets == 1 || i % 3 == 0, true, Layers.RemoteShootMask);
                     Ballistics.EndShot(dirs.Count > 0 ? dirs[0] : Vector3.forward);
