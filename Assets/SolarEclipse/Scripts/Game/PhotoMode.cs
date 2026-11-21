@@ -271,6 +271,8 @@ namespace SolarEclipse
         // (touches that start on the photo panel or its buttons are ignored).
         readonly System.Collections.Generic.Dictionary<int, (bool stick, Vector2 origin, Vector2 last)> fingers = new System.Collections.Generic.Dictionary<int, (bool, Vector2, Vector2)>();
 
+        readonly System.Collections.Generic.List<(Vector2 from, Vector2 to)> look = new System.Collections.Generic.List<(Vector2, Vector2)>();
+
         Vector3 TouchInput(SettingsData d)
         {
             var move = Vector3.zero;
@@ -291,14 +293,21 @@ namespace SolarEclipse
                     var st = Vector2.ClampMagnitude((v - f.origin) / 90f, 1f);
                     move += new Vector3(st.x, 0f, -st.y);
                 }
-                else
-                {
-                    var delta = v - f.last;
-                    Yaw += delta.x * 0.15f * d.touchSensitivity;
-                    Pitch = Mathf.Clamp(Pitch + delta.y * 0.15f * d.touchSensitivity, -89f, 89f);
-                }
+                else look.Add((f.last, v)); // applied below: one finger looks around, two fingers pinch-zoom (GS2)
                 fingers[t.fingerId] = (f.stick, f.origin, v);
             }
+            if (look.Count >= 2)
+            {
+                float before = Vector2.Distance(look[0].from, look[1].from), now = Vector2.Distance(look[0].to, look[1].to);
+                PhotoMode.Fov = Mathf.Clamp(PhotoMode.Fov - (now - before) * 0.08f, 10f, 110f);
+            }
+            else if (look.Count == 1)
+            {
+                var delta = look[0].to - look[0].from;
+                Yaw += delta.x * 0.15f * d.touchSensitivity;
+                Pitch = Mathf.Clamp(Pitch + delta.y * 0.15f * d.touchSensitivity, -89f, 89f);
+            }
+            look.Clear();
             if (Input.touchCount == 0) fingers.Clear();
             return move;
         }

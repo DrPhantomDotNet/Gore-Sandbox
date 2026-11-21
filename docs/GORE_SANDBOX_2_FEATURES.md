@@ -1208,14 +1208,14 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1143. Thermal throttle protection
 1144. [x] 30/60/90/120 FPS options on phones
 1145. Resolution scale on phones
-1146. Phone graphics auto-preset
+1146. [x] Phone graphics auto-preset
 1147. Smaller download size
 1148. Faster loading on phones
 1149. Controller support on phones
 1150. Tablet layouts
-1151. Notch/safe-area support improved
+1151. [x] Notch/safe-area support improved
 1152. Portrait mode for menus
-1153. Pinch to zoom in photo mode
+1153. [x] Pinch to zoom in photo mode
 1154. Share screenshots to other apps
 1155. Mobile-friendly spawn menu
 1156. Mobile-friendly map editor
