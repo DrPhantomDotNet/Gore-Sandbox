@@ -62,15 +62,15 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 47. [x] "Continue" card: jump back into your last map
 48. Recent maps row on the main menu
 49. News panel fed by the latest changelog entry
-50. Discord / itch.io links as small icons
-51. Player profile card on the menu (name, level, badge)
+50. [x] Discord / itch.io links as small icons
+51. [x] Player profile card on the menu (name, level, badge)
 52. [x] Quick-play button (random map + Goredolls)
 53. Menu music with 3 tracks and a mute button
 54. Unified Play hub for Sandbox, Modes, Story, Open World
-55. Map select with big preview images and filters
-56. Map favourites
-57. Map search bar
-58. Map sort by name, size, newest, most played
+55. [x] Map select with big preview images and filters
+56. [x] Map favourites
+57. [x] Map search bar
+58. [x] Map sort by name, size, newest, most played
 59. Settings rebuilt into tabs: Video, Audio, Gore, Controls, Gameplay, Accessibility
 60. Every setting has a short description
 61. Reset-to-default per tab
