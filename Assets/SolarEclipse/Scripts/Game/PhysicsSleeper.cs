@@ -3,7 +3,7 @@ using UnityEngine;
 namespace SolarEclipse
 {
     /// <summary>
-    /// GS2 performance: every couple of seconds, dead Goredolls and props far from the player that have nearly
+    /// GS2 performance: every couple of seconds, dead Goredolls far (50 m+) from the player that have nearly
     /// stopped moving are put to sleep, so the physics engine skips them until something touches them.
     /// Host / singleplayer only (clients don't simulate).
     /// </summary>
@@ -11,7 +11,6 @@ namespace SolarEclipse
     {
         static PhysicsSleeper inst;
         float next;
-        static readonly Collider[] Hits = new Collider[256];
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Boot() { if (inst != null) return; var go = new GameObject("Physics Sleeper"); DontDestroyOnLoad(go); inst = go.AddComponent<PhysicsSleeper>(); }
