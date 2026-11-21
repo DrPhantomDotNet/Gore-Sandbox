@@ -640,7 +640,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 603. Akimbo SMGs
 604. Desert Eagle (improved)
 605. [x] Five-seven
-606. Revolver with speed loader
+606. [x] Revolver with speed loader
 607. [x] P90
 608. [x] Vector
 609. [x] Thompson
@@ -723,9 +723,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 682. Krav Maga: disarms and counters
 683. Counters/parries with good timing
 684. Dodges and side-steps
-685. Stamina in fights
-686. Combos with bonus damage
-687. Finishers on dazed Goredolls
+685. [x] Stamina in fights
+686. [x] Combos with bonus damage
+687. [x] Finishers on dazed Goredolls
 688. [x] Ground and pound
 689. Mount position
 690. [x] Rear naked choke (improved headlock)
@@ -746,7 +746,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 705. Combo trainer
 706. Fight camera that frames both fighters
 707. [x] Slow-motion on the final hit
-708. Fight stats (punches thrown, landed)
+708. [x] Fight stats (punches thrown, landed)
 709. Style mixing (pick your moves)
 710. Custom move editor (choose poses, timing)
 

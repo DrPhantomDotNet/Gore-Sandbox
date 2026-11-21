@@ -554,6 +554,7 @@ namespace SolarEclipse
 
         FighterRig rig;
         FightMove move;
+        int thrown, landed; // GS2 fight stats (shown in the corner while the style is out)
         float moveT, guard, phase, animTime, comboUntil, flashT, hitComboUntil, chokeSend, lockFall, lockStruggle, nextVoice, choke;
         int combo, hitCombo;
         bool hitDone, queued;
@@ -702,6 +703,8 @@ namespace SolarEclipse
             if (m == FightMove.FrontKick || m == FightMove.Haymaker) Player.Launch(Flat * 2.5f);
             FightNet.SendMove(m);
             if (spec.Kick) Stats.Add(Stats.Kicks); else Stats.Add("punches");
+            thrown++;
+            PlayerFeel.Stamina = Mathf.Max(0f, PlayerFeel.Stamina - (spec.Kick ? 0.06f : 0.035f)); // GS2: fighting tires you out
         }
 
         // ------------------------------------------------------------------ hitting
@@ -797,9 +800,16 @@ namespace SolarEclipse
             {
                 bool head = part.Type == PartType.Head || part.Type == PartType.Neck;
                 var point = part.Body.worldCenterOfMass - Flat * 0.08f;
+                // GS2: combos hit harder, a tired fighter hits softer, and a heavy blow on a dazed Goredoll is a finisher.
+                float comboMul = Time.time < hitComboUntil ? 1f + 0.1f * Mathf.Min(hitCombo, 5) : 1f;
+                float tired = Mathf.Lerp(0.6f, 1f, Mathf.Clamp01(PlayerFeel.Stamina / 0.3f));
+                var dv = doll.Vitals;
+                bool finisher = !doll.IsDead && spec.Knock > 0f && (dv.Consciousness < 0.6f || dv.HeadTrauma > 0.4f || dv.State == LifeState.Unconscious);
+                float extra = comboMul * tired * (finisher ? 1.8f : 1f);
+                landed++;
                 var info = new DamageInfo
                 {
-                    Amount = spec.Dmg * St.Damage * (head ? FightingStyles.HeadMul : 1f) * (super ? 3f : 1f), Force = dir * spec.Force * (super ? 4f : 1f),
+                    Amount = spec.Dmg * St.Damage * (head ? FightingStyles.HeadMul : 1f) * (super ? 3f : 1f) * extra, Force = dir * spec.Force * (super ? 4f : 1f) * (finisher ? 1.6f : 1f),
                     Point = point, Normal = -dir, Direction = dir, Type = DamageType.Blunt, Source = p, Weapon = St.Name + ": " + spec.Name,
                 };
                 part.TakeDamage(info);
@@ -809,7 +819,8 @@ namespace SolarEclipse
                 if (part.Type == PartType.Head && spec.Dmg >= 20f && Settings.Organs && Random.value < 0.35f) GoreKit.KnockTeeth(part, dir, Random.Range(1, 3));
                 AudioManager.Play(spec.Kick ? "kick_hit" : "punch_hit", point, 1f, Random.Range(0.9f, 1.1f));
                 if (head && spec.Dmg >= 20f) AudioManager.Play("bone_crack", point, 0.45f, Random.Range(0.9f, 1.1f));
-                Flash(spec.Name);
+                Flash(finisher ? "FINISHER! " + spec.Name : spec.Name);
+                if (finisher && !NetState.Active && GameManager.I != null) GameManager.I.SlowMo(0.25f, 0.8f);
                 // A blow that drops them: a moment of slow motion (singleplayer only).
                 if (!NetState.Active && spec.Knock > 4f && GameManager.I != null) GameManager.I.SlowMo(0.35f, 0.45f);
                 CameraFX.Shake(spec.Shake);
@@ -978,6 +989,8 @@ namespace SolarEclipse
                 float sc = 1f + Mathf.Clamp01(flashT - 0.8f) * 0.6f;
                 UI.Label(new Rect(0, H * 0.2f, W, 70), flashText, Mathf.RoundToInt(44 * sc), new Color(1f, 0.85f, 0.2f, a), TextAnchor.MiddleCenter, FontStyle.Normal, true, false, UI.HeavyFont);
             }
+            if (thrown > 0)
+                UI.Label(new Rect(W - 320, H * 0.32f, 300, 26), "LANDED " + landed + " / " + thrown + "  (" + Mathf.RoundToInt(100f * landed / thrown) + "%)", 16, new Color(1f, 1f, 1f, 0.6f), TextAnchor.MiddleRight, FontStyle.Bold);
             if (!touch)
             {
                 string help = locked != null ? "LMB punch   F knee   hold RMB choke   R " + (St.LockThrow == FightMove.Suplex ? "suplex" : "throw") + "   Q snap neck   E release"
