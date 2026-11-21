@@ -27,6 +27,9 @@ namespace SolarEclipse
             yield return Mode("maze", "Escape the Maze", "Mode - hedge maze", "grid", TimeOfDay.Night,
                 "A new random maze every time. Find the exit before the things hunting you in the dark find you.",
                 new[] { "Random maze", "Hunters", "Best time saved" }, new Color(0.05f, 0.08f, 0.05f), new Color(0.2f, 0.35f, 0.18f), new Color(0.5f, 1f, 0.4f), BuildMaze);
+            yield return Mode("ffa", "Free-for-all", "Mode - ruined arena", "target", TimeOfDay.Sunset,
+                "Sixteen Goredolls, every one for themselves, and you in the middle. Be the last one standing.",
+                new[] { "Everyone fights everyone", "16 brawlers", "Wins saved" }, new Color(0.3f, 0.12f, 0.05f), new Color(0.5f, 0.38f, 0.25f), new Color(1f, 0.6f, 0.2f), m => BuildRuinsFor(m, true));
             yield return Mode("infection", "Infection", "Mode - town square", "skull", TimeOfDay.Sunset,
                 "Two zombies in a crowded town square. Everyone they kill gets back up as one of them. Stop the outbreak before the whole town turns.",
                 new[] { "Spreading infection", "Crowd of 24", "Survivors saved" }, new Color(0.3f, 0.15f, 0.1f), new Color(0.35f, 0.4f, 0.25f), new Color(0.6f, 1f, 0.3f), BuildSquare);
@@ -34,7 +37,9 @@ namespace SolarEclipse
 
         // ------------------------------------------------------------------ maps
 
-        static void BuildRuins(MapBuilder m)
+        static void BuildRuins(MapBuilder m) => BuildRuinsFor(m, false);
+
+        static void BuildRuinsFor(MapBuilder m, bool ffa)
         {
             m.Options.StartingNpcs = 0;
             m.Block("Floor", new Vector3(-32, -1, -32), new Vector3(32, 0, 32), T(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.35f, 0.33f, 0.32f), 0.2f);
@@ -51,7 +56,7 @@ namespace SolarEclipse
                 m.Box("Ruin", p + Vector3.up * h / 2f, Quaternion.Euler(0, Random.Range(0f, 90f), 0), new Vector3(Random.Range(2f, 5f), h, 0.6f), brick, SurfaceType.Concrete, b * Random.Range(0.8f, 1.1f));
             }
             for (int i = 0; i < 4; i++) m.StreetLamp(new Vector3(i < 2 ? -20 : 20, 0, i % 2 == 0 ? -20 : 20), 45f + i * 90f, new Color(1f, 0.6f, 0.35f), 6f, 26f, 2f);
-            m.Root.gameObject.AddComponent<LastManStanding>();
+            if (ffa) m.Root.gameObject.AddComponent<FreeForAll>(); else m.Root.gameObject.AddComponent<LastManStanding>();
             m.PlayerSpawn = new Vector3(0, 0.1f, 0);
             for (int i = 0; i < 8; i++) m.NpcSpawns.Add(Quaternion.Euler(0, i * 45f, 0) * new Vector3(0, 0.1f, 28f));
             m.Playable = new Bounds(new Vector3(0, 4, 0), new Vector3(64, 10, 64));
@@ -401,6 +406,48 @@ namespace SolarEclipse
             int humans = 0, zombies = 0;
             foreach (var d in Goredoll.All) { if (d == null || d.IsDead) continue; if (d.Zombie != null) zombies++; else humans++; }
             Panel(new Rect(W / 2 - 260, 20, 520, 50), "HUMANS " + humans + "   ZOMBIES " + zombies + "   TURNED " + turned + "   BEST " + PlayerPrefs.GetInt("infection_best", 0));
+        }
+    }
+
+    // ====================================================================== Free-for-all
+
+    public sealed class FreeForAll : ModeBase
+    {
+        bool spawned, over, given, prevInfighting; int kills; float start;
+
+        void Start() { Banner("FREE-FOR-ALL", "Everyone fights everyone. Be the last one standing.", 5f); start = Time.time; prevInfighting = Rules.NpcInfighting; Rules.NpcInfighting = true; }
+        protected override void OnDisable() { base.OnDisable(); Rules.NpcInfighting = prevInfighting; }
+
+        void Update()
+        {
+            var p = PlayerController.Instance;
+            if (!given && p != null) { given = true; Give("boxing", "bat", "glock"); }
+            if (over || p == null) return;
+            if (Host && !spawned && Time.time - start > 2.5f)
+            {
+                spawned = true;
+                var types = new[] { "boxer", "wrestler", "biker", "gangster", "gladiator", "viking", "samurai", "bodybuilder" };
+                for (int i = 0; i < 16; i++)
+                {
+                    var at = Quaternion.Euler(0, i * 22.5f, 0) * new Vector3(0, 0.1f, Random.Range(10f, 26f));
+                    GoredollFactory.Spawn(at, Random.Range(0f, 360f), Random.value < 0.6f ? NpcTypes.Preset(types[Random.Range(0, types.Length)]) : "Aggressive");
+                }
+                return;
+            }
+            if (!spawned) return;
+            if (p.IsDead) { over = true; Banner("ELIMINATED", kills + " kills. Restart the map to try again.", 10f); return; }
+            int alive = 0;
+            foreach (var d in Goredoll.All) if (d != null && !d.IsDead && d.Vitals.Conscious) alive++;
+            if (alive == 0) { over = true; PlayerPrefs.SetInt("ffa_wins", PlayerPrefs.GetInt("ffa_wins", 0) + 1); Banner("LAST ONE STANDING", kills + " kills in " + (Time.time - start).ToString("0") + " s", 10f); AudioManager.Ui("ui_success"); }
+        }
+
+        protected override void OnDollDied(Goredoll d, object attacker) { if (GameModes2.ByMe(attacker)) kills++; }
+
+        protected override void DrawMode(float W, float H)
+        {
+            int alive = 0;
+            foreach (var d in Goredoll.All) if (d != null && !d.IsDead && d.Vitals.Conscious) alive++;
+            Panel(new Rect(W / 2 - 230, 20, 460, 50), "STANDING " + (alive + 1) + "   KILLS " + kills + "   WINS " + PlayerPrefs.GetInt("ffa_wins", 0));
         }
     }
 }

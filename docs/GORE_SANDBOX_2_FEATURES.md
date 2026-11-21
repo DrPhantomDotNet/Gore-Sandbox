@@ -964,7 +964,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 911. Arena fights (fighting styles)
 912. [x] King of the Hill
 913. Team Deathmatch
-914. Free-for-all
+914. [x] Free-for-all
 915. Capture the Flag
 916. [x] Infection
 917. Prop Hunt
