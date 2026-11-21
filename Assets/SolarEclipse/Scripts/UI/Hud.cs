@@ -512,13 +512,29 @@ namespace SolarEclipse
             UI.Label(new Rect(W / 2 - 400, H * 0.25f + 100, 800, 60), mapDesc, 20, UI.Muted.WithAlpha(a), TextAnchor.UpperCenter, FontStyle.Normal, true, true);
         }
 
+        float nextPhysCount; int bodies, awake;
         void DrawStats(GameManager gm, float x, float y)
         {
             int alive = 0, dead = 0;
             foreach (var g in Goredoll.All) if (g != null) { if (g.IsDead) dead++; else alive++; }
-            string s = $"Goredolls {alive} alive / {dead} dead\nDecals {Decals.ActiveCount} · Debris {Debris.Count}\nVoices {AudioManager.ActiveVoices} · Time ×{Time.timeScale:0.00}\nPos {PlayerController.Instance.transform.position:F1}";
-            UI.Rounded(new Rect(x - 4, y, 300, 92), new Color(0, 0, 0, 0.45f), true);
-            UI.Label(new Rect(x + 4, y + 4, 290, 86), s, 14, UI.TextColor, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
+            // GS2: physics and network stats (counted once a second; scanning every body each frame is too slow).
+            if (Time.unscaledTime >= nextPhysCount)
+            {
+                nextPhysCount = Time.unscaledTime + 1f;
+                bodies = 0; awake = 0;
+                foreach (var rb in Object.FindObjectsOfType<Rigidbody>()) { bodies++; if (!rb.isKinematic && !rb.IsSleeping()) awake++; }
+            }
+            string s = $"Goredolls {alive} alive / {dead} dead\nDecals {Decals.ActiveCount} · Debris {Debris.Count}\nVoices {AudioManager.ActiveVoices} · Time ×{Time.timeScale:0.00}\nPhysics {awake} awake / {bodies} bodies\nPos {PlayerController.Instance.transform.position:F1}";
+            float hgt = 112;
+            if (NetState.Active && NetManager.I != null)
+            {
+                int ping = 0, n = 0;
+                foreach (var pl in NetManager.I.Players.Values) { n++; if (!pl.IsHost) ping = Mathf.Max(ping, pl.PingMs); }
+                s += $"\nNet {(NetState.IsHost ? "hosting" : "client")} · {n} players · worst ping {ping} ms";
+                hgt += 20;
+            }
+            UI.Rounded(new Rect(x - 4, y, 320, hgt), new Color(0, 0, 0, 0.45f), true);
+            UI.Label(new Rect(x + 4, y + 4, 310, hgt - 6), s, 14, UI.TextColor, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
         }
     }
 }

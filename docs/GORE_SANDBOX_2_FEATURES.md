@@ -766,7 +766,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 723. Breakable glass tables
 724. Breakable fences
 725. Collapsing scaffolding
-726. Explosion shockwaves pushing props
+726. [x] Explosion shockwaves pushing props
 727. Fire spreading on wood and cloth
 728. [x] Fire extinguishing with water
 729. Smoke filling rooms
@@ -785,11 +785,11 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 742. [x] Gravity zones
 743. Slow-motion physics accuracy fix
 744. Physics substep setting
-745. Physics object limit setting
+745. [x] Physics object limit setting
 746. Sleep/freeze far objects for performance
-747. Destruction debris cleanup
+747. [x] Destruction debris cleanup
 748. Debris stays option
-749. Physics stats overlay
+749. [x] Physics stats overlay
 750. Undo for physics changes
 
 ## 17. Props, Machines & Traps (50)
@@ -1105,7 +1105,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1046. Reconnect after disconnect
 1047. Host migration
 1048. [x] Ping display
-1049. Network stats overlay
+1049. [x] Network stats overlay
 1050. Region selection
 1051. Party system
 1052. Clans with tags
