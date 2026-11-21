@@ -326,11 +326,18 @@ namespace SolarEclipse
         Transform barrels;
         AudioSource loop;
 
-        protected override bool CanShoot => spin >= 0.97f;
+        // GS2: overheating. Long bursts heat the barrels (they glow); at 100% it locks up until they cool to 35%.
+        float heat; bool overheated; MaterialPropertyBlock heatMpb; Renderer[] barrelR;
+        protected override bool CanShoot => spin >= 0.97f && !overheated;
         protected override bool EjectOnFire => (++ejectCount % 3) == 0;
+        protected override void OnShot()
+        {
+            heat = Mathf.Min(1f, heat + 0.0045f);
+            if (heat >= 1f && !overheated) { overheated = true; AudioManager.Play("hiss", Eye, 0.8f, 1f, 0f); GameEvents.ShowToast("Overheated! Let the barrels cool."); }
+        }
         public override bool IsAiming => false;
         public override float MoveSpeedMul => 0.85f - 0.4f * spin;
-        public override string ModeText => spin >= 0.97f ? "ROTARY" : "SPIN " + Mathf.RoundToInt(spin * 100f) + "%";
+        public override string ModeText => overheated ? "OVERHEATED " + Mathf.RoundToInt(heat * 100f) + "%" : spin >= 0.97f ? "ROTARY · HEAT " + Mathf.RoundToInt(heat * 100f) + "%" : "SPIN " + Mathf.RoundToInt(spin * 100f) + "%";
 
         protected override void OnAttach()
         {
@@ -359,6 +366,17 @@ namespace SolarEclipse
             f.Mode = false; // always full auto
             base.Tick(f, dt);
 
+            heat = Mathf.MoveTowards(heat, 0f, dt * (want && !overheated ? 0.02f : 0.22f));
+            if (overheated && heat < 0.35f) overheated = false;
+            if (barrels != null)
+            {
+                if (barrelR == null) barrelR = barrels.GetComponentsInChildren<Renderer>();
+                if (heatMpb == null) heatMpb = new MaterialPropertyBlock();
+                float glow = Mathf.Clamp01((heat - 0.4f) / 0.6f);
+                var tint = Color.Lerp(Color.white, new Color(2.2f, 0.9f, 0.4f), glow);
+                foreach (var r in barrelR) { if (r == null) continue; r.GetPropertyBlock(heatMpb); heatMpb.SetColor("_Color", tint); r.SetPropertyBlock(heatMpb); }
+                if (heat > 0.7f && Random.value < heat * 0.3f && Model.Muzzle != null) FX.MuzzleSmoke(Model.Muzzle.position, Vector3.up, 0.4f);
+            }
             barrelAngle = (barrelAngle + spin * 2000f * dt) % 360f;
             if (barrels != null) barrels.localRotation = Quaternion.Euler(0f, 0f, barrelAngle);
 
