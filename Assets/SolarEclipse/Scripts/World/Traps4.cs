@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 namespace SolarEclipse
 {
     /// <summary>
-    /// Gore Sandbox 2 traps and props, part 3: shark tank and piranha pool.
+    /// Gore Sandbox 2 traps and props, part 3: shark tank, piranha pool, balloon, thruster, gravity zone, oil slick and ice patch.
     /// Registered through Traps3.Register.
     /// </summary>
     public static class Traps4
@@ -15,6 +15,11 @@ namespace SolarEclipse
         {
             add("sharktank", "Shark Tank", "A glass tank with a hungry shark inside. Throw something in.", "drop", FishTank.Shark);
             add("piranhapool", "Piranha Pool", "A pool full of piranhas. They strip a body in seconds.", "drop", FishTank.Piranha);
+            add("balloon", "Balloon", "A helium balloon. It ties itself to the first thing it touches and lifts it. Use several.", "globe", Balloon.Create);
+            add("thruster", "Thruster", "A rocket thruster. Sticks to what it touches. Press E to fire it.", "explosion", Thruster.Create);
+            add("gravityzone", "Gravity Zone", "A field that flips gravity: everything inside floats up. Press E to switch it on/off.", "arrow_down", GravityZone.Create);
+            add("oilslick", "Oil Slick", "A slippery puddle of oil. Goredolls that walk into it go down.", "drop", Slick.Oil);
+            add("icepatch", "Ice Patch", "A sheet of ice. Goredolls slip and slide on it.", "snow", Slick.Ice);
         }
 
         /// <summary>Walls of a box-shaped tank as separate colliders (Machines.Part gives each part one box collider).</summary>
@@ -116,6 +121,169 @@ namespace SolarEclipse
                     if (Random.value < 0.3f) BloodFX.Mist(p.transform.position, Vector3.up, 1.2f);
                     if (Random.value < 0.05f) GoreKit.Burn(p, 0.25f); // flesh stripped down
                     rb.AddTorque(Random.insideUnitSphere * 2f, ForceMode.VelocityChange);
+                }
+            }
+        }
+    }
+
+    /// <summary>Helium balloon: floats up, ties itself (spring "string") to the first rigidbody it touches.</summary>
+    public sealed class Balloon : MonoBehaviour
+    {
+        Rigidbody rb; bool tied; float born;
+        static readonly Color[] Colors = { new Color(0.9f, 0.15f, 0.15f), new Color(0.2f, 0.5f, 0.95f), new Color(0.95f, 0.8f, 0.15f), new Color(0.3f, 0.85f, 0.35f), new Color(0.85f, 0.3f, 0.85f) };
+        LineRenderer line; Rigidbody other; Vector3 otherAnchor;
+
+        public static GameObject Create(Vector3 pos, Quaternion rot)
+        {
+            var go = Machines.Root("Balloon", pos + Vector3.up * 1.2f, Quaternion.identity, false, 0.05f);
+            var c = Colors[Random.Range(0, Colors.Length)];
+            Machines.Part(go.transform, "Balloon", mb => { mb.Color = c; mb.Sphere(Vector3.zero, new Vector3(0.28f, 0.34f, 0.28f)); mb.Box(new Vector3(0, -0.36f, 0), new Vector3(0.05f, 0.05f, 0.05f)); }, Mats.Lit, true);
+            var b = go.AddComponent<Balloon>();
+            b.rb = go.GetComponent<Rigidbody>(); b.rb.useGravity = false; b.rb.drag = 1.5f; b.rb.angularDrag = 2f; b.born = Time.time;
+            b.line = go.AddComponent<LineRenderer>(); b.line.widthMultiplier = 0.008f; b.line.sharedMaterial = Mats.Lit; b.line.positionCount = 2; b.line.enabled = false;
+            return go;
+        }
+
+        void FixedUpdate() { if (rb != null) rb.AddForce(Vector3.up * 9.81f * 0.06f + Vector3.up * 2.2f, ForceMode.Force); } // lifts about 0.25 kg each
+
+        void LateUpdate()
+        {
+            if (!tied) return;
+            if (other == null) { tied = false; line.enabled = false; foreach (var j in GetComponents<SpringJoint>()) Destroy(j); return; }
+            line.SetPosition(0, transform.position + Vector3.down * 0.36f);
+            line.SetPosition(1, other.transform.TransformPoint(otherAnchor));
+        }
+
+        void OnCollisionEnter(Collision c)
+        {
+            if (tied || !Machines.Authority || Time.time - born < 0.3f) return;
+            var o = c.rigidbody;
+            if (o == null || o == rb || o.GetComponent<Balloon>() != null) return;
+            tied = true; other = o;
+            otherAnchor = o.transform.InverseTransformPoint(c.GetContact(0).point);
+            var j = gameObject.AddComponent<SpringJoint>();
+            j.connectedBody = o; j.autoConfigureConnectedAnchor = false; j.anchor = Vector3.down * 0.36f; j.connectedAnchor = otherAnchor;
+            j.spring = 40f; j.damper = 2f; j.maxDistance = 1.4f; j.minDistance = 0f;
+            transform.position += Vector3.up * 0.8f;
+            line.enabled = true;
+        }
+    }
+
+    /// <summary>Thruster: welds itself to the first rigidbody it touches; E toggles a constant push along its nozzle.</summary>
+    public sealed class Thruster : MonoBehaviour, IInteractable
+    {
+        Rigidbody rb; bool on, stuck; AudioSource loop; float born;
+        public string Prompt => on ? "Stop the thruster" : "Fire the thruster";
+
+        public static GameObject Create(Vector3 pos, Quaternion rot)
+        {
+            var go = Machines.Root("Thruster", pos + Vector3.up * 0.3f, rot, false, 4f);
+            Machines.Part(go.transform, "Body", mb => { mb.Color = Machines.Steel; mb.Cylinder(new Vector3(0, 0, -0.25f), new Vector3(0, 0, 0.15f), 0.12f, 0.12f, 14); mb.SetColor(Machines.Dark); mb.Cylinder(new Vector3(0, 0, -0.25f), new Vector3(0, 0, -0.38f), 0.09f, 0.14f, 14); mb.SetColor(Machines.Yellow); mb.Box(new Vector3(0, 0.13f, 0), new Vector3(0.08f, 0.02f, 0.3f)); });
+            var t = go.AddComponent<Thruster>(); t.rb = go.GetComponent<Rigidbody>(); t.born = Time.time;
+            return go;
+        }
+
+        public void Interact(GameObject user)
+        {
+            on = !on;
+            AudioManager.Ui(on ? "ui_success" : "ui_tab");
+            if (on && loop == null) loop = AudioManager.CreateLoop("flamer", transform, 0.5f, AudioBus.Sfx, 25f);
+            if (loop != null) { if (on) loop.Play(); else loop.Stop(); }
+        }
+
+        void OnCollisionEnter(Collision c)
+        {
+            if (stuck || !Machines.Authority || Time.time - born < 0.2f || c.rigidbody == null) return;
+            stuck = true;
+            var j = gameObject.AddComponent<FixedJoint>(); j.connectedBody = c.rigidbody; j.breakForce = 6000f;
+        }
+
+        void FixedUpdate()
+        {
+            if (!on) return;
+            if (Machines.Authority && rb != null) rb.AddForce(transform.forward * 900f, ForceMode.Force);
+        }
+
+        void Update()
+        {
+            if (!on) return;
+            var noz = transform.TransformPoint(new Vector3(0, 0, -0.42f));
+            FX.Fire(noz, -transform.forward * 6f + Random.insideUnitSphere * 0.5f, 0.18f);
+        }
+    }
+
+    /// <summary>Gravity zone: rigidbodies inside fall upward (gentle) and drift. E toggles it.</summary>
+    public sealed class GravityZone : MonoBehaviour, IInteractable
+    {
+        TriggerZone zone; bool on = true; Renderer field;
+        public string Prompt => on ? "Switch the gravity field off" : "Switch the gravity field on";
+
+        public static GameObject Create(Vector3 pos, Quaternion rot)
+        {
+            var go = Machines.Root("Gravity Zone", pos, rot);
+            Machines.Part(go.transform, "Base", mb => { mb.Color = Machines.Dark; mb.Cylinder(new Vector3(0, 0, 0), new Vector3(0, 0.15f, 0), 2.2f, 2.2f, 28); mb.SetColor(new Color(0.4f, 0.3f, 0.9f)); mb.Cylinder(new Vector3(0, 0.15f, 0), new Vector3(0, 0.17f, 0), 1.9f, 1.9f, 28, false); });
+            var f = Machines.Part(go.transform, "Field", mb => { mb.Color = new Color(0.5f, 0.4f, 1f, 0.25f); mb.Cylinder(new Vector3(0, 0.2f, 0), new Vector3(0, 6f, 0), 2.1f, 2.1f, 28, false); }, Mats.Glass, false);
+            var g = go.AddComponent<GravityZone>();
+            g.field = f.GetComponent<Renderer>();
+            g.zone = Machines.Zone(go.transform, new Vector3(0, 3.1f, 0), new Vector3(4.2f, 6f, 4.2f));
+            return go;
+        }
+
+        public void Interact(GameObject user) { on = !on; if (field != null) field.enabled = on; AudioManager.Ui(on ? "ui_success" : "ui_tab"); }
+
+        void FixedUpdate()
+        {
+            if (!on || !Machines.Authority) return;
+            foreach (var rb in zone.Live())
+            {
+                if (rb.isKinematic) continue;
+                rb.AddForce(-Physics.gravity * 1.25f, ForceMode.Acceleration);
+                RB.SetVel(rb, RB.Vel(rb) * 0.985f);
+                var p = TriggerZone.PartOf(rb);
+                if (p != null && p.Doll != null && p.Type == PartType.Pelvis) p.Doll.Ragdoll.Fall(2f);
+            }
+        }
+    }
+
+    /// <summary>Oil slick / ice patch: a frictionless flat patch; Goredolls walking on it lose their footing.</summary>
+    public sealed class Slick : MonoBehaviour
+    {
+        TriggerZone zone; bool ice; readonly Dictionary<BodyPart, float> hit = new Dictionary<BodyPart, float>();
+        static PhysicMaterial slippery;
+
+        public static GameObject Oil(Vector3 pos, Quaternion rot) => Build(pos, rot, false);
+        public static GameObject Ice(Vector3 pos, Quaternion rot) => Build(pos, rot, true);
+
+        static GameObject Build(Vector3 pos, Quaternion rot, bool ice)
+        {
+            var go = Machines.Root(ice ? "Ice Patch" : "Oil Slick", pos, rot);
+            var top = Machines.Part(go.transform, "Patch", mb =>
+            {
+                mb.Color = ice ? new Color(0.8f, 0.92f, 1f) : new Color(0.04f, 0.04f, 0.05f);
+                mb.Box(new Vector3(0, 0.01f, 0), new Vector3(ice ? 4f : 3f, 0.02f, ice ? 4f : 2.4f));
+            }, ice ? Mats.Glass : Mats.LitMetal, true);
+            if (slippery == null) slippery = new PhysicMaterial("Slippery") { dynamicFriction = 0.02f, staticFriction = 0.02f, frictionCombine = PhysicMaterialCombine.Minimum, bounciness = 0f };
+            top.GetComponent<Collider>().sharedMaterial = slippery;
+            var s = go.AddComponent<Slick>(); s.ice = ice;
+            s.zone = Machines.Zone(go.transform, new Vector3(0, 0.4f, 0), new Vector3(ice ? 4f : 3f, 0.8f, ice ? 4f : 2.4f));
+            return go;
+        }
+
+        void FixedUpdate()
+        {
+            if (!Machines.Authority) return;
+            foreach (var rb in zone.Live())
+            {
+                var p = TriggerZone.PartOf(rb);
+                if (p == null || p.Doll == null || p.Doll.IsDead) continue;
+                if (p.Type != PartType.FootL && p.Type != PartType.FootR) continue;
+                if (RB.Vel(rb).sqrMagnitude < 0.3f || !Traps2.Cool(hit, p, 1f)) continue;
+                if (Random.value < (ice ? 0.25f : 0.45f))
+                {
+                    p.Doll.Ragdoll.Fall(ice ? 1.5f : 2.5f);
+                    var pel = p.Doll.Parts.TryGetValue(PartType.Pelvis, out var pv) ? pv : null;
+                    if (pel != null && pel.Body != null) pel.Body.AddForce(RB.Vel(rb).normalized * 3f + Vector3.up, ForceMode.VelocityChange);
+                    if (p.Doll.Voice != null) p.Doll.Voice.Say("v_whoa", 0.9f, false);
                 }
             }
         }

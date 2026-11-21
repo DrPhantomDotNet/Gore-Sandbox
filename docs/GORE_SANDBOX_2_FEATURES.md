@@ -772,17 +772,17 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 729. Smoke filling rooms
 730. Gas leaks that explode
 731. Liquid barrels that leak
-732. Oil slicks that are slippery
-733. Ice surfaces
+732. [x] Oil slicks that are slippery
+733. [x] Ice surfaces
 734. Magnets and magnetic props
 735. Springs and pistons (player-built)
 736. Hinges and motors (player-built)
 737. Welding props together
-738. Balloons that lift things
-739. Thrusters
+738. [x] Balloons that lift things
+739. [x] Thrusters
 740. Wheels for contraptions
 741. Physics gun beam improved
-742. Gravity zones
+742. [x] Gravity zones
 743. Slow-motion physics accuracy fix
 744. Physics substep setting
 745. Physics object limit setting
