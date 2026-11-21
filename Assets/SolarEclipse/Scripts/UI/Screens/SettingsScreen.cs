@@ -148,7 +148,7 @@ namespace SolarEclipse
                     changed |= UI.Toggle(Next(), "Vibration (phones)", ref d.vibration, "The phone vibrates when you get hurt.");
                     if (UI.Toggle(Next(), "Battery saver (phones)", ref d.batterySaver, "Caps the game at 30 FPS to save battery and keep the phone cooler.")) { changed = true; Settings.Apply(); }
                     changed |= UI.Toggle(Next(), "Film look", ref d.filmLook, "Film grain and a soft vignette over the game, for a more cinematic, realistic feel.");
-                    changed |= UI.Selector(Next(), "Main menu scene", ref d.menuScene, new[] { "Operating room", "Classic stage" }, "The live 3D scene behind the main menu. Applies next time the menu opens.");
+                    changed |= UI.Selector(Next(), "Main menu scene", ref d.menuScene, new[] { "Operating room", "Classic stage", "Slaughterhouse", "Rainy alley" }, "The live 3D scene behind the main menu. Applies next time the menu opens.");
                     changed |= UI.Toggle(Next(), "Show chat", ref d.showChat, "Chat messages in the corner (T or Enter to type, also in singleplayer).");
                     changed |= UI.Selector(Next(), "Your age (for chat)", ref d.ageGroup, ChatFilter.AgeGroups, "Only stored on this device, never sent anywhere. Used to set chat maturity: under 13 always hides profanity.");
                     if (ChatFilter.ForcedOn)

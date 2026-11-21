@@ -47,6 +47,8 @@ namespace SolarEclipse
         void Build()
         {
             if (Settings.Data.menuScene == 0) { BuildOperatingRoom(); return; }
+            if (Settings.Data.menuScene == 2) { BuildSlaughterhouse(); return; }
+            if (Settings.Data.menuScene == 3) { BuildAlley(); return; }
             var root = transform;
             MapLighting.Apply(TimeOfDay.BloodMoon, false, root);
             var b = new MapBuilder(root, null, new MapOptions());
@@ -188,6 +190,109 @@ namespace SolarEclipse
             UpdateCamera(0f);
         }
 
+        // ------------------------------------------------------------------ GS2: slaughterhouse and rainy alley
+
+        int scene; readonly System.Collections.Generic.List<Transform> hooks = new System.Collections.Generic.List<Transform>();
+        ParticleSystem rain; Light alleyLamp;
+
+        void CamAndDoll(Vector3 dollPos, float dollYaw)
+        {
+            var camGo = new GameObject("MenuCamera");
+            camGo.transform.SetParent(transform, false);
+            cam = camGo.AddComponent<Camera>();
+            cam.fieldOfView = 45f; cam.nearClipPlane = 0.05f;
+            cam.cullingMask = ~((1 << Layers.Viewmodel) | (1 << 31));
+            camGo.AddComponent<AudioListener>();
+            doll = GoredollFactory.Spawn(dollPos, dollYaw, "Passive", 0, transform);
+            if (doll.Brain != null) doll.Brain.enabled = false;
+            doll.DisplayName = "Menu Guy";
+            focus = dollPos + new Vector3(0, 1.05f, 0);
+            UpdateCamera(0f);
+        }
+
+        /// <summary>A dim slaughterhouse: carcasses swinging on a hook rail, tiled walls, a drain and a lot of old blood.</summary>
+        void BuildSlaughterhouse()
+        {
+            scene = 2;
+            var root = transform;
+            MapLighting.Apply(TimeOfDay.Night, true, root);
+            RenderSettings.fog = true; RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = new Color(0.05f, 0.025f, 0.02f); RenderSettings.fogDensity = 0.07f;
+            var b = new MapBuilder(root, null, new MapOptions());
+            var tiles = MapBuilder.Tex(TextureFactory.Tiles);
+            b.Block("Floor", new Vector3(-7, -0.3f, -5), new Vector3(7, 0, 8), MapBuilder.Tex(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.4f, 0.36f, 0.34f));
+            b.Block("Back Wall", new Vector3(-7, 0, 6), new Vector3(7, 4.5f, 6.3f), tiles, SurfaceType.Concrete, new Color(0.62f, 0.6f, 0.52f));
+            b.Block("Ceiling", new Vector3(-7, 4.5f, -5), new Vector3(7, 4.8f, 6.3f), tiles, SurfaceType.Concrete, new Color(0.25f, 0.24f, 0.22f));
+            b.Box("Hook Rail", new Vector3(0, 3.6f, 3.6f), Quaternion.identity, new Vector3(9f, 0.08f, 0.08f), Mats.LitMetal, SurfaceType.Metal, new Color(0.45f, 0.42f, 0.4f), 1f, false);
+            b.Cylinder("Drain", new Vector3(0.5f, 0.005f, 2f), 0.25f, 0.01f, Mats.LitMetal, SurfaceType.Metal, new Color(0.1f, 0.1f, 0.1f), 14, false);
+            b.Box("Chopping Block", new Vector3(-2.4f, 0.45f, 1.8f), Quaternion.Euler(0, 15, 0), new Vector3(1.2f, 0.9f, 0.8f), MapBuilder.Tex(TextureFactory.Wood), SurfaceType.Wood, new Color(0.4f, 0.25f, 0.18f));
+            b.Finish();
+            Physics.SyncTransforms();
+            for (int i = 0; i < 4; i++)
+            {
+                var pivot = new GameObject("Hook").transform;
+                pivot.SetParent(root, false); pivot.localPosition = new Vector3(-3.2f + i * 2.1f, 3.6f, 3.6f);
+                var chain = GameObject.CreatePrimitive(PrimitiveType.Cylinder); Destroy(chain.GetComponent<Collider>());
+                chain.transform.SetParent(pivot, false); chain.transform.localPosition = new Vector3(0, -0.3f, 0); chain.transform.localScale = new Vector3(0.02f, 0.3f, 0.02f);
+                chain.GetComponent<Renderer>().sharedMaterial = Mats.LitMetal;
+                var body = StaticHuman.Create(pivot, Appearance.Random(-1), Layers.Effects, "Carcass");
+                body.transform.localPosition = new Vector3(0, -0.6f, 0); body.transform.localRotation = Quaternion.Euler(180f, Random.Range(0f, 360f), 0);
+                body.Set(PartType.UpperArmL, 0, 0, 15f); body.Set(PartType.UpperArmR, 0, 0, -15f);
+                hooks.Add(pivot);
+            }
+            for (int i = 0; i < 22; i++) Decals.Blood(new Vector3(Random.Range(-5f, 5f), 0.01f, Random.Range(-2f, 5.5f)), Vector3.up, Random.Range(0.4f, 1.8f), Random.value < 0.35f ? 2 : 0, null);
+            for (int i = 0; i < 8; i++) Decals.Blood(new Vector3(Random.Range(-5f, 5f), Random.Range(0.3f, 2.5f), 5.99f), Vector3.back, Random.Range(0.5f, 1.4f), 1, null);
+            var lg = new GameObject("Bulb").AddComponent<Light>(); lg.transform.SetParent(root, false); lg.transform.localPosition = new Vector3(0.4f, 3.8f, 1.5f);
+            lg.type = LightType.Point; lg.range = 9f; lg.intensity = 2.2f; lg.color = new Color(1f, 0.78f, 0.55f); lg.shadows = LightShadows.Soft;
+            FlickerLight.Maybe(lg, null, 1f);
+            CamAndDoll(new Vector3(0.8f, 0f, 1.4f), 200f);
+            baseYaw = 200f; dist = 4.4f;
+        }
+
+        /// <summary>A narrow alley at night in the rain: wet bricks, a dumpster, a buzzing lamp, puddles of blood.</summary>
+        void BuildAlley()
+        {
+            scene = 3;
+            var root = transform;
+            MapLighting.Apply(TimeOfDay.Night, false, root);
+            RenderSettings.fog = true; RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = new Color(0.03f, 0.04f, 0.06f); RenderSettings.fogDensity = 0.05f;
+            var b = new MapBuilder(root, null, new MapOptions());
+            var brick = MapBuilder.Tex(TextureFactory.Brick);
+            b.Block("Ground", new Vector3(-4, -0.3f, -8), new Vector3(4, 0, 14), MapBuilder.Tex(TextureFactory.Asphalt), SurfaceType.Concrete, new Color(0.22f, 0.22f, 0.24f));
+            b.Block("Wall L", new Vector3(-4.3f, 0, -8), new Vector3(-4, 9, 14), brick, SurfaceType.Concrete, new Color(0.42f, 0.25f, 0.2f));
+            b.Block("Wall R", new Vector3(4, 0, -8), new Vector3(4.3f, 9, 14), brick, SurfaceType.Concrete, new Color(0.38f, 0.24f, 0.2f));
+            b.Box("Dumpster", new Vector3(-2.9f, 0.7f, 3.5f), Quaternion.Euler(0, 4, 0), new Vector3(1.6f, 1.4f, 2.6f), Mats.LitMetal, SurfaceType.Metal, new Color(0.15f, 0.3f, 0.2f));
+            b.Box("Pipe", new Vector3(3.9f, 4f, 2f), Quaternion.identity, new Vector3(0.12f, 8f, 0.12f), Mats.LitMetal, SurfaceType.Metal, new Color(0.3f, 0.3f, 0.32f), 1f, false);
+            b.Finish();
+            Physics.SyncTransforms();
+            for (int i = 0; i < 10; i++) Decals.Blood(new Vector3(Random.Range(-3f, 3f), 0.01f, Random.Range(-2f, 8f)), Vector3.up, Random.Range(0.5f, 1.6f), 2, null);
+            alleyLamp = new GameObject("Alley Lamp").AddComponent<Light>(); alleyLamp.transform.SetParent(root, false); alleyLamp.transform.localPosition = new Vector3(3.4f, 4.2f, 2.4f);
+            alleyLamp.type = LightType.Spot; alleyLamp.spotAngle = 95f; alleyLamp.range = 14f; alleyLamp.intensity = 3f; alleyLamp.color = new Color(1f, 0.72f, 0.4f);
+            alleyLamp.transform.localRotation = Quaternion.Euler(80f, -30f, 0f); alleyLamp.shadows = LightShadows.Soft;
+            FlickerLight.Maybe(alleyLamp, null, 1f);
+            rain = ParticleKit.Create("Menu Rain", root, Mats.Particle, 1500, 0f);
+            CamAndDoll(new Vector3(0.6f, 0f, 1.6f), 200f);
+            baseYaw = 200f; dist = 4.6f;
+        }
+
+        void TickScenes(float dt)
+        {
+            if (scene == 2)
+                for (int i = 0; i < hooks.Count; i++)
+                {
+                    if (hooks[i] == null) continue;
+                    hooks[i].localRotation = Quaternion.Euler(Mathf.Sin(Time.unscaledTime * 0.9f + i * 1.3f) * 7f, 0, Mathf.Sin(Time.unscaledTime * 0.7f + i) * 4f);
+                    if (Random.value < dt * 1.2f) BloodFX.Drip(hooks[i].TransformPoint(new Vector3(0, -2.3f, 0)), Vector3.zero);
+                }
+            if (scene == 3 && rain != null && cam != null)
+            {
+                var c = cam.transform.position;
+                for (int i = 0; i < 12; i++)
+                    ParticleKit.Emit(rain, c + new Vector3(Random.Range(-6f, 6f), 6f, Random.Range(0f, 10f)), new Vector3(0.4f, -14f, 0.2f), Random.Range(0.012f, 0.02f), 0.6f, new Color(0.7f, 0.75f, 0.85f, 0.35f));
+            }
+        }
+
         void TickOperatingRoom(float dt)
         {
             // ECG: steady ~70 bpm with a beep.
@@ -245,6 +350,7 @@ namespace SolarEclipse
             pokeCooldown -= dt;
             UpdateCamera(dt);
             if (operatingRoom) TickOperatingRoom(dt);
+            TickScenes(dt);
             if (doll == null) return;
             if (doll.IsDead && Time.time - doll.Vitals.TimeOfDeath > 4f) doll.Revive();
             doll.Ragdoll.LookTarget = cam.transform.position;

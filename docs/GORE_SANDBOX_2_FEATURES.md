@@ -45,8 +45,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 ## 2. Main Menu & UI (50)
 31. [x] Live 3D scene behind the main menu
 32. [x] Operating-room menu scene with a surgical lamp
-33. Slaughterhouse menu scene with swinging hook
-34. Alley-in-the-rain menu scene
+33. [x] Slaughterhouse menu scene with swinging hook
+34. [x] Alley-in-the-rain menu scene
 35. [x] Menu scene picker in Settings
 36. [x] Slow orbiting menu camera with parallax
 37. [x] Mouse/finger-tilt parallax on the menu camera
