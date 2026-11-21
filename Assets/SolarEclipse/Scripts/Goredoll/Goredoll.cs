@@ -144,6 +144,7 @@ namespace SolarEclipse
         {
             if (Forward) { if (NetState.LocalAction) NetManager.I.RequestLaunch(this, velocity); return; }
             if (StoryHooks.NoLaunch(this)) return; // story NPCs that can't be pushed around yet
+            if (TimeStop.Active) { foreach (var bp in Parts.Values) if (bp != null) TimeStop.Absorb(bp.Body, velocity); }
             Ragdoll.Launch(velocity);
         }
 

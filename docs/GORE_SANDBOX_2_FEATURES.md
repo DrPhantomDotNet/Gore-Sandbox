@@ -1286,7 +1286,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1215. Instant replay of the last 10 seconds
 1216. Ragdoll launcher cannon (improved)
 1217. Gravity gun 2.0
-1218. Time stop power
+1218. [x] Time stop power
 1219. Telekinesis power
 1220. Super strength mode
 1221. [x] Big head mode
