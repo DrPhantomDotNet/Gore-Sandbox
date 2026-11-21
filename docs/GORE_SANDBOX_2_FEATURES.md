@@ -171,7 +171,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 152. Tattoos (procedural designs)
 153. Scars and birthmarks
 154. Better faces: nose, lips, cheekbones, jaw
-155. Eyelids that blink
+155. [x] Eyelids that blink
 156. Wet eyes with highlights
 157. Eye colours with iris detail
 158. Eyebrows and lashes
@@ -184,15 +184,15 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 165. Clothing wrinkles in the mesh
 166. Clothing prints and logos
 167. Female body type
-168. Child-free policy: all Goredolls are adults
-169. Facial expressions: pain, fear, rage, shock, crying
-170. Tears when crying
+168. [x] Child-free policy: all Goredolls are adults
+169. [x] Facial expressions: pain, fear, rage, shock, crying
+170. [x] Tears when crying
 171. Sweat shine when stressed
 172. [x] Skin going pale with blood loss
 173. [x] Lips turning blue with low oxygen
 174. Pupils reacting to light and death
-175. Jaw going slack on death
-176. Eyes rolling back when unconscious
+175. [x] Jaw going slack on death
+176. [x] Eyes rolling back when unconscious
 177. Breathing chest motion
 178. Shivering when in shock
 179. Better walk cycle with arm swing
@@ -446,7 +446,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 417. Wind, rain and thunder ambience
 418. Distant city ambience
 419. Dripping water ambience indoors
-420. Flickering light buzz
+420. [x] Flickering light buzz
 421. Machine hums and clanks
 422. [x] Heartbeat when your health is low
 423. [x] Tinnitus ring after explosions

@@ -139,6 +139,20 @@ namespace SolarEclipse
             mouthOpen = MathX.Damp(mouthOpen, Mathf.Max(baseOpen, mouthTarget), 14f, dt);
             if (lipLower != null) lipLower.localPosition = lipRest + new Vector3(0, -0.016f * mouthOpen, -0.002f * mouthOpen);
             if (mouth != null) mouth.localScale = new Vector3(1f + 0.15f * mouthOpen, 0.25f + 1.6f * mouthOpen, 1f);
+
+            // GS2: crying. Long pain or fear makes tears run from the eyes.
+            if (Expression == Expression.Pain || Expression == Expression.Afraid) cryT += dt; else cryT = Mathf.Max(0f, cryT - dt * 0.5f);
+            if (cryT > 4f && Time.time >= nextTear)
+            {
+                nextTear = Time.time + Random.Range(0.6f, 1.6f);
+                if (tears == null) { tears = ParticleKit.Create("Tears", null, Mats.Particle, 300, 1f); }
+                var e = Random.value < 0.5f ? eyeL : eyeR;
+                if (e != null && !(e == eyeL ? eyeLGone : eyeRGone))
+                    ParticleKit.Emit(tears, e.position + transform.forward * 0.012f - transform.up * 0.012f, -transform.up * 0.05f + transform.forward * 0.02f, 0.006f, 1.2f, new Color(0.8f, 0.9f, 1f, 0.7f));
+            }
         }
+
+        float cryT, nextTear;
+        static ParticleSystem tears;
     }
 }
