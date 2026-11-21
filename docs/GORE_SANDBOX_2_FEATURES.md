@@ -248,8 +248,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 227. [x] Burns: red skin, blisters, charred black
 228. Burned clothes falling apart
 229. [x] Frostbite blue skin (freeze ray)
-230. Acid burns that eat through skin
-231. Electrical burns with entry marks
+230. [x] Acid burns that eat through skin
+231. [x] Electrical burns with entry marks
 232. Bite wounds (zombies, dogs)
 233. Crush injuries flattening parts
 234. Degloving injuries (extreme)

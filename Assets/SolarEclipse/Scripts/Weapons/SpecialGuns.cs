@@ -84,6 +84,7 @@ namespace SolarEclipse
             FX.Sparks(h.point, h.normal, 10);
             AudioManager.Play("zap", h.point, 0.8f, Random.Range(0.95f, 1.05f));
             var d = DollOf(h.collider);
+            if (d != null) Machines.ElectricBurn(h.collider.GetComponent<BodyPart>(), h.point); // barb marks
             if (d == null || !authority) return;
             d.Ragdoll.Fall(5f);
             d.Vitals.Sedate(4f);

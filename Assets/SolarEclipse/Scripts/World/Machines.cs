@@ -83,6 +83,17 @@ namespace SolarEclipse
 
         public static bool Authority => !NetState.IsClient;
 
+        /// <summary>GS2: a small charred entry mark where electricity went in (and a slight burn on the part).</summary>
+        public static void ElectricBurn(BodyPart p, Vector3 at)
+        {
+            if (p == null || !Settings.GoreEnabled) return;
+            var col = p.GetComponent<Collider>();
+            var point = col != null ? col.ClosestPoint(at) : p.transform.position;
+            var normal = (point - p.transform.position).sqrMagnitude > 1e-6f ? (point - p.transform.position).normalized : Vector3.up;
+            Decals.Wound(point, normal, 8, Random.Range(0.025f, 0.045f), col);
+            GoreKit.Burn(p, 0.08f);
+        }
+
         public static void Hurt(BodyPart p, float amount, DamageType type, Vector3 dir, object src, string weapon)
             => p.TakeDamage(new DamageInfo { Amount = amount, Type = type, Point = p.transform.position, Direction = dir, Normal = -dir, Force = dir * amount * 0.5f, Source = src, Weapon = weapon });
 
@@ -347,6 +358,7 @@ namespace SolarEclipse
             if (victim != null && victim.Doll != null && Machines.Authority)
             {
                 Machines.Hurt(victim, 45f, DamageType.Generic, (target.Value - ball.position).normalized, this, "Tesla Coil");
+                Machines.ElectricBurn(victim, target.Value); // GS2: entry mark
                 GoreKit.Burn(victim, 0.3f);
                 if (victim.Doll.Ragdoll != null) victim.Doll.Ragdoll.Fall(2f);
                 FX.Smoke(target.Value, Vector3.up, 0.4f, new Color(0.2f, 0.2f, 0.2f, 0.7f), 1.5f);
@@ -408,6 +420,7 @@ namespace SolarEclipse
                 var part = TriggerZone.PartOf(rb);
                 if (part == null || part.Doll == null) continue;
                 Machines.Hurt(part, 7f, DamageType.Generic, Vector3.up, this, "Electric Chair");
+                if (Random.value < 0.15f) Machines.ElectricBurn(part, part.transform.position);
                 GoreKit.Burn(part, 0.06f);
                 rb.AddForce(Random.insideUnitSphere * 6f, ForceMode.VelocityChange);
                 if (part.IsHead && Time.time > until - 0.2f && part.Doll.Dismember != null) part.Doll.Dismember.Gib(part, Vector3.up);
