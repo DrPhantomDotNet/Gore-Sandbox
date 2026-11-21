@@ -23,5 +23,5 @@ for p in "$W/rt/Runtime.csproj" "$W/and/Android.csproj"; do
   timeout 600 dotnet build -nologo -v q "$p" 2>&1 | grep -E " error |Build succeeded" | sed "s#$ROOT/Assets/SolarEclipse/##; s# \[/tmp.*##" | sort -u | head -25
 done
 # Unity 6 removed APIs the 2021 reference DLLs still accept: catch them here (Core/RB.cs wraps them behind #if).
-bad=$(find "$ROOT/Assets" -name '*.cs' -print0 | xargs -0 awk 'FNR==1{e=0} /#if UNITY_6000/{u=1} /#else/{if(u)e=1} /#endif/{u=0;e=0} /\<PhysicMaterial(Combine)?\>/{if(!e) print FILENAME":"FNR": "$0}')
+bad=$(find "$ROOT/Assets" -name '*.cs' -print0 | xargs -0 awk 'FNR==1{e=0} /#if UNITY_6000/{u=1} /#else/{if(u)e=1} /#endif/{u=0;e=0} /(^|[^A-Za-z])PhysicMaterial([^A-Za-z]|Combine|$)/{if(!e && $0 !~ /^[ \t]*\/\//) print FILENAME":"FNR": "$0}')
 if [ -n "$bad" ]; then echo "== Unity 6 API check"; echo "$bad" | sed "s#$ROOT/##"; echo " error: PhysicMaterial is PhysicsMaterial in Unity 6; use PhysMat (Core/RB.cs)"; fi
