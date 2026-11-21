@@ -1075,7 +1075,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1016. Up to 16 players per server
 1017. Better lag compensation
 1018. Smoother remote player movement
-1019. Voice chat improvements (noise gate)
+1019. [x] Voice chat improvements (noise gate)
 1020. Text chat emojis (ASCII-safe)
 1021. Friends list
 1022. Invite friends to your server
@@ -1084,7 +1084,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1025. Favourite servers
 1026. Server passwords (improved)
 1027. Server rules screen on join
-1028. Admin tools (kick, ban, mute, teleport)
+1028. [x] Admin tools (kick, ban, mute, teleport)
 1029. Vote kick
 1030. Anti-cheat checks (host-side)
 1031. Spectate players
@@ -1092,26 +1092,26 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1033. Player emotes (more)
 1034. Gestures (point, wave)
 1035. Player name tags with levels
-1036. Player profiles you can view
+1036. [x] Player profiles you can view
 1037. Shared building (co-op creations)
-1038. Synced gore across all players
+1038. [x] Synced gore across all players
 1039. Synced ragdolls (smoother)
 1040. Synced weather and time
 1041. Mods in multiplayer (host allows)
 1042. Custom maps downloaded on join (improved)
 1043. Dedicated server option (PC)
 1044. LAN play improved
-1045. Cross-play PC and phone
+1045. [x] Cross-play PC and phone
 1046. Reconnect after disconnect
 1047. Host migration
-1048. Ping display
+1048. [x] Ping display
 1049. Network stats overlay
 1050. Region selection
 1051. Party system
 1052. Clans with tags
 1053. Leaderboards
 1054. Report player button
-1055. Parental chat filter option
+1055. [x] Parental chat filter option
 
 ## 25. Creation Tools & Modding (40)
 1056. Map editor 2.0 with more pieces
