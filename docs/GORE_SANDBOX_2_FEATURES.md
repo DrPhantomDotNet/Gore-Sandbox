@@ -1083,7 +1083,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1024. Server browser filters (mode, map, ping)
 1025. Favourite servers
 1026. Server passwords (improved)
-1027. Server rules screen on join
+1027. [x] Server rules screen on join
 1028. [x] Admin tools (kick, ban, mute, teleport)
 1029. Vote kick
 1030. Anti-cheat checks (host-side)

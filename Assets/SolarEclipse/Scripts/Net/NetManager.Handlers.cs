@@ -290,6 +290,17 @@ namespace SolarEclipse
             cb?.Invoke();
             var map = MapCatalog.All.Find(m => m.Id == mapId) ?? MapCatalog.All[0];
             GameManager.I.StartMap(map, options, seed, true);
+            StartCoroutine(ServerRulesCard(ServerName, hostName, map.Name, Server.PvP, LocalCreative, clientLoadout)); // GS2: rules on join
+        }
+
+        System.Collections.IEnumerator ServerRulesCard(string server, string host, string mapName, bool pvp, bool creative, int loadout)
+        {
+            float until = Time.unscaledTime + 60f;
+            while ((GameManager.I == null || GameManager.I.State != GameState.Playing) && Time.unscaledTime < until) yield return null;
+            yield return new WaitForSecondsRealtime(1.5f);
+            if (!NetState.IsClient) yield break;
+            string rules = "Host: " + host + "  ·  Map: " + mapName + "  ·  PvP " + (pvp ? "ON" : "OFF") + "  ·  " + (creative ? "You have Creative" : "No Creative (ask the host)") + "  ·  " + (loadout == 0 ? "Fists only" : "Guns allowed");
+            Toasts.Show("WELCOME TO " + server.ToUpperInvariant(), rules, UI.Accent2);
         }
 
         void PlayRemoteFire(NetReader rd)
