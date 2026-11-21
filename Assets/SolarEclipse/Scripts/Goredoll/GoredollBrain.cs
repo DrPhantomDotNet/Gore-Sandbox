@@ -417,7 +417,7 @@ namespace SolarEclipse
             }
 
             // GS2: press a hand on a bleeding neck or belly wound (unless running, fighting or hands up).
-            if (!run && (body.Pose == PoseMode.Idle || body.Pose == PoseMode.Walk || body.Pose == PoseMode.LookAround) && Action != AiAction.Fight && Action != AiAction.Surrender)
+            if (!run && move.sqrMagnitude < 0.01f && (body.Pose == PoseMode.Idle || body.Pose == PoseMode.LookAround) && Action != AiAction.Fight && Action != AiAction.Surrender) // standing still (the clutch pose has no walk cycle)
             {
                 float neck = Bleed(PartType.Neck), trunk = Mathf.Max(Bleed(PartType.Chest), Bleed(PartType.Abdomen));
                 if (neck > 0.8f) body.Pose = PoseMode.ClutchNeck;
