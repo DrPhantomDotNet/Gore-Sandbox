@@ -22,6 +22,18 @@ namespace SolarEclipse
             "A tourniquet stops limb bleeding. Goredolls don't carry one.",
             "Holding RMB in a headlock chokes harder: watch the oxygen counter fall.",
             "Exit wounds are bigger than entry wounds.",
+            "Bleeding? Press H (or tap the red BLEEDING label) to bandage yourself.",
+            "Hit an armed Goredoll's gun hand and it may drop the weapon.",
+            "A deep cut near the wrist severs the tendons: the hand just hangs.",
+            "Heavy blows to the belly can cause internal bleeding with no wound to show for it.",
+            "In a fight, hits in a row build a combo. A heavy blow on a dazed Goredoll is a finisher.",
+            "The Super Soaker washes blood off walls and floors, and puts burning Goredolls out.",
+            "Hold Left Alt to look around without turning.",
+            "Guns can jam if you turn it on in the pause menu. Press R to clear the jam.",
+            "Wipe the blood off a melee weapon with R.",
+            "Pause menu > Stop time: freeze everything, hit it, then let time run again.",
+            "Thunderstorms can strike Goredolls standing out in the open.",
+            "In the snow, bodies slowly get colder. Below 33 degrees they pass out.",
         };
 
         public string MapName = "";
