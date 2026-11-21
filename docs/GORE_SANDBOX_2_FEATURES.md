@@ -566,9 +566,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 533. [x] Samurai
 534. [x] Gladiator
 535. [x] Mummy-wrapped dummy
-536. Crash test dummy (no gore, sparks)
-537. Mannequin (breaks like plastic)
-538. Cyborg (metal under skin)
+536. [x] Crash test dummy (no gore, sparks)
+537. [x] Mannequin (breaks like plastic)
+538. [x] Cyborg (metal under skin)
 539. Giant variants for every type
 540. [x] Mini (half-size) variants
 

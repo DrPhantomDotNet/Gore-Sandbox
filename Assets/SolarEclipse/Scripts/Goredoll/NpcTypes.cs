@@ -21,6 +21,8 @@ namespace SolarEclipse
             public bool Blade;
             public int Armor = -1;      // Gore Sandbox 2: built-in armour level ("~aN")
             public bool Gloves, Wraps;  // boxing gloves; mummy bandages
+            public Color? Skin;         // Gore Sandbox 2: crash test dummy, mannequin, cyborg
+            public bool Bloodless;      // no blood at all (plastic / metal bodies)
         }
 
         public static readonly List<TypeDef> Types = new List<TypeDef>
@@ -60,6 +62,9 @@ namespace SolarEclipse
             new TypeDef { Id = "samurai", Name = "Samurai", Desc = "Armour, topknot and a katana.", Brain = "Brave", Shirt = new Color(0.55f, 0.1f, 0.08f), Pants = new Color(0.1f, 0.1f, 0.12f), Armor = 2, Weapon = "katana", Blade = true },
             new TypeDef { Id = "gladiator", Name = "Gladiator", Desc = "Helmet, armour and a short sword. Born for the arena.", Brain = "Brave", Shirt = new Color(0.75f, 0.6f, 0.4f), Pants = new Color(0.55f, 0.15f, 0.1f), Sleeves = false, Hat = 7, HatColor = new Color(0.8f, 0.65f, 0.3f), Armor = 2, Weapon = "knife", Blade = true },
             new TypeDef { Id = "mummy", Name = "Mummy", Desc = "Wrapped head to toe in old bandages.", Brain = "Aggressive", Shirt = new Color(0.82f, 0.78f, 0.65f), Pants = new Color(0.82f, 0.78f, 0.65f), Shoes = new Color(0.75f, 0.7f, 0.58f), Wraps = true },
+            new TypeDef { Id = "crashdummy", Name = "Crash Test Dummy", Desc = "Yellow and black, built to be hit. It sparks and bends instead of bleeding out.", Brain = "Passive", Skin = new Color(0.95f, 0.78f, 0.12f), Shirt = new Color(0.95f, 0.78f, 0.12f), Pants = new Color(0.12f, 0.12f, 0.13f), Shoes = new Color(0.12f, 0.12f, 0.13f), Hair = 2, Bloodless = true },
+            new TypeDef { Id = "mannequin", Name = "Mannequin", Desc = "A shop mannequin that somehow walks. Hollow plastic: it never bleeds out.", Brain = "Passive", Skin = new Color(0.92f, 0.9f, 0.86f), Shirt = new Color(0.92f, 0.9f, 0.86f), Pants = new Color(0.92f, 0.9f, 0.86f), Shoes = new Color(0.85f, 0.83f, 0.8f), Hair = 2, Bloodless = true },
+            new TypeDef { Id = "cyborg", Name = "Cyborg", Desc = "Metal under the skin. Armoured, aggressive and it bleeds oil.", Brain = "Aggressive", Skin = new Color(0.55f, 0.57f, 0.62f), Shirt = new Color(0.2f, 0.22f, 0.26f), Pants = new Color(0.2f, 0.22f, 0.26f), Hair = 2, Armor = 2 },
         };
 
         public static TypeDef Get(string id) => Types.Find(t => t.Id == id);
@@ -73,6 +78,8 @@ namespace SolarEclipse
             var look = CustomLook.FromAppearance(Appearance.Random(-1));
             look.Shirt = t.Shirt; look.Pants = t.Pants; look.Shoes = t.Shoes; look.LongSleeves = t.Sleeves;
             if (t.Hair >= 0) look.HairStyle = t.Hair;
+            if (t.Skin.HasValue) { look.Skin = t.Skin.Value; look.Beard = false; }
+            if (t.Id == "cyborg") look.Eyes = new Color(1f, 0.1f, 0.05f);
             look.Name = t.Name;
             look.Role = 0;
             return t.Brain + (t.Armor >= 0 ? "~a" + t.Armor : "") + "~c" + look.Encode() + "~t" + t.Id + tokens;
@@ -161,6 +168,8 @@ namespace SolarEclipse
                             for (int i = 0; i < 4; i++) mb.Box(new Vector3(0, -len * (0.15f + i * 0.2f) + (kv.Key == PartType.Head ? HumanModel.HeadCenterY + len * 0.4f : 0f), 0), new Vector3(0.13f, 0.012f, 0.13f));
                         }, layer);
                     }
+                if (t.Bloodless && doll.Bleeding != null) doll.Bleeding.enabled = false;
+                if (t.Bloodless || t.Id == "cyborg") doll.gameObject.AddComponent<SyntheticBody>().Init(doll, t.Id == "cyborg");
                 if (t.Weapon != null && doll.Parts.TryGetValue(PartType.HandR, out var hand) && hand != null)
                 {
                     var w = ArmedDolls.MountGun(hand.transform, t.Weapon, layer);
@@ -263,6 +272,32 @@ namespace SolarEclipse
                     AudioManager.Play("slice", mid, 0.9f);
                     return;
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Dummies, mannequins and cyborgs: hits spark instead of (or as well as) bleeding; cyborgs leak black oil.
+    /// Watches part health each frame and reacts to drops, so it works with every damage source.
+    /// </summary>
+    public sealed class SyntheticBody : MonoBehaviour
+    {
+        Goredoll doll; bool cyborg; readonly Dictionary<BodyPart, float> last = new Dictionary<BodyPart, float>();
+        public void Init(Goredoll d, bool isCyborg) { doll = d; cyborg = isCyborg; foreach (var p in d.Parts.Values) if (p != null) last[p] = p.Health; }
+        void Update()
+        {
+            if (doll == null) return;
+            foreach (var p in doll.Parts.Values)
+            {
+                if (p == null || !last.TryGetValue(p, out var h)) continue;
+                if (p.Health < h - 1f)
+                {
+                    var pos = p.transform.position;
+                    FX.Sparks(pos, Random.onUnitSphere, cyborg ? 10 : 5);
+                    if (cyborg) { BloodFX.Burst(pos, Random.onUnitSphere, 0.8f, new Color(0.03f, 0.03f, 0.03f)); AudioManager.Play("metal_impact", pos, 0.5f, Random.Range(0.9f, 1.1f)); }
+                    else AudioManager.Play("thump_light", pos, 0.5f, Random.Range(1.2f, 1.5f));
+                }
+                last[p] = p.Health;
             }
         }
     }
