@@ -1169,7 +1169,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1106. Player card backgrounds
 1107. Player outfits for sandbox
 1108. Gloves skins for fighting styles
-1109. [x] Weapon skins unlocks
+1109. Weapon skins unlocks
 1110. Spawn gun skins
 1111. Blood colour unlocks
 1112. Death effect unlocks (fun)
