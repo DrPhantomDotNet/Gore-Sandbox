@@ -116,6 +116,7 @@ namespace SolarEclipse
                 case "knife": return Knife(layer);
                 case "spawngun": return SpawnGun(layer);
                 case "ropetool": return ToolModels.RopeTool(layer);
+                case "toolgun": return ToolModels.RopeTool(layer);
                 case "gravitygun": return ToolModels.GravityGun(layer);
                 case "shotgun": case "sniper": case "revolver": case "minigun": case "harpoon": return WeaponModels2.Build(id, layer);
                 case "rpg": case "frag": case "c4": case "katana": case "sledgehammer": return WeaponModels3.Build(id, layer);

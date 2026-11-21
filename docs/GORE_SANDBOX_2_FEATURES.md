@@ -1138,21 +1138,21 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1077. Duplicator tool (copy groups of props)
 1078. Advanced duplicator (save contraptions)
 1079. Material tool (change prop material)
-1080. Colour tool (paint props)
+1080. [x] Colour tool (paint props)
 1081. Scale tool improved
-1082. Weld tool
+1082. [x] Weld tool
 1083. Rope tool improved
-1084. Balloon tool
-1085. Thruster tool
+1084. [x] Balloon tool
+1085. [x] Thruster tool
 1086. Wheel tool
-1087. Light tool (place lights)
+1087. [x] Light tool (place lights)
 1088. Camera tool (place cameras)
 1089. Text sign tool
 1090. Decal tool (sprays)
 1091. Unity editor tools updated (Dev Hub 2.0)
 1092. Modding guide updated
 1093. Example mods included
-1094. Mod sandboxing kept safe
+1094. [x] Mod sandboxing kept safe
 1095. Mod version checks
 
 ## 26. Progression, Achievements & Customisation (35)

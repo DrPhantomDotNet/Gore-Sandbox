@@ -61,6 +61,7 @@ namespace SolarEclipse
                 case WeaponKind.Admin: return new AdminGun { Def = def };
                 case WeaponKind.SpawnGun: return new SpawnGun { Def = def };
                 case WeaponKind.RopeTool: return new RopeTool { Def = def };
+                case WeaponKind.ToolGun: return new ToolGun { Def = def }; // GS2 (Weapons/ToolGun.cs)
                 case WeaponKind.GravityGun: return new GravityGun { Def = def };
                 default: return new Firearm { Def = def };
             }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SolarEclipse
 {
-    public enum WeaponKind { Fists, Knife, Firearm, Admin, SpawnGun, Explosive, Melee, RopeTool, GravityGun, FightingStyle }
+    public enum WeaponKind { Fists, Knife, Firearm, Admin, SpawnGun, Explosive, Melee, RopeTool, GravityGun, FightingStyle, ToolGun }
 
     /// <summary>Data for one weapon (add new guns here without touching weapon code).</summary>
     public sealed class WeaponDef
@@ -126,6 +126,7 @@ namespace SolarEclipse
                 HipPos = new Vector3(0.12f, -0.16f, 0.12f), AimFov = 0.78f, AimDistance = 0.17f, CasingType = 0, WeightKg = 3f, NoiseRadius = 40f,
             },
             // Sandbox tools (Creative)
+            new WeaponDef { Id = "toolgun", Name = "Tool Gun", Kind = WeaponKind.ToolGun, Glyph = "wrench", Description = "R switches mode. WELD: LMB two objects to weld them together (RMB removes welds). PAINT: LMB paints, RMB picks the next colour. LIGHT: LMB places a lamp, RMB removes one.", HipPos = new Vector3(0.13f, -0.15f, 0.3f) },
             new WeaponDef { Id = "ropetool", Name = "Rope Tool", Kind = WeaponKind.RopeTool, Glyph = "rope", Description = "LMB end A, LMB end B: tie props, Goredolls and the world together (hang them from ceilings). RMB cuts a rope, R: tight / slack / long.", HipPos = new Vector3(0.13f, -0.15f, 0.3f) },
             new WeaponDef { Id = "gravitygun", Name = "Gravity Gun", Kind = WeaponKind.GravityGun, Glyph = "gravgun", Description = "RMB pulls and holds objects and Goredolls, LMB punts them (or anything in front of you).", HipPos = new Vector3(0.13f, -0.16f, 0.3f) },
             // ---- Gun pack 3 (Weapons/Mac11.cs, DualKatanas.cs, WeaponModels4.cs, Audio/RecipesGuns3.cs). Append only: the index is sent over the network.
