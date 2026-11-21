@@ -152,6 +152,7 @@ namespace SolarEclipse
             RenderSettings.ambientEquatorColor = baseEq * dim;
             RenderSettings.ambientGroundColor = baseGround * dim;
             RenderSettings.fogColor = Color.Lerp(baseFog, new Color(0.06f, 0.04f, 0.08f), k);
+            if (RenderSettings.skybox != null && RenderSettings.skybox.HasProperty("_Eclipse")) RenderSettings.skybox.SetFloat("_Eclipse", k); // the moon covers the sun (SEG_Sky.shader)
             if (MapLighting.Sun != null && baseSun >= 0f) { MapLighting.Sun.intensity = baseSun * dim; MapLighting.Sun.color = Color.Lerp(Color.white, new Color(1f, 0.55f, 0.35f), k); }
             if (t >= 65f) { RestoreLight(); eclipseAt = -1f; eclipseT = 0f; }
         }
@@ -159,6 +160,7 @@ namespace SolarEclipse
         void RestoreLight()
         {
             if (baseSun < 0f) return;
+            if (RenderSettings.skybox != null && RenderSettings.skybox.HasProperty("_Eclipse")) RenderSettings.skybox.SetFloat("_Eclipse", 0f);
             RenderSettings.ambientSkyColor = baseSky; RenderSettings.ambientEquatorColor = baseEq; RenderSettings.ambientGroundColor = baseGround; RenderSettings.fogColor = baseFog;
             if (MapLighting.Sun != null) { MapLighting.Sun.intensity = baseSun; MapLighting.Sun.color = Color.white; }
             baseSun = -1f;

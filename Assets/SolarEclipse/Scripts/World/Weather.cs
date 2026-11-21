@@ -64,6 +64,11 @@ namespace SolarEclipse
             if (kind == WeatherKind.BloodRain) grey = night ? new Color(0.12f, 0.02f, 0.02f) : new Color(0.45f, 0.12f, 0.1f);
             if (kind == WeatherKind.Sandstorm) { grey = night ? new Color(0.12f, 0.09f, 0.05f) : new Color(0.72f, 0.58f, 0.38f); RenderSettings.fog = true; RenderSettings.fogDensity += 0.03f; }
             RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, grey, kind == WeatherKind.Fog ? 0.8f : 0.6f);
+            if (RenderSettings.skybox != null && RenderSettings.skybox.HasProperty("_CloudCover")) // GS2: overcast skies
+            {
+                RenderSettings.skybox.SetFloat("_CloudCover", kind == WeatherKind.Thunderstorm || kind == WeatherKind.Rain || kind == WeatherKind.BloodRain ? 0.9f : kind == WeatherKind.Snow || kind == WeatherKind.Hail ? 0.8f : 0.6f);
+                RenderSettings.skybox.SetColor("_CloudColor", grey * 1.1f);
+            }
             float add = kind == WeatherKind.Fog ? 0.04f : kind == WeatherKind.Thunderstorm ? 0.012f : kind == WeatherKind.Snow ? 0.014f : 0.008f;
             RenderSettings.fogDensity += add;
             if (kind == WeatherKind.Fog) RenderSettings.fog = true; // fog weather overrides the fog setting: it's the point

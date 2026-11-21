@@ -77,6 +77,9 @@ namespace SolarEclipse
             sky.SetFloat("_SunSize", sunSize);
             sky.SetFloat("_Stars", stars);
             sky.SetFloat("_Eclipse", eclipse);
+            // GS2 clouds (Resources/Shaders/SEG_Sky.shader): tinted for the time of day; weather thickens them (World/Weather.cs).
+            sky.SetColor("_CloudColor", time == TimeOfDay.Day ? new Color(0.95f, 0.96f, 0.98f) : time == TimeOfDay.Sunset ? new Color(1f, 0.68f, 0.55f) : time == TimeOfDay.Night ? new Color(0.09f, 0.1f, 0.13f) : new Color(0.28f, 0.05f, 0.04f));
+            sky.SetFloat("_CloudCover", time == TimeOfDay.Day ? 0.35f : 0.3f);
             RenderSettings.skybox = sky;
             RenderSettings.reflectionIntensity = time == TimeOfDay.Day ? 0.6f : 0.25f;
             float particleLight = Mathf.Clamp(ambSky.grayscale * 1.6f + intensity * 0.55f, 0.25f, 1f) * b;

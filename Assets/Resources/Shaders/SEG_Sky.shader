@@ -1,4 +1,4 @@
-// Procedural gradient sky with sun/moon disc, glow and stars. Used as RenderSettings.skybox.
+// Procedural gradient sky with sun/moon disc, glow, stars and (GS2) drifting clouds. Used as RenderSettings.skybox.
 Shader "SolarEclipse/Sky"
 {
     Properties
@@ -11,6 +11,8 @@ Shader "SolarEclipse/Sky"
         _SunSize ("Sun Size", Float) = 0.015
         _Stars ("Stars", Float) = 0
         _Eclipse ("Eclipse", Float) = 0
+        _CloudCover ("Cloud Cover", Float) = 0.35
+        _CloudColor ("Cloud Color", Color) = (1,1,1,1)
     }
     SubShader
     {
@@ -25,7 +27,16 @@ Shader "SolarEclipse/Sky"
             #include "UnityCG.cginc"
             fixed4 _Top, _Horizon, _Bottom, _SunColor;
             float4 _SunDir;
-            float _SunSize, _Stars, _Eclipse;
+            float _SunSize, _Stars, _Eclipse, _CloudCover;
+            fixed4 _CloudColor;
+            float hash2(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
+            float vnoise(float2 p)
+            {
+                float2 i = floor(p), f = frac(p);
+                f = f * f * (3.0 - 2.0 * f);
+                return lerp(lerp(hash2(i), hash2(i + float2(1, 0)), f.x), lerp(hash2(i + float2(0, 1)), hash2(i + float2(1, 1)), f.x), f.y);
+            }
+            float fbm(float2 p) { float v = 0.0, a = 0.5; for (int k = 0; k < 4; k++) { v += a * vnoise(p); p *= 2.03; a *= 0.5; } return v; }
             struct appdata { float4 vertex : POSITION; };
             struct v2f { float4 pos : SV_POSITION; float3 dir : TEXCOORD0; };
             v2f vert (appdata v)
@@ -52,6 +63,15 @@ Shader "SolarEclipse/Sky"
                 float n = frac(sin(dot(p, float3(12.9898, 78.233, 37.719))) * 43758.5453);
                 float tw = 0.6 + 0.4 * sin(_Time.y * 3.0 + n * 50.0);
                 col += _Stars * step(0.9975, n) * saturate(h * 5.0) * tw;
+                // Clouds: a flat layer projected onto the sky dome, drifting slowly; fades towards the horizon.
+                if (h > 0.0 && _CloudCover > 0.001)
+                {
+                    float2 uv = d.xz / (h + 0.12) * 0.9 + _Time.y * float2(0.012, 0.004);
+                    float c = fbm(uv);
+                    float cov = smoothstep(1.0 - _CloudCover, 1.0 - _CloudCover + 0.25, c) * saturate(h * 6.0);
+                    float3 cc = _CloudColor.rgb * (0.75 + 0.35 * fbm(uv * 2.0 + 3.1)) + _SunColor.rgb * glow * 0.6;
+                    col = lerp(col, cc, cov * 0.85);
+                }
                 return fixed4(col, 1);
             }
             ENDCG

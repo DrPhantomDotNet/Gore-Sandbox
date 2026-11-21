@@ -112,7 +112,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 95. Wet-surface shine on floors after rain
 96. Puddle reflections (fake)
 97. Better skybox gradients per time of day
-98. Procedural clouds that move
+98. [x] Procedural clouds that move
 99. [x] Stars and moon at night
 100. [x] Lightning flashes lighting the map
 101. [x] Higher-resolution procedural textures
