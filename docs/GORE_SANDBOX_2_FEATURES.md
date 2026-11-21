@@ -250,7 +250,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 229. [x] Frostbite blue skin (freeze ray)
 230. [x] Acid burns that eat through skin
 231. [x] Electrical burns with entry marks
-232. Bite wounds (zombies, dogs)
+232. [x] Bite wounds (zombies, dogs)
 233. Crush injuries flattening parts
 234. Degloving injuries (extreme)
 235. Gibs that look like real meat chunks

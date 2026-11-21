@@ -55,4 +55,24 @@ namespace SolarEclipse
             Bruise.Begin(Decals.Wound(eye, t.forward, 7, 0.06f, col, Random.Range(0f, 360f)));
         }
     }
+
+    /// <summary>GS2 bite wounds (zombies, dogs): an upper and lower arc of small tooth punctures around the bite.</summary>
+    public static class BiteMark
+    {
+        public static void Place(BodyPart part, Vector3 at, Vector3 normal)
+        {
+            if (part == null || !Settings.GoreEnabled) return;
+            var col = part.GetComponent<Collider>();
+            var right = Vector3.Cross(normal, Vector3.up); if (right.sqrMagnitude < 0.01f) right = Vector3.Cross(normal, Vector3.forward);
+            right.Normalize();
+            var up = Vector3.Cross(right, normal).normalized;
+            for (int jaw = -1; jaw <= 1; jaw += 2)
+                for (int i = 0; i < 5; i++)
+                {
+                    float a = (i / 4f - 0.5f) * 2.2f;
+                    var p = at + right * Mathf.Sin(a) * 0.035f + up * jaw * (0.018f + (1f - Mathf.Cos(a)) * 0.012f);
+                    Decals.Wound(p, normal, 6, Random.Range(0.012f, 0.018f), col, Random.Range(0f, 360f));
+                }
+        }
+    }
 }

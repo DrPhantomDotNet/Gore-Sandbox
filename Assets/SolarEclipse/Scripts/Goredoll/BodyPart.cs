@@ -230,6 +230,7 @@ namespace SolarEclipse
                 }
                 else if (dmg > 2.5f) Bruise.Begin(Decals.Wound(pos, info.Normal, cell, size * Mathf.Clamp(dmg / 15f, 0.5f, 1.4f), Col, rot)); // bruises age red > purple > blue > yellow (Gore/GoreRework.cs)
                 if (w.Kind == WoundKind.Blunt && IsHead && dmg > 6f) BlackEye.Maybe(this, pos); // punches to the face (Gore/GoreRework2.cs)
+                if (info.Weapon != null && info.Weapon.IndexOf("bite", System.StringComparison.OrdinalIgnoreCase) >= 0) BiteMark.Place(this, pos, info.Normal); // two arcs of tooth marks
                 if (w.BleedRate > 0.5f) Doll.Bleeding.AddEmitter(this, w);
 
                 // The Gore Update (Gore/GoreKit.cs)
