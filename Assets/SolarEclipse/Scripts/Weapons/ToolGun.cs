@@ -9,14 +9,14 @@ namespace SolarEclipse
     /// </summary>
     public sealed class ToolGun : Weapon
     {
-        static readonly string[] Modes = { "WELD", "PAINT", "LIGHT" };
+        static readonly string[] Modes = { "WELD", "PAINT", "LIGHT", "SPRAY" };
         static readonly Color[] Palette = { new Color(0.85f, 0.1f, 0.1f), new Color(0.95f, 0.55f, 0.1f), new Color(0.95f, 0.85f, 0.15f), new Color(0.2f, 0.75f, 0.25f), new Color(0.15f, 0.45f, 0.95f), new Color(0.6f, 0.25f, 0.85f), new Color(0.95f, 0.95f, 0.95f), new Color(0.12f, 0.12f, 0.13f), new Color(0.95f, 0.45f, 0.7f) };
         static readonly string[] PaletteNames = { "red", "orange", "yellow", "green", "blue", "purple", "white", "black", "pink" };
         static readonly List<Light> lights = new List<Light>();
         int mode, colour; Rigidbody first; float pulse;
         MaterialPropertyBlock mpb;
 
-        public override string AmmoText => mode == 1 ? PaletteNames[colour].ToUpperInvariant() : mode == 2 ? lights.Count + " / 24 lights" : (first != null ? "PICK THE SECOND OBJECT" : "PICK AN OBJECT");
+        public override string AmmoText => mode == 1 || mode == 3 ? PaletteNames[colour].ToUpperInvariant() : mode == 2 ? lights.Count + " / 24 lights" : (first != null ? "PICK THE SECOND OBJECT" : "PICK AN OBJECT");
         public override string ModeText => Modes[mode];
 
         protected override void OnEquip() { Vm.Right.SetPose(HandPose.PistolGrip); Vm.Left.SetPose(HandPose.Support); }
@@ -81,6 +81,10 @@ namespace SolarEclipse
                     lights.Add(l);
                     AudioManager.Play("sg_tick", hit.point, 0.5f, 1.4f);
                     break;
+                case 3: // spray: a big splat of paint on any surface
+                    Decals.Paint(hit.point, hit.normal, Random.Range(0.5f, 0.8f), Palette[colour], hit.collider);
+                    AudioManager.Play("hiss", hit.point, 0.5f, 1.1f);
+                    break;
             }
         }
 
@@ -96,7 +100,7 @@ namespace SolarEclipse
                     foreach (var j in Object.FindObjectsOfType<FixedJoint>()) if (j.connectedBody == hit.rigidbody) { Object.Destroy(j); n++; }
                     GameEvents.ShowToast(n > 0 ? "Removed " + n + " weld" + (n == 1 ? "" : "s") : "Nothing welded there");
                     break;
-                case 1:
+                case 1: case 3:
                     colour = (colour + 1) % Palette.Length;
                     GameEvents.ShowToast("Paint: " + PaletteNames[colour]);
                     AudioManager.Play("sg_tick", Eye, 0.4f, 1.2f, 0f);

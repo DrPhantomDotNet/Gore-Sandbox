@@ -1148,7 +1148,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1087. [x] Light tool (place lights)
 1088. Camera tool (place cameras)
 1089. Text sign tool
-1090. Decal tool (sprays)
+1090. [x] Decal tool (sprays)
 1091. Unity editor tools updated (Dev Hub 2.0)
 1092. Modding guide updated
 1093. Example mods included
