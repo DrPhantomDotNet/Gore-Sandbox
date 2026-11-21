@@ -14,10 +14,10 @@ namespace SolarEclipse
 
         public static void Sync(Camera c)
         {
-            float g = Rules.LowGravity ? -3.2f : -9.81f;
+            float g = -9.81f * Rules.GravityScale * (Rules.LowGravity ? 0.33f : 1f); // respects the gravity slider and Moon Base
             if (Mathf.Abs(Physics.gravity.y - g) > 0.01f) Physics.gravity = new Vector3(0f, g, 0f);
             if (c == null) return;
-            bool want = Rules.Noir || Rules.Retro || Rules.Mirror;
+            bool want = Rules.Noir || Rules.Retro || Rules.Mirror || Settings.Data.colorBlind > 0;
             var fx = c.GetComponent<ScreenFx>();
             if (want && fx == null) { fx = c.gameObject.AddComponent<ScreenFx>(); fx.cam = c; }
             else if (!want && fx != null) { c.ResetProjectionMatrix(); Destroy(fx); }
@@ -34,14 +34,15 @@ namespace SolarEclipse
 
         void OnRenderImage(RenderTexture src, RenderTexture dst)
         {
-            if (!Rules.Noir && !Rules.Retro) { Graphics.Blit(src, dst); return; }
+            if (!Rules.Noir && !Rules.Retro && Settings.Data.colorBlind <= 0) { Graphics.Blit(src, dst); return; }
             if (mat == null)
             {
                 var sh = Shader.Find("SolarEclipse/ScreenFx");
                 if (sh == null) { Graphics.Blit(src, dst); return; }
                 mat = new Material(sh) { hideFlags = HideFlags.DontSave };
             }
-            mat.SetFloat("_Mode", Rules.Retro ? 2f : 1f);
+            mat.SetFloat("_Mode", Rules.Retro ? 2f : Rules.Noir ? 1f : 3f);
+            mat.SetFloat("_CB", Settings.Data.colorBlind); // GS2 colour-blind correction (1 protan, 2 deutan, 3 tritan)
             Graphics.Blit(src, dst, mat);
         }
 

@@ -1225,7 +1225,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1160. Signed APK updates (no uninstall) once a key is set
 
 ## 28. Accessibility, Settings & Performance (30)
-1161. Colour-blind modes
+1161. [x] Colour-blind modes
 1162. High-contrast UI
 1163. UI text size slider
 1164. Subtitle size and background options

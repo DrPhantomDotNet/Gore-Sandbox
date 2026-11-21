@@ -125,6 +125,7 @@ namespace SolarEclipse
                     changed |= UI.Toggle(Next(), "Hide organs", ref d.hideOrgans, "No organs fall out of wounds, whatever the gore level.");
                     changed |= UI.Toggle(Next(), "No gibs", ref d.noGibs, "Bodies never burst into chunks.");
                     changed |= UI.Toggle(Next(), "No flies", ref d.noFlies, "No buzzing flies around old corpses.");
+                    changed |= UI.Selector(Next(), "Colour-blind mode", ref d.colorBlind, new[] { "Off", "Protanopia (red)", "Deuteranopia (green)", "Tritanopia (blue)" }, "In game: shifts colours so red/green or blue/yellow differences stay visible.");
                     changed |= UI.Toggle(Next(), "Reduce flashes", ref d.flashReduction, "Much dimmer flashes from explosions, muzzle flashes and lightning.");
                     float fd = d.maxDecals;
                     if (UI.Slider(Next(), "Max blood decals", ref fd, 50, 2000, "0")) { d.maxDecals = Mathf.RoundToInt(fd); changed = true; }
@@ -190,7 +191,7 @@ namespace SolarEclipse
             new[] { "masterVolume", "sfxVolume", "voiceVolume", "musicVolume", "ambienceVolume", "uiVolume", "dynamicMusic", "monoAudio" },
             new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "autoFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
             new[] { "headBob", "storyDifficulty", "aiDifficulty", "unlockAll", "screenShake", "viewmodel", "subtitles", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
-            new[] { "goreLevel", "bloodColor", "bloodAmount", "bloodOnScreen", "hideOrgans", "noGibs", "noFlies", "flashReduction", "maxDecals", "maxGibs", "gibLifetime", "hitmarkers", "damageNumbers", "killFeed" },
+            new[] { "goreLevel", "bloodColor", "bloodAmount", "bloodOnScreen", "hideOrgans", "noGibs", "noFlies", "colorBlind", "flashReduction", "maxDecals", "maxGibs", "gibLifetime", "hitmarkers", "damageNumbers", "killFeed" },
             new[] { "uiScale", "hudScale", "hudOpacity", "autoUpdate", "playIntro", "pauseOnFocusLoss", "vibration", "batterySaver", "filmLook", "menuScene", "showChat", "crosshairStyle", "crosshairColor", "crosshairSize" },
             new[] { "voiceMode", "pushToTalkKey", "micGain", "voiceThreshold", "incomingVoiceVolume", "proximityVoice" },
             new[] { "vrMode", "vrSnapTurn", "vrSnapAngle", "vrTurnSpeed", "vrHandDirection", "vrManualReload", "vrGunAngle", "vrHeightOffset" },
@@ -218,7 +219,7 @@ namespace SolarEclipse
                 case 1: return 9;
                 case 2: return 15;
                 case 3: return 13;
-                case 4: return 14;
+                case 4: return 15;
                 case 6: return 12;
                 case 7: return 13;
                 default: return 19;
