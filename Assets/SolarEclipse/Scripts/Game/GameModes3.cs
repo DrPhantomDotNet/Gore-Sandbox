@@ -30,6 +30,9 @@ namespace SolarEclipse
             yield return Mode("ffa", "Free-for-all", "Mode - ruined arena", "target", TimeOfDay.Sunset,
                 "Sixteen Goredolls, every one for themselves, and you in the middle. Be the last one standing.",
                 new[] { "Everyone fights everyone", "16 brawlers", "Wins saved" }, new Color(0.3f, 0.12f, 0.05f), new Color(0.5f, 0.38f, 0.25f), new Color(1f, 0.6f, 0.2f), m => BuildRuinsFor(m, true));
+            yield return Mode("fightnight", "Fight Night", "Mode - boxing ring", "fist", TimeOfDay.Night,
+                "A ring, a cheering crowd and five opponents, each tougher than the last. Fists and fighting styles only. Knock them out.",
+                new[] { "5 opponents", "Crowd", "Best run saved" }, new Color(0.15f, 0.05f, 0.05f), new Color(0.55f, 0.15f, 0.12f), new Color(1f, 0.85f, 0.3f), BuildRing, true);
             yield return Mode("infection", "Infection", "Mode - town square", "skull", TimeOfDay.Sunset,
                 "Two zombies in a crowded town square. Everyone they kill gets back up as one of them. Stop the outbreak before the whole town turns.",
                 new[] { "Spreading infection", "Crowd of 24", "Survivors saved" }, new Color(0.3f, 0.15f, 0.1f), new Color(0.35f, 0.4f, 0.25f), new Color(0.6f, 1f, 0.3f), BuildSquare);
@@ -112,6 +115,35 @@ namespace SolarEclipse
             m.PlayerSpawn = SkyCheckpoints[0];
             m.Playable = new Bounds(new Vector3(0, 20, 100), new Vector3(120, 80, 260));
             m.KillY = -200f; // falling is handled by the mode (back to the checkpoint)
+        }
+
+        public static readonly List<Goredoll> RingCrowd = new List<Goredoll>();
+
+        static void BuildRing(MapBuilder m)
+        {
+            m.Options.StartingNpcs = 0;
+            Maps2.Room(m, new Vector3(-22, 0, -22), new Vector3(22, 12, 22), TextureFactory.Concrete, new Color(0.18f, 0.16f, 0.17f));
+            m.Block("Ring", new Vector3(-6, 0, -6), new Vector3(6, 1f, 6), T(TextureFactory.Carpet), SurfaceType.Carpet, new Color(0.25f, 0.3f, 0.6f));
+            for (int c = 0; c < 4; c++) m.Box("Corner Post", new Vector3(c < 2 ? -6 : 6, 1.9f, c % 2 == 0 ? -6 : 6), Quaternion.identity, new Vector3(0.25f, 1.8f, 0.25f), Mats.LitMetal, SurfaceType.Metal, c % 2 == 0 ? new Color(0.8f, 0.1f, 0.1f) : new Color(0.1f, 0.2f, 0.8f));
+            for (int k = 0; k < 3; k++)
+                for (int sd = 0; sd < 4; sd++)
+                {
+                    var rot = Quaternion.Euler(0, sd * 90f, 0);
+                    m.Box("Rope", rot * new Vector3(0, 1.5f + k * 0.45f, 6f), rot, new Vector3(12f, 0.05f, 0.05f), Mats.Lit, SurfaceType.Carpet, Color.white, 1f, true);
+                }
+            m.Ramp("Ring Steps", new Vector3(0, 0, -9f), 0f, 1.5f, 1f, 20f, T(TextureFactory.Wood), SurfaceType.Wood);
+            for (int t = 0; t < 4; t++)
+                for (int sd = 0; sd < 4; sd++)
+                {
+                    var rot = Quaternion.Euler(0, sd * 90f, 0);
+                    m.Box("Seats", rot * new Vector3(0, 0.4f + t * 0.8f, 11f + t * 2.2f), rot, new Vector3(22f + t * 4f, 0.8f + t * 1.6f, 2.2f), T(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.3f, 0.12f, 0.12f));
+                }
+            var spot = new GameObject("Ring Light").AddComponent<Light>(); spot.transform.SetParent(m.Root, false); spot.transform.position = new Vector3(0, 11.5f, 0); spot.transform.rotation = Quaternion.Euler(90, 0, 0);
+            spot.type = LightType.Spot; spot.spotAngle = 70f; spot.range = 20f; spot.intensity = 4f; spot.color = new Color(1f, 0.97f, 0.9f); spot.shadows = LightShadows.Soft; m.Lamps.Add(spot);
+            m.CeilingLight(new Vector3(0, 11.7f, 14), new Color(1f, 0.7f, 0.5f), 18f, 0.8f);
+            m.Root.gameObject.AddComponent<FightNight>();
+            m.PlayerSpawn = new Vector3(0, 1.1f, -4f);
+            m.Playable = new Bounds(new Vector3(0, 6, 0), new Vector3(44, 12, 44));
         }
 
         static void BuildSquare(MapBuilder m)
@@ -450,6 +482,62 @@ namespace SolarEclipse
             int alive = 0;
             foreach (var d in Goredoll.All) if (d != null && !d.IsDead && d.Vitals.Conscious) alive++;
             Panel(new Rect(W / 2 - 230, 20, 460, 50), "STANDING " + (alive + 1) + "   KILLS " + kills + "   WINS " + PlayerPrefs.GetInt("ffa_wins", 0));
+        }
+    }
+
+    // ====================================================================== Fight Night
+
+    public sealed class FightNight : ModeBase
+    {
+        static readonly string[] Opponents = { "boxer", "brawler2", "wrestler", "bodybuilder", "sumo2" };
+        static readonly string[] OppTypes = { "boxer", "biker", "wrestler", "bodybuilder", "gladiator" };
+        int round = -1, best; Goredoll opp; float next; bool over, given, crowdSpawned; float cheerNext;
+
+        void Start() { Banner("FIGHT NIGHT", "Five opponents. Fists only. Knock them out.", 5f); next = Time.time + 5f; best = PlayerPrefs.GetInt("fightnight_best", 0); }
+
+        void Update()
+        {
+            var p = PlayerController.Instance;
+            if (!given && p != null) { given = true; Give("boxing", "karate", "muaythai", "wrestling"); }
+            if (p == null || over) return;
+            if (Host && !crowdSpawned)
+            {
+                crowdSpawned = true;
+                for (int i = 0; i < 16; i++)
+                {
+                    float a = i / 16f * Mathf.PI * 2f; var at = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * 12.5f + Vector3.up * 0.9f;
+                    var c = GoredollFactory.Spawn(at, a * Mathf.Rad2Deg + 180f, "Passive");
+                    if (c != null) { if (c.Brain != null) c.Brain.enabled = false; c.DisplayName = "Fan"; GameModes3.RingCrowd.Add(c); }
+                }
+            }
+            if (Time.time > cheerNext) { cheerNext = Time.time + Random.Range(1.5f, 4f); foreach (var c in GameModes3.RingCrowd) if (c != null && !c.IsDead && Random.value < 0.15f) c.Voice?.Say(Random.value < 0.5f ? "v_hey" : "v_whoa", 0.5f, false); }
+            if (p.IsDead) { over = true; Banner("KNOCKED OUT", "You won " + Mathf.Max(0, round) + " fights. Restart the map to go again.", 10f); return; }
+            if (!Host) return;
+            bool oppDown = opp != null && (opp.IsDead || opp.Vitals.State == LifeState.Unconscious);
+            if (opp != null && !oppDown) return;
+            if (opp != null && oppDown && next <= 0f)
+            {
+                next = Time.time + 4f;
+                Banner("K.O.!", "Round " + (round + 1) + " won", 3f); AudioManager.Ui("ui_success"); AudioManager.Play2D("bell", 0.8f, 1f, AudioBus.Sfx);
+                if (round + 1 > best) { best = round + 1; PlayerPrefs.SetInt("fightnight_best", best); }
+                if (round + 1 >= Opponents.Length) { over = true; Banner("CHAMPION", "You beat all five. The crowd goes wild.", 10f); return; }
+            }
+            if (Time.time < next) return;
+            if (opp != null) opp.Despawn();
+            round++; next = 0f;
+            opp = GoredollFactory.Spawn(new Vector3(0, 1.1f, 4f), 180f, NpcTypes.Preset(OppTypes[round]));
+            if (opp != null && opp.Brain != null) { opp.Brain.Hostile = true; opp.Brain.Aggression = 1f; }
+            if (p.Health != null) p.Health.Current = Mathf.Min(p.Health.Max, p.Health.Current + 35f);
+            var t = NpcTypes.Get(OppTypes[round]);
+            Banner("ROUND " + (round + 1), "vs. the " + (t != null ? t.Name : "Fighter"), 3f);
+            AudioManager.Play2D("bell", 0.9f, 1.1f, AudioBus.Sfx);
+        }
+
+        protected override void OnDisable() { base.OnDisable(); GameModes3.RingCrowd.Clear(); }
+
+        protected override void DrawMode(float W, float H)
+        {
+            Panel(new Rect(W / 2 - 220, 20, 440, 50), "ROUND " + Mathf.Clamp(round + 1, 1, Opponents.Length) + "/" + Opponents.Length + "    BEST " + best + " wins");
         }
     }
 }

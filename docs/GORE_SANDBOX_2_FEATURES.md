@@ -740,7 +740,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 699. Grab weapons mid-fight
 700. [x] Goredolls that box back
 701. Goredoll fighting styles (karate Goredolls)
-702. Fight arena with crowd
+702. [x] Fight arena with crowd
 703. [x] Training dummy with damage numbers
 704. [x] Move list screen per style
 705. Combo trainer
@@ -961,7 +961,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 908. Gore Golf (more holes)
 909. Hide & Seek (improved)
 910. Tournament (improved)
-911. Arena fights (fighting styles)
+911. [x] Arena fights (fighting styles)
 912. [x] King of the Hill
 913. Team Deathmatch
 914. [x] Free-for-all
