@@ -834,7 +834,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 789. [x] Soccer goal
 790. [x] Punching bag
 791. [x] Hospital bed with straps
-792. Operating table with tools
+792. [x] Operating table with tools
 793. [x] Wheelchair
 794. Shopping trolley (improved)
 795. [x] Office chair (rolling)

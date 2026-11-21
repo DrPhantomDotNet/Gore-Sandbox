@@ -20,6 +20,7 @@ namespace SolarEclipse
             add("gravityzone", "Gravity Zone", "A field that flips gravity: everything inside floats up. Press E to switch it on/off.", "arrow_down", GravityZone.Create);
             add("oilslick", "Oil Slick", "A slippery puddle of oil. Goredolls that walk into it go down.", "drop", Slick.Oil);
             add("icepatch", "Ice Patch", "A sheet of ice. Goredolls slip and slide on it.", "snow", Slick.Ice);
+            add("optable", "Operating Table", "A steel surgery table with a lamp and a tray of instruments. Lay a Goredoll on it and press E to strap them down.", "scalpel", OperatingTable.Create);
             add("ecgmonitor", "ECG Monitor", "A bedside monitor: shows the nearest Goredoll's heart rate, blood pressure and oxygen, and beeps with every heartbeat.", "heart", EcgMonitor.Create);
         }
 
@@ -347,6 +348,50 @@ namespace SolarEclipse
                 UI.Label(new Rect(r.x + 10, r.y + 32, 220, 26), "BP " + (dead ? "0/0" : Mathf.RoundToInt(v.Systolic) + "/" + Mathf.RoundToInt(v.Diastolic)), 18, new Color(1f, 0.4f, 0.4f), TextAnchor.MiddleLeft, FontStyle.Bold);
                 UI.Label(new Rect(r.x + 10, r.y + 60, 220, 26), "SpO2 " + (dead ? "--" : Mathf.RoundToInt(v.SpO2) + "%"), 18, new Color(0.4f, 0.8f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
             }
+        }
+    }
+
+    /// <summary>GS2 operating table: E straps whoever lies on it down by the chest, wrists and ankles (E again releases).</summary>
+    public sealed class OperatingTable : MonoBehaviour, IInteractable
+    {
+        TriggerZone zone; bool strapped; readonly List<FixedJoint> straps = new List<FixedJoint>();
+        public string Prompt => strapped ? "Release the straps" : "Strap the patient down";
+
+        public static GameObject Create(Vector3 pos, Quaternion rot)
+        {
+            var go = Machines.Root("Operating Table", pos, rot);
+            Machines.Part(go.transform, "Top", mb => { mb.Color = new Color(0.75f, 0.77f, 0.8f); mb.BevelBox(new Vector3(0, 0.9f, 0), new Vector3(0.7f, 0.08f, 2.0f), 0.02f); });
+            Machines.Part(go.transform, "Post", mb => { mb.Color = Machines.Steel; mb.Box(new Vector3(0, 0.45f, 0), new Vector3(0.25f, 0.86f, 0.25f)); mb.Box(new Vector3(0, 0.03f, 0), new Vector3(0.6f, 0.06f, 0.9f)); });
+            Machines.Part(go.transform, "Tray", mb =>
+            {
+                mb.Color = Machines.Steel; mb.Box(new Vector3(0.75f, 1.0f, 0.3f), new Vector3(0.45f, 0.03f, 0.3f)); mb.Box(new Vector3(0.75f, 0.5f, 0.3f), new Vector3(0.03f, 1f, 0.03f));
+                mb.SetColor(new Color(0.9f, 0.9f, 0.93f)); for (int k = 0; k < 5; k++) mb.Box(new Vector3(0.6f + k * 0.07f, 1.02f, 0.3f), new Vector3(0.01f, 0.008f, 0.22f));
+            }, null, false);
+            Machines.Part(go.transform, "Lamp", mb => { mb.Color = new Color(0.85f, 0.86f, 0.88f); mb.Box(new Vector3(-0.5f, 1.3f, 0), new Vector3(0.04f, 2.6f, 0.04f)); mb.Cylinder(new Vector3(-0.2f, 2.3f, 0), new Vector3(-0.2f, 2.42f, 0), 0.3f, 0.3f, 18); }, null, false);
+            var l = new GameObject("Surgical Light").AddComponent<Light>(); l.transform.SetParent(go.transform, false); l.transform.localPosition = new Vector3(-0.2f, 2.25f, 0); l.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            l.type = LightType.Spot; l.spotAngle = 60f; l.range = 4f; l.intensity = 3f; l.color = new Color(1f, 0.98f, 0.92f); l.shadows = LightShadows.Soft;
+            var t = go.AddComponent<OperatingTable>();
+            t.zone = Machines.Zone(go.transform, new Vector3(0, 1.15f, 0), new Vector3(0.8f, 0.5f, 2.1f));
+            return go;
+        }
+
+        public void Interact(GameObject user)
+        {
+            strapped = !strapped;
+            AudioManager.Play("creak", transform.position + Vector3.up, 0.6f, 1.3f);
+            foreach (var j in straps) if (j != null) Destroy(j);
+            straps.Clear();
+            if (!strapped || !Machines.Authority) return;
+            var root = GetComponent<Rigidbody>();
+            foreach (var rb in zone.Live())
+            {
+                var p = TriggerZone.PartOf(rb);
+                if (p == null || p.Doll == null) continue;
+                if (p.Type != PartType.Chest && p.Type != PartType.Pelvis && p.Type != PartType.HandL && p.Type != PartType.HandR && p.Type != PartType.FootL && p.Type != PartType.FootR) continue;
+                var j = rb.gameObject.AddComponent<FixedJoint>(); j.connectedBody = root; j.breakForce = 8000f; straps.Add(j);
+                if (p.Type == PartType.Chest && p.Doll.Vitals.Conscious) p.Doll.Voice.Say("v_no");
+            }
+            GameEvents.ShowToast(straps.Count > 0 ? "Strapped down." : "Nobody on the table.");
         }
     }
 }
