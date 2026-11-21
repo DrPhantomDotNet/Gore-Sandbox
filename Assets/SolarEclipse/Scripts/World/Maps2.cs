@@ -231,7 +231,7 @@ namespace SolarEclipse
 
         // ------------------------------------------------------------------ Laboratory
 
-        static void Room(MapBuilder m, Vector3 min, Vector3 max, Texture2D tex, Color c, SurfaceType st = SurfaceType.Concrete)
+        internal static void Room(MapBuilder m, Vector3 min, Vector3 max, Texture2D tex, Color c, SurfaceType st = SurfaceType.Concrete)
         {
             m.Block("Floor", new Vector3(min.x, min.y - 0.3f, min.z), new Vector3(max.x, min.y, max.z), T(tex), st, c * 0.8f);
             m.Block("Ceiling", new Vector3(min.x, max.y, min.z), new Vector3(max.x, max.y + 0.3f, max.z), T(tex), st, c * 0.6f);
@@ -304,7 +304,7 @@ namespace SolarEclipse
 
         // ------------------------------------------------------------------ Medieval Village
 
-        static void Hut(MapBuilder m, Vector3 c, float yaw, float w, float d, float h, Color wall)
+        internal static void Hut(MapBuilder m, Vector3 c, float yaw, float w, float d, float h, Color wall)
         {
             var rot = Quaternion.Euler(0, yaw, 0); var wood = T(TextureFactory.Wood); var plaster = T(TextureFactory.Plaster);
             Color beam = new Color(0.32f, 0.2f, 0.12f);

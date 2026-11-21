@@ -886,20 +886,20 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 837. [x] New map: Farm with barn
 838. [x] New map: Forest cabin
 839. [x] New map: Desert gas station
-840. New map: Snowy mountain lodge
-841. New map: Military base
+840. [x] New map: Snowy mountain lodge
+841. [x] New map: Military base
 842. New map: Oil rig
 843. New map: Cruise ship
 844. New map: Airport terminal
-845. New map: Stadium
+845. [x] New map: Stadium
 846. New map: School-free campus (university)
 847. New map: Amusement park
-848. New map: Haunted mansion
+848. [x] New map: Haunted mansion
 849. [x] New map: Sewers
 850. [x] New map: Morgue
 851. [x] New map: Laboratory
 852. New map: Space station
-853. New map: Moon base (low gravity)
+853. [x] New map: Moon base (low gravity)
 854. [x] New map: Medieval village
 855. [x] New map: Arena colosseum
 856. [x] New map: Rooftops

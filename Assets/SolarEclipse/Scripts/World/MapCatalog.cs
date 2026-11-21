@@ -51,6 +51,7 @@ namespace SolarEclipse
                 };
                 all.AddRange(ContentMaps.Defs()); // Content Update maps (World/ContentMaps.cs)
                 all.AddRange(Maps2.Defs()); // Gore Sandbox 2 maps (World/Maps2.cs)
+                all.AddRange(Maps3.Defs()); // more Gore Sandbox 2 maps (World/Maps3.cs)
                 all.AddRange(GameModes.Defs()); // Content Update game modes (Game/GameModes.cs)
                 all.AddRange(new[]
                 {

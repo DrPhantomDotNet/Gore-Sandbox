@@ -37,12 +37,14 @@ namespace SolarEclipse
                 var rz = go.AddComponent<AudioReverbZone>();
                 rz.reverbPreset = preset.Value; rz.minDistance = 400f; rz.maxDistance = 500f;
             }
+            if (def.Id == "moonbase" && !NetState.IsClient) { w.savedGravity = Rules.GravityScale; Rules.GravityScale = 0.17f; Rules.ApplyGravity(); w.moon = true; } // a sixth of Earth's gravity
             bool outdoorDay = !def.Indoor && opt != null && opt.Time == TimeOfDay.Day && Weather.Supported(def);
             if (outdoorDay && (Random.value < 0.12f || Rules.ForceEclipse)) w.eclipseAt = Time.time + (Rules.ForceEclipse ? 8f : Random.Range(60f, 200f));
         }
 
         void OnEnable() { Current = this; }
-        void OnDisable() { if (Current == this) Current = null; RestoreLight(); Physiology.AmbientCold = 0f; }
+        float savedGravity = 1f; bool moon;
+        void OnDisable() { if (Current == this) Current = null; RestoreLight(); Physiology.AmbientCold = 0f; if (moon) { moon = false; Rules.GravityScale = savedGravity; Rules.ApplyGravity(); } }
 
         bool Cold => opt != null && (opt.Weather == WeatherKind.Snow || opt.Weather == WeatherKind.Hail) || (def != null && def.Id != null && (def.Id.Contains("snow") || def.Id.Contains("lodge") || def.Id.Contains("arctic")));
         bool Wet => opt != null && (opt.Weather == WeatherKind.Rain || opt.Weather == WeatherKind.Thunderstorm);
