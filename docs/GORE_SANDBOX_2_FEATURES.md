@@ -474,7 +474,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 443. [x] Grudges: attack the player who hurt them
 444. Friends that help each other
 445. Dragging injured friends to safety
-446. Applying bandages to friends
+446. [x] Applying bandages to friends
 447. [x] Calling for help on phones
 448. [x] Fleeing to exits
 449. [x] Hiding behind cover
@@ -516,7 +516,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 485. [x] Cheering at fights
 486. Filming fights with phones
 487. Police AI that arrests
-488. Medic AI that treats the injured
+488. [x] Medic AI that treats the injured
 489. Security guard AI with patrol routes
 490. Soldier AI with squad tactics
 491. Flanking and suppression for armed AI

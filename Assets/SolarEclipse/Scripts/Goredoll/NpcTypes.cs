@@ -169,6 +169,7 @@ namespace SolarEclipse
                         }, layer);
                     }
                 if (t.Bloodless && doll.Bleeding != null) doll.Bleeding.enabled = false;
+                if (t.Id == "paramedic" || t.Id == "doctor") doll.gameObject.AddComponent<MedicAI>(); // GS2: treats the injured
                 if (t.Bloodless || t.Id == "cyborg") doll.gameObject.AddComponent<SyntheticBody>().Init(doll, t.Id == "cyborg");
                 if (t.Weapon != null && doll.Parts.TryGetValue(PartType.HandR, out var hand) && hand != null)
                 {
@@ -299,6 +300,51 @@ namespace SolarEclipse
                 }
                 last[p] = p.Health;
             }
+        }
+    }
+
+    /// <summary>
+    /// GS2 medic AI (paramedics, doctors): walks to the nearest bleeding Goredoll, kneels over them for a few
+    /// seconds and stops most of the bleeding. Host only; overrides the brain's movement while treating.
+    /// </summary>
+    public sealed class MedicAI : MonoBehaviour
+    {
+        Goredoll doll, patient; float nextScan, treatT;
+
+        void Start() { doll = GetComponent<Goredoll>(); }
+
+        void LateUpdate()
+        {
+            if (doll == null || doll.IsDead || NetState.IsClient || !doll.Vitals.Conscious || doll.Ragdoll == null || !doll.Ragdoll.IsStanding) return;
+            if (doll.Brain != null && (doll.Brain.Running || doll.Brain.Hostile)) { patient = null; return; }
+            if (Time.time >= nextScan)
+            {
+                nextScan = Time.time + 1.5f;
+                if (patient == null || patient.IsDead || patient.TotalBleed < 1f)
+                {
+                    patient = null; float best = 25f * 25f;
+                    foreach (var g in Goredoll.All)
+                    {
+                        if (g == null || g == doll || g.IsDead || g.TotalBleed < 2f || g.Zombie != null) continue;
+                        float d = (g.Position - doll.Position).sqrMagnitude;
+                        if (d < best) { best = d; patient = g; }
+                    }
+                    treatT = 0f;
+                    if (patient != null) doll.Voice?.Say("v_hey", 0.8f, false);
+                }
+            }
+            if (patient == null) return;
+            var to = MathX.Flat(patient.Position - doll.Position);
+            doll.Ragdoll.DesiredYaw = Quaternion.LookRotation(to + Vector3.forward * 0.001f).eulerAngles.y;
+            if (to.magnitude > 1.1f) { doll.Ragdoll.DesiredVelocity = to.normalized * (to.magnitude > 5f ? 3.5f : 1.4f); doll.Ragdoll.Pose = to.magnitude > 5f ? PoseMode.Run : PoseMode.Walk; return; }
+            doll.Ragdoll.DesiredVelocity = Vector3.zero;
+            doll.Ragdoll.Pose = PoseMode.Cower; // kneeling over the patient
+            treatT += Time.deltaTime;
+            if (treatT < 3.5f) return;
+            foreach (var bp in patient.Parts.Values) if (bp != null) foreach (var w in bp.Wounds) w.BleedRate *= 0.15f;
+            patient.Vitals.Pain = Mathf.Max(0f, patient.Vitals.Pain - 25f);
+            AudioManager.Play("whoosh_small", patient.Position, 0.6f, 0.7f);
+            patient = null; treatT = 0f;
         }
     }
 }
