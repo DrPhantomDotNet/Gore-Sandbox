@@ -255,6 +255,10 @@ namespace SolarEclipse
             tint.a = 1;
             var oldBruise = d.Go != null ? d.Go.GetComponent<Bruise>() : null;
             if (oldBruise != null) oldBruise.enabled = false; // recycled decal: stop ageing the previous bruise
+            var oldGape = d.Go != null ? d.Go.GetComponent<WoundGape>() : null;
+            if (oldGape != null) oldGape.enabled = false;
+            var oldBead = d.Go != null ? d.Go.GetComponent<WoundBead>() : null;
+            if (oldBead != null) oldBead.enabled = false;
             Place(d, pos, normal, size, rot, TextureFactory.AtlasCell(cell, TextureFactory.WoundCells), tint, bodyPart, 0.002f);
             d.Renderer.sharedMaterial = Mats.DecalWounds;
             // Wound decals always follow the limb, even static colliders.

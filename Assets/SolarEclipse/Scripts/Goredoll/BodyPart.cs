@@ -203,8 +203,14 @@ namespace SolarEclipse
                 if (Type == PartType.Neck && w.Arterial) cell = 13;
                 float rot = info.Type == DamageType.Slash ? Vector3.SignedAngle(transform.right, info.Direction, info.Normal) : -1f;
                 if (rot < 0 && rot != -1f) rot += 360f;
-                if (w.Kind != WoundKind.Blunt) Decals.Wound(pos, info.Normal, cell, size, Col, rot);
+                if (w.Kind != WoundKind.Blunt)
+                {
+                    var wd = Decals.Wound(pos, info.Normal, cell, size, Col, rot);
+                    if (w.Kind == WoundKind.Laceration && dmg > 8f) WoundGape.Begin(wd, Mathf.Clamp(dmg / 25f, 0.25f, 0.7f)); // cuts pull open (Gore/GoreRework2.cs)
+                    else if ((w.Kind == WoundKind.Graze || (w.Kind == WoundKind.Laceration && dmg <= 8f)) && Settings.GoreEnabled && !Rules.NoBleeding) WoundBead.Begin(wd); // small cuts bead and drip
+                }
                 else if (dmg > 2.5f) Bruise.Begin(Decals.Wound(pos, info.Normal, cell, size * Mathf.Clamp(dmg / 15f, 0.5f, 1.4f), Col, rot)); // bruises age red > purple > blue > yellow (Gore/GoreRework.cs)
+                if (w.Kind == WoundKind.Blunt && IsHead && dmg > 6f) BlackEye.Maybe(this, pos); // punches to the face (Gore/GoreRework2.cs)
                 if (w.BleedRate > 0.5f) Doll.Bleeding.AddEmitter(this, w);
 
                 // The Gore Update (Gore/GoreKit.cs)

@@ -215,13 +215,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 194. Hanging skin flaps on torn stumps
 195. Exposed tendons on wrists and ankles
 196. Muscle fibres stretching before tearing
-197. Entry wounds small and dark
-198. Exit wounds larger with torn edges
-199. Bullet wound size by calibre
+197. [x] Entry wounds small and dark
+198. [x] Exit wounds larger with torn edges
+199. [x] Bullet wound size by calibre
 200. Shotgun wound patterns
 201. Grazes that leave long scrapes
 202. Stab wounds with slit shape
-203. Slash wounds that open wider over time
+203. [x] Slash wounds that open wider over time
 204. Deep cuts showing muscle underneath
 205. Very deep cuts exposing organs
 206. Intestines spilling from deep abdominal wounds
@@ -244,7 +244,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 223. [x] Bruises appearing over seconds
 224. [x] Bruises aging: red, purple, blue, yellow
 225. Swelling around blunt hits
-226. Black eyes from face punches
+226. [x] Black eyes from face punches
 227. Burns: red skin, blisters, charred black
 228. Burned clothes falling apart
 229. Frostbite blue skin (freeze ray)
@@ -288,7 +288,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 267. Bullet wounds bleed out of clothes holes
 268. [x] Arterial wounds spray in pulses
 269. [x] Venous wounds ooze steadily
-270. Capillary wounds bead and drip
+270. [x] Capillary wounds bead and drip
 
 ## 6. Blood & Fluids (40)
 271. [x] Arterial spray that pulses with the heartbeat
