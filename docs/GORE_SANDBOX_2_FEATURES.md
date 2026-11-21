@@ -40,7 +40,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 27. Trailer mode button in Extras (unlisted)
 28. Photo-real thumbnail generator for maps
 29. Shareable title screen screenshot
-30. Soft fade transitions between every screen
+30. [x] Soft fade transitions between every screen
 
 ## 2. Main Menu & UI (50)
 31. [x] Live 3D scene behind the main menu
@@ -618,16 +618,16 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 581. New weapon models with more detail
 582. Weapon wear and dirt
 583. Realistic recoil patterns per gun
-584. Bullet drop on long range
-585. Bullet penetration through thin walls
-586. Ricochets off metal
-587. Tracers on automatic weapons
+584. [x] Bullet drop on long range
+585. [x] Bullet penetration through thin walls
+586. [x] Ricochets off metal
+587. [x] Tracers on automatic weapons
 588. [x] Muzzle smoke after firing
-589. Casings ejecting with physics
-590. Empty magazines dropping
-591. Tactical vs empty reloads
+589. [x] Casings ejecting with physics
+590. [x] Empty magazines dropping
+591. [x] Tactical vs empty reloads
 592. Chamber check animation
-593. Weapon inspect animations for all guns
+593. [x] Weapon inspect animations for all guns
 594. Fire mode switch animations
 595. Jamming option (realism)
 596. Overheating for miniguns

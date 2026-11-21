@@ -34,9 +34,15 @@ namespace SolarEclipse
             if (mask == 0) mask = Layers.ShootMask;
             var pos = origin;
             var end = origin + dir * remaining;
+            bool drop = def.Range > 200f; // GS2 bullet drop: long-range rounds fall along their path (~850 m/s muzzle velocity)
             for (int i = 0; i < 8 && remaining > 0.01f; i++)
             {
-                if (!Physics.Raycast(pos, dir, out var hit, remaining, mask, QueryTriggerInteraction.Ignore)) { end = pos + dir * remaining; break; }
+                float seg = drop ? Mathf.Min(remaining, 120f) : remaining;
+                if (!Physics.Raycast(pos, dir, out var hit, seg, mask, QueryTriggerInteraction.Ignore))
+                {
+                    if (drop && remaining > seg) { pos += dir * seg; remaining -= seg; dir = (dir + Vector3.down * 0.0016f).normalized; i--; continue; }
+                    end = pos + dir * seg; break;
+                }
                 end = hit.point;
                 remaining -= hit.distance;
                 var part = hit.collider.GetComponent<BodyPart>();
