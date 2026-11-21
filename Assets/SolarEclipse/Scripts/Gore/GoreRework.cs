@@ -103,6 +103,7 @@ namespace SolarEclipse
         float dist;
         int wet;
         bool left;
+        float trail;
 
         public static void Attach(Goredoll d) { if (d != null && d.GetComponent<DollFootprints>() == null) d.gameObject.AddComponent<DollFootprints>().doll = d; }
 
@@ -112,6 +113,16 @@ namespace SolarEclipse
             var p = pelvis.Body.position;
             var step = MathX.Flat(p - last);
             last = p;
+            // GS2: bleeding bodies on the ground (crawling, dragged, sliding) leave a smeared trail.
+            if (!doll.Ragdoll.IsStanding && step.magnitude < 1f && doll.TotalBleed > 1.5f && Settings.GoreEnabled)
+            {
+                trail += step.magnitude;
+                if (trail > 0.22f && Physics.Raycast(p + Vector3.up * 0.1f, Vector3.down, out var gh, 0.6f, Layers.DecalMask, QueryTriggerInteraction.Ignore))
+                {
+                    trail = 0f;
+                    Decals.Blood(gh.point, gh.normal, Mathf.Clamp(0.14f + doll.TotalBleed * 0.01f, 0.14f, 0.32f), 0, gh.collider);
+                }
+            }
             if (!doll.Ragdoll.IsStanding || step.magnitude > 1f) return;
             dist += step.magnitude;
             if (dist < 0.72f) return;

@@ -303,8 +303,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 280. Blood running down walls
 281. Blood running down slopes
 282. Blood splatter shape by impact angle
-283. Mist from high-velocity impacts
-284. Blood on the camera lens when close
+283. [x] Mist from high-velocity impacts
+284. [x] Blood on the camera lens when close
 285. Blood on weapons after melee hits
 286. Blood on the player's hands/gloves
 287. Clean blood off weapons (inspect key)
@@ -312,7 +312,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 289. Blood viscosity setting
 290. Blood on water surfaces spreads
 291. Blood in rain gets washed thin
-292. Coughing blood spray
+292. [x] Coughing blood spray
 293. [x] Vomiting (poison, gut wounds)
 294. [x] Drooling blood from mouth
 295. [x] Nosebleeds from face hits
@@ -320,13 +320,13 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 297. Eye bleeding (extreme)
 298. Bubbling blood from lung wounds
 299. Blood bubbles at mouth when breathing
-300. Bleeding stops when heart stops
+300. [x] Bleeding stops when heart stops
 301. Blood volume shown in the wound inspector
 302. Blood decals limit by graphics level
 303. Blood cleanup tool (mop)
-304. Hose that washes blood away
-305. Blood trails behind dragged bodies
-306. Blood trails behind crawling Goredolls
+304. [x] Hose that washes blood away
+305. [x] Blood trails behind dragged bodies
+306. [x] Blood trails behind crawling Goredolls
 307. Blood drips from hanging bodies onto the floor
 308. Sprinkler/fire system washing blood
 309. Blood soaking into dirt and grass
