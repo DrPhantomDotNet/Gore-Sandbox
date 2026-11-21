@@ -73,7 +73,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 58. [x] Map sort by name, size, newest, most played
 59. Settings rebuilt into tabs: Video, Audio, Gore, Controls, Gameplay, Accessibility
 60. Every setting has a short description
-61. Reset-to-default per tab
+61. [x] Reset-to-default per tab
 62. Settings search
 63. Pause menu redesign with live blurred background
 64. Pause menu quick toggles (slow-mo, noclip, god mode)

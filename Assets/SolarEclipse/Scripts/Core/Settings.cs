@@ -133,7 +133,7 @@ namespace SolarEclipse
             => Data.touchMode == 1 || (Data.touchMode == 0 && (Application.isMobilePlatform || Input.touchSupported && Input.touchCount > 0 && !Input.mousePresent));
 
         /// <summary>First launch on a phone/tablet: lighter graphics and fewer bodies so it stays smooth.</summary>
-        static void MobileDefaults(SettingsData d)
+        internal static void MobileDefaults(SettingsData d)
         {
             d.targetFps = 60;
             d.antiAliasing = 1;      // 2x MSAA

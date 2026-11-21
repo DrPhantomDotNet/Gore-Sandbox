@@ -166,12 +166,41 @@ namespace SolarEclipse
 
             if (UI.Button(new Rect(r.x + 24, r.yMax - 80, 250, 58), "RESET DEFAULTS", ButtonKind.Danger, IconFactory.Get("refresh"), 20))
                 UIRoot.Push(new ConfirmDialog("Reset settings?", "Every option goes back to its default value.", Settings.ResetToDefaults, "RESET", ButtonKind.Danger));
+            if (UI.Button(new Rect(r.x + 284, r.yMax - 80, 250, 58), "RESET THIS TAB", ButtonKind.Ghost, IconFactory.Get("refresh"), 20))
+            { int t = tab; UIRoot.Push(new ConfirmDialog("Reset " + TabNames[t] + "?", "Only the options on this tab go back to their defaults.", () => ResetTab(t), "RESET", ButtonKind.Danger)); }
             if (UI.Button(new Rect(r.xMax - 274, r.yMax - 80, 250, 58), "SAVE & BACK", ButtonKind.Primary, IconFactory.Get("check"), 22)) OnBack();
         }
 
         int row;
         float scrollY, width;
         Rect Next() => new Rect(0, scrollY + (row++) * 64f, width, 56);
+
+        // GS2: reset one tab to defaults (field names of SettingsData shown on each tab).
+        static readonly string[][] TabFields =
+        {
+            new[] { "qualityLevel", "fullscreen", "vsync", "targetFps", "shadowQuality", "shadowDistance", "antiAliasing", "fov", "viewmodelFov", "renderDistance", "brightness", "fog", "showFps", "detailedStats" },
+            new[] { "masterVolume", "sfxVolume", "voiceVolume", "musicVolume", "ambienceVolume", "uiVolume", "dynamicMusic", "monoAudio" },
+            new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
+            new[] { "headBob", "screenShake", "viewmodel", "subtitles", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
+            new[] { "goreLevel", "bloodColor", "bloodAmount", "bloodOnScreen", "hideOrgans", "noGibs", "noFlies", "flashReduction", "maxDecals", "maxGibs", "gibLifetime", "hitmarkers", "damageNumbers", "killFeed" },
+            new[] { "uiScale", "autoUpdate", "playIntro", "pauseOnFocusLoss", "vibration", "batterySaver", "filmLook", "menuScene", "showChat", "crosshairStyle", "crosshairColor", "crosshairSize" },
+            new[] { "voiceMode", "pushToTalkKey", "micGain", "voiceThreshold", "incomingVoiceVolume", "proximityVoice" },
+            new[] { "vrMode", "vrSnapTurn", "vrSnapAngle", "vrTurnSpeed", "vrHandDirection", "vrManualReload", "vrGunAngle", "vrHeightOffset" },
+        };
+
+        static void ResetTab(int t)
+        {
+            if (t < 0 || t >= TabFields.Length) return;
+            var def = new SettingsData();
+            if (Application.isMobilePlatform) Settings.MobileDefaults(def);
+            foreach (var name in TabFields[t])
+            {
+                var f = typeof(SettingsData).GetField(name);
+                if (f != null) f.SetValue(Settings.Data, f.GetValue(def));
+            }
+            Settings.Apply(); Settings.Save();
+            AudioManager.Ui("ui_success");
+        }
 
         int Rows()
         {
