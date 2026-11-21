@@ -139,7 +139,7 @@ namespace SolarEclipse
             var c = Colors[Random.Range(0, Colors.Length)];
             Machines.Part(go.transform, "Balloon", mb => { mb.Color = c; mb.Sphere(Vector3.zero, new Vector3(0.28f, 0.34f, 0.28f)); mb.Box(new Vector3(0, -0.36f, 0), new Vector3(0.05f, 0.05f, 0.05f)); }, Mats.Lit, true);
             var b = go.AddComponent<Balloon>();
-            b.rb = go.GetComponent<Rigidbody>(); b.rb.useGravity = false; b.rb.drag = 1.5f; b.rb.angularDrag = 2f; b.born = Time.time;
+            b.rb = go.GetComponent<Rigidbody>(); b.rb.useGravity = false; RB.SetDamping(b.rb, 1.5f, 2f); b.born = Time.time;
             b.line = go.AddComponent<LineRenderer>(); b.line.widthMultiplier = 0.008f; b.line.sharedMaterial = Mats.Lit; b.line.positionCount = 2; b.line.enabled = false;
             return go;
         }
@@ -249,7 +249,6 @@ namespace SolarEclipse
     public sealed class Slick : MonoBehaviour
     {
         TriggerZone zone; bool ice; readonly Dictionary<BodyPart, float> hit = new Dictionary<BodyPart, float>();
-        static PhysicMaterial slippery;
 
         public static GameObject Oil(Vector3 pos, Quaternion rot) => Build(pos, rot, false);
         public static GameObject Ice(Vector3 pos, Quaternion rot) => Build(pos, rot, true);
@@ -262,8 +261,7 @@ namespace SolarEclipse
                 mb.Color = ice ? new Color(0.8f, 0.92f, 1f) : new Color(0.04f, 0.04f, 0.05f);
                 mb.Box(new Vector3(0, 0.01f, 0), new Vector3(ice ? 4f : 3f, 0.02f, ice ? 4f : 2.4f));
             }, ice ? Mats.Glass : Mats.LitMetal, true);
-            if (slippery == null) slippery = new PhysicMaterial("Slippery") { dynamicFriction = 0.02f, staticFriction = 0.02f, frictionCombine = PhysicMaterialCombine.Minimum, bounciness = 0f };
-            top.GetComponent<Collider>().sharedMaterial = slippery;
+            PhysMat.Frictionless(top.GetComponent<Collider>()); // Core/RB.cs: works on Unity 6 and older
             var s = go.AddComponent<Slick>(); s.ice = ice;
             s.zone = Machines.Zone(go.transform, new Vector3(0, 0.4f, 0), new Vector3(ice ? 4f : 3f, 0.8f, ice ? 4f : 2.4f));
             return go;
