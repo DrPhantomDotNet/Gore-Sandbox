@@ -483,7 +483,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 452. Barricading with props
 453. Picking up weapons from the ground
 454. Using melee weapons they find
-455. Throwing props at you
+455. [x] Throwing props at you
 456. [x] Fighting back with punches and kicks
 457. Grappling and shoving
 458. [x] Surrendering with hands up
@@ -992,7 +992,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 939. Custom game rules editor
 940. Mode voting in multiplayer
 941. Bots for every mode
-942. Scoreboards per mode
+942. [x] Scoreboards per mode
 943. Match replays
 944. Spectator mode
 945. Mode tutorials

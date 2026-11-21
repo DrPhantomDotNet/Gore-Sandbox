@@ -452,6 +452,7 @@ namespace SolarEclipse
             var to = MathX.Flat(fightTarget.position - Pelvis);
             FaceTowards(fightTarget.position);
             body.LookTarget = fightTarget.position + Vector3.up * 1.4f;
+            if (to.magnitude > 4f && to.magnitude < 14f && Time.time > nextThrow) TryThrowProp(fightTarget.position + Vector3.up * 1.2f); // GS2: grab something and chuck it
             if (to.magnitude > 1.15f) { move = to.normalized; run = to.magnitude > 3f; body.Pose = run ? PoseMode.Run : PoseMode.Guard; return; }
             body.Pose = PoseMode.Punch;
             punchTimer += dt;
@@ -468,6 +469,30 @@ namespace SolarEclipse
             }
             if (punchTimer > 1.0f) { punchTimer = 0; if (Random.value < 0.2f) doll.Voice.Say("v_argh", 0.8f, false); }
             if (Fear > 0.8f) SetAction(AiAction.Flee);
+        }
+
+        float nextThrow;
+        static readonly Collider[] ThrowHits = new Collider[16];
+        /// <summary>GS2: angry Goredolls throw a light prop lying next to them at whoever they're fighting.</summary>
+        void TryThrowProp(Vector3 target)
+        {
+            nextThrow = Time.time + Random.Range(3f, 6f);
+            if (NetState.IsClient || Random.value > 0.6f) return;
+            int n = Physics.OverlapSphereNonAlloc(Pelvis, 1.8f, ThrowHits, Layers.Mask(Layers.Props), QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < n; i++)
+            {
+                var rb = ThrowHits[i].attachedRigidbody;
+                if (rb == null || rb.isKinematic || rb.mass > 12f || rb.GetComponent<OWCar>() != null) continue;
+                var from = Pelvis + Vector3.up * 1.4f + MathX.Flat(target - Pelvis).normalized * 0.6f;
+                rb.position = from;
+                var to = target - from; float t = Mathf.Clamp(to.magnitude / 14f, 0.35f, 1f);
+                RB.SetVel(rb, to / t + Vector3.up * (0.5f * 9.81f * t)); // simple ballistic arc
+                rb.angularVelocity = Random.insideUnitSphere * 8f;
+                body.Pose = PoseMode.Punch; body.PunchProgress = 1f;
+                AudioManager.Play("whoosh_big", from, 0.7f);
+                if (Random.value < 0.5f) doll.Voice.Say("v_argh", 0.8f, false);
+                return;
+            }
         }
 
         Vector3 FollowPath()
