@@ -335,6 +335,7 @@ namespace SolarEclipse
         }
 
         float Part(PartType t) => doll.Parts.TryGetValue(t, out var p) ? p.Function : 0f;
+        float Bleed(PartType t) => doll.Parts.TryGetValue(t, out var p) && p != null && !p.Severed ? p.BleedRate : 0f;
 
         void Act(float dt)
         {
@@ -413,6 +414,14 @@ namespace SolarEclipse
                     Thought = "~ dancing ~";
                     body.Pose = PoseMode.Dance;
                     break;
+            }
+
+            // GS2: press a hand on a bleeding neck or belly wound (unless running, fighting or hands up).
+            if (!run && (body.Pose == PoseMode.Idle || body.Pose == PoseMode.Walk || body.Pose == PoseMode.LookAround) && Action != AiAction.Fight && Action != AiAction.Surrender)
+            {
+                float neck = Bleed(PartType.Neck), trunk = Mathf.Max(Bleed(PartType.Chest), Bleed(PartType.Abdomen));
+                if (neck > 0.8f) body.Pose = PoseMode.ClutchNeck;
+                else if (trunk > 1.2f) body.Pose = PoseMode.ClutchTorso;
             }
 
             if (move.sqrMagnitude > 0.01f)

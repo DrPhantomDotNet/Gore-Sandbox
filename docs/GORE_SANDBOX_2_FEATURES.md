@@ -198,7 +198,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 179. Better walk cycle with arm swing
 180. Run, sprint and panic-run cycles
 181. Limping with leg injuries
-182. Holding wounds with hands
+182. [x] Holding wounds with hands
 183. Crawling with injured legs (improved)
 184. Getting-up animations (from back and front)
 185. Falling-protect reflex (arms out)
