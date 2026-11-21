@@ -45,7 +45,7 @@ namespace SolarEclipse
             {
                 var p = cp + new Vector3(Random.Range(-18f, 18f), 4f, Random.Range(-18f, 18f));
                 if (Physics.Raycast(p + Vector3.up * 30f, Vector3.down, out var h, 40f, Layers.WorldMask, QueryTriggerInteraction.Ignore) && h.normal.y > 0.7f)
-                    Decals.Wash(h.point, 1.2f);
+                    Decals.Wash(h.point, 1.2f, false);
             }
         }
         bool Windy => opt != null && (opt.Weather == WeatherKind.Thunderstorm || opt.Weather == WeatherKind.Sandstorm || opt.Weather == WeatherKind.Hail);
