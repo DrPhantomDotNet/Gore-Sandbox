@@ -365,6 +365,13 @@ namespace SolarEclipse
                     Thought = "watching you";
                     if (p != null && playerDist < 2.2f) move = -MathX.Flat(p.Position - Pelvis).normalized * 0.8f;
                     if (p != null) FaceTowards(p.Position);
+                    // GS2: bystanders cheer when you're fighting someone with your fists (fighting styles).
+                    if (p is PlayerController pc && pc.Inventory != null && pc.Inventory.Current is Boxing && playerDist < 12f && Time.time - pc.Inventory.LastSwitchTime > 1f)
+                    {
+                        Thought = "FIGHT! FIGHT!";
+                        if (Mathf.Repeat(Time.time + doll.GetInstanceID() * 0.37f, 3f) < 1.2f) body.Pose = PoseMode.Wave;
+                        if (Time.time > nextCheer) { nextCheer = Time.time + Random.Range(3f, 7f); doll.Voice.Say(Random.value < 0.5f ? "v_hey" : "v_whoa", 0.7f, false); }
+                    }
                     break;
                 case AiAction.Greet:
                     Thought = "saying hi";
@@ -471,7 +478,7 @@ namespace SolarEclipse
             if (Fear > 0.8f) SetAction(AiAction.Flee);
         }
 
-        float nextThrow;
+        float nextThrow, nextCheer;
         static readonly Collider[] ThrowHits = new Collider[16];
         /// <summary>GS2: angry Goredolls throw a light prop lying next to them at whoever they're fighting.</summary>
         void TryThrowProp(Vector3 target)

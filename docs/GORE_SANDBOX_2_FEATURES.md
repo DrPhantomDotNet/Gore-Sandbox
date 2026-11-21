@@ -513,7 +513,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 482. Daily routines on story maps
 483. Smoking, drinking and phone idles
 484. [x] Dancing when music plays
-485. Cheering at fights
+485. [x] Cheering at fights
 486. Filming fights with phones
 487. Police AI that arrests
 488. Medic AI that treats the injured
