@@ -56,6 +56,7 @@ namespace SolarEclipse
 
         void Awake()
         {
+            MissionClock.Mark();
             I = this;
             Rules.ResetAll();
             UIRoot.HudLayer += DrawHud;

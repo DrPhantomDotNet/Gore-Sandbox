@@ -121,8 +121,22 @@ namespace SolarEclipse
         public override bool ShowCursor => false;
         public override bool BlocksGameplay => true;
 
+        string rankLine; Color rankCol;
+
         public override void OnOpen()
         {
+            // GS2 mission rank: S/A/B/C from the time taken and how much damage you took (deaths reset the clock).
+            float secs = MissionClock.Elapsed; var p = PlayerController.Instance;
+            float hp = p != null && p.Health != null ? Mathf.Clamp01(p.Health.Current / Mathf.Max(1f, p.Health.Max)) : 1f;
+            float score = Mathf.Clamp01(1f - secs / 900f) * 0.6f + hp * 0.4f;
+            string rank = score > 0.8f ? "S" : score > 0.6f ? "A" : score > 0.4f ? "B" : "C";
+            rankCol = rank == "S" ? new Color(1f, 0.82f, 0.2f) : rank == "A" ? new Color(0.5f, 1f, 0.55f) : rank == "B" ? new Color(0.55f, 0.75f, 1f) : new Color(0.8f, 0.8f, 0.8f);
+            var kb = new System.Text.StringBuilder("mission_best_"); foreach (var ch in subtitle ?? "") if (char.IsLetterOrDigit(ch) && kb.Length < 60) kb.Append(char.ToLowerInvariant(ch)); string key = kb.ToString();
+            float best = PlayerPrefs.GetFloat(key, 0f);
+            bool record = best <= 0f || secs < best;
+            if (record && secs > 1f) PlayerPrefs.SetFloat(key, secs);
+            rankLine = "RANK " + rank + "    TIME " + MissionClock.Format(secs) + (record ? "    NEW BEST" : "    BEST " + MissionClock.Format(best));
+            Stats.Add("missions_rank_" + rank);
             AudioManager.StopMusic();
             AudioManager.Play2D("story_passed", 1f, 1f, AudioBus.Ui);
             CameraFX.Shake(0.25f);
@@ -163,6 +177,8 @@ namespace SolarEclipse
             UI.Label(new Rect(0, H * 0.36f + 168, W, 60), subtitle, 40, new Color(1f, 1f, 1f, sa), TextAnchor.MiddleCenter, FontStyle.Bold);
             float ca = Mathf.Clamp01((t - 1.4f) / 0.4f) * (1f - Mathf.Clamp01((t - FadeAt) / 0.6f));
             UI.Label(new Rect(0, H * 0.36f + 230, W, 44), line, 26, new Color(0.85f, 0.85f, 0.85f, ca), TextAnchor.MiddleCenter, FontStyle.Bold);
+            float ra = Mathf.Clamp01((t - 2f) / 0.4f) * (1f - Mathf.Clamp01((t - FadeAt) / 0.6f));
+            if (rankLine != null) UI.Label(new Rect(0, H * 0.36f + 280, W, 44), rankLine, 26, rankCol.WithAlpha(ra), TextAnchor.MiddleCenter, FontStyle.Bold);
 
             // Fade to black.
             float fade = Mathf.Clamp01((t - FadeAt) / FadeTime);
@@ -269,5 +285,14 @@ namespace SolarEclipse
         void Leave() { leaving = true; leaveAt = Time.unscaledTime; AudioManager.Ui("ui_close"); }
 
         public override bool OnBack() { if (!leaving) Leave(); return true; }
+    }
+
+    /// <summary>GS2: time since the current story mission started (reset when a mission loads or restarts).</summary>
+    public static class MissionClock
+    {
+        static float start = -1f;
+        public static void Mark() => start = Time.time;
+        public static float Elapsed => start < 0f ? 0f : Time.time - start;
+        public static string Format(float s) { int m = Mathf.FloorToInt(s / 60f); return m + ":" + Mathf.FloorToInt(s % 60f).ToString("00"); }
     }
 }

@@ -1013,8 +1013,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 958. Hard mode
 959. Permadeath mode
 960. New Game+
-961. Mission ranks (S, A, B, C)
-962. Mission timers and best times
+961. [x] Mission ranks (S, A, B, C)
+962. [x] Mission timers and best times
 963. Stealth sections
 964. Chase sections
 965. Boss fights with phases

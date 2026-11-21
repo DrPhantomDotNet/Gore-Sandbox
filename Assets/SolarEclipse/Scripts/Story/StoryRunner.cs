@@ -107,6 +107,7 @@ namespace SolarEclipse
         void Awake()
         {
             I = this;
+            MissionClock.Mark(); // GS2: mission time, rank and best time on MISSION PASSED (UI/Screens/StoryScreens.cs)
             Rules.ResetAll();
             UIRoot.HudLayer += DrawHud;
         }
