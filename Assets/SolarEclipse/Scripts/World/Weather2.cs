@@ -33,13 +33,14 @@ namespace SolarEclipse
         }
 
         void OnEnable() { Current = this; }
-        void OnDisable() { if (Current == this) Current = null; RestoreLight(); }
+        void OnDisable() { if (Current == this) Current = null; RestoreLight(); Physiology.AmbientCold = 0f; }
 
         bool Cold => opt != null && (opt.Weather == WeatherKind.Snow || opt.Weather == WeatherKind.Hail) || (def != null && def.Id != null && (def.Id.Contains("snow") || def.Id.Contains("lodge") || def.Id.Contains("arctic")));
         bool Windy => opt != null && (opt.Weather == WeatherKind.Thunderstorm || opt.Weather == WeatherKind.Sandstorm || opt.Weather == WeatherKind.Hail);
 
         void Update()
         {
+            Physiology.AmbientCold = Cold && !def.Indoor ? 1f : 0f; // hypothermia (Goredoll/Physiology.cs)
             var cam = Camera.main;
             if (cam == null) return;
             var cp = cam.transform.position;

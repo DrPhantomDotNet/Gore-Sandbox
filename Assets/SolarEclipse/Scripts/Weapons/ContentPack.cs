@@ -245,6 +245,7 @@ namespace SolarEclipse
                 glow.transform.SetParent(ch.transform, false); glow.transform.localPosition = Vector3.up * 0.2f;
                 glow.type = LightType.Point; glow.color = new Color(1f, 0.5f, 0.15f); glow.range = 6f; glow.shadows = LightShadows.None;
             }
+            d.Vitals.Temperature = Mathf.MoveTowards(d.Vitals.Temperature, 43f, Time.deltaTime * 0.15f); // burning heats the body
             if (glow != null) glow.intensity = (1.4f + Mathf.PerlinNoise(Time.time * 9f, GetInstanceID() * 0.1f) * 1.4f) * Mathf.Clamp01(until - Time.time);
             int k = 0;
             foreach (var part in d.Parts.Values)

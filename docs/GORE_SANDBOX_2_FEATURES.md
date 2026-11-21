@@ -351,7 +351,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 326. Kidney damage
 327. Stomach and intestine damage
 328. [x] Shock stages I–IV
-329. Hypothermia and hyperthermia
+329. [x] Hypothermia and hyperthermia
 330. [x] Pain that changes behaviour by severity
 331. [x] Adrenaline that delays pain
 332. [x] Fainting from pain or blood sight
@@ -374,7 +374,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 349. X-ray scanner tool
 350. [x] ECG monitor prop showing live vitals
 351. Medical chart screen per Goredoll
-352. Body temperature readout
+352. [x] Body temperature readout
 353. Pupil response check
 354. [x] Glasgow coma score display (improved)
 355. [x] Triage tag tool (colours)

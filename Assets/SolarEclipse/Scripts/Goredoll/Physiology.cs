@@ -24,6 +24,8 @@ namespace SolarEclipse
         public float LungDamage;       // 0..2
         public float AirwayBlood;      // 0..1 (neck/trachea injury → choking)
         public float HeadTrauma;       // 0..1
+        public float Temperature = 37f;  // °C (GS2: hypothermia in the cold, hyperthermia when burning)
+        public static float AmbientCold; // 0 normal, 1 freezing (set by World/Weather2.cs)
         public float InternalBleed;    // ml/s of hidden bleeding into the chest/belly (GS2: heavy blunt hits)
         /// <summary>Airway squeezed shut (headlock choke, Weapons/FightingStyles.cs): 0..1, ends at ChokeUntil.</summary>
         public float Choke, ChokeUntil;
@@ -88,6 +90,9 @@ namespace SolarEclipse
             float f = BloodLossFraction;
 
             Adrenaline = Mathf.MoveTowards(Adrenaline, 0f, dt * 0.03f);
+            // Temperature: blood loss and cold weather cool the body; it warms back towards 37.
+            float tTarget = 37f - AmbientCold * 5f - Mathf.Clamp01(f / 0.4f) * 1.5f;
+            Temperature = Mathf.MoveTowards(Temperature, tTarget, dt * (tTarget < Temperature ? 0.006f : 0.02f));
             Pain = Mathf.MoveTowards(Pain, 0f, dt * (Rules.NoPain ? 50f : 0.8f));
             Shock = Mathf.Clamp01((f - 0.15f) / 0.25f * 0.7f + Pain / 100f * 0.3f);
 
@@ -112,7 +117,7 @@ namespace SolarEclipse
             AirwayBlood = Mathf.MoveTowards(AirwayBlood, 0f, dt * 0.004f);
 
             // Consciousness
-            float cTarget = 1f - Mathf.Clamp01((f - 0.27f) / 0.1f) - HeadTrauma - Mathf.Clamp01((80f - SpO2) / 25f);
+            float cTarget = 1f - Mathf.Clamp01((f - 0.27f) / 0.1f) - HeadTrauma - Mathf.Clamp01((80f - SpO2) / 25f) - Mathf.Clamp01((33f - Temperature) / 3f) - Mathf.Clamp01((Temperature - 41f) / 2f);
             if (faintTimer > 0) { faintTimer -= dt; cTarget = Mathf.Min(cTarget, 0.1f); }
             Consciousness = MathX.Damp(Consciousness, Mathf.Clamp01(cTarget), 0.9f, dt);
             HeadTrauma = Mathf.MoveTowards(HeadTrauma, 0f, dt * 0.01f);

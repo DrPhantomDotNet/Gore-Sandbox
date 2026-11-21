@@ -137,6 +137,8 @@ namespace SolarEclipse
             else if (v.State == LifeState.Unconscious || v.RespRate > 30f || v.BloodLossFraction > 0.25f || v.SpO2 < 88f) { tri = "RED - IMMEDIATE"; tc = UI.Bad; }
             else if (v.BloodLossFraction > 0.1f || v.Pain > 50f || v.Paralysis != Paralysis.None) { tri = "YELLOW - DELAYED"; tc = UI.Warn; }
             else { tri = "GREEN - MINOR"; tc = UI.Good; }
+            float temp = v.Temperature;
+            UI.Label(new Rect(trace.xMax - 150, trace.y, 146, 22), "TEMP " + temp.ToString("0.0") + " C", 13, temp < 35f ? new Color(0.5f, 0.75f, 1f) : temp > 38.5f ? UI.Warn : new Color(0.3f, 1f, 0.45f), TextAnchor.MiddleRight, FontStyle.Bold);
             UI.Rounded(new Rect(trace.x + 4, trace.yMax - 28, 230, 26), tc.WithAlpha(0.25f), true);
             UI.Label(new Rect(trace.x + 12, trace.yMax - 28, 220, 26), "TRIAGE: " + tri, 13, tc, TextAnchor.MiddleLeft, FontStyle.Bold);
             UI.Label(new Rect(trace.x + 4, trace.y, 200, 22), doll.IsDead ? "ASYSTOLE" : v.HeartRate > 100 ? "SINUS TACHYCARDIA" : v.HeartRate < 60 ? "SINUS BRADYCARDIA" : "NORMAL SINUS RHYTHM", 13, new Color(0.3f, 1f, 0.45f));
