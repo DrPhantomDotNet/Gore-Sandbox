@@ -969,7 +969,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 916. [x] Infection
 917. Prop Hunt
 918. [x] Gun Game
-919. One in the Chamber
+919. [x] One in the Chamber
 920. [x] Last Man Standing
 921. Horde defence with base building
 922. [x] Escape the maze

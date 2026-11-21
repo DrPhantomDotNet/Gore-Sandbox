@@ -29,7 +29,10 @@ namespace SolarEclipse
                 new[] { "Random maze", "Hunters", "Best time saved" }, new Color(0.05f, 0.08f, 0.05f), new Color(0.2f, 0.35f, 0.18f), new Color(0.5f, 1f, 0.4f), BuildMaze);
             yield return Mode("ffa", "Free-for-all", "Mode - ruined arena", "target", TimeOfDay.Sunset,
                 "Sixteen Goredolls, every one for themselves, and you in the middle. Be the last one standing.",
-                new[] { "Everyone fights everyone", "16 brawlers", "Wins saved" }, new Color(0.3f, 0.12f, 0.05f), new Color(0.5f, 0.38f, 0.25f), new Color(1f, 0.6f, 0.2f), m => BuildRuinsFor(m, true));
+                new[] { "Everyone fights everyone", "16 brawlers", "Wins saved" }, new Color(0.3f, 0.12f, 0.05f), new Color(0.5f, 0.38f, 0.25f), new Color(1f, 0.6f, 0.2f), m => BuildRuinsFor(m, 1));
+            yield return Mode("oitc", "One in the Chamber", "Mode - ruined arena", "pistol_silenced", TimeOfDay.Night,
+                "A pistol with one bullet and a knife. Every kill gives you a bullet back (up to three). Miss, and it's knife work.",
+                new[] { "One bullet", "Kills refill", "Best score saved" }, new Color(0.1f, 0.08f, 0.1f), new Color(0.45f, 0.3f, 0.3f), new Color(1f, 0.3f, 0.3f), m => BuildRuinsFor(m, 2));
             yield return Mode("fightnight", "Fight Night", "Mode - boxing ring", "fist", TimeOfDay.Night,
                 "A ring, a cheering crowd and five opponents, each tougher than the last. Fists and fighting styles only. Knock them out.",
                 new[] { "5 opponents", "Crowd", "Best run saved" }, new Color(0.15f, 0.05f, 0.05f), new Color(0.55f, 0.15f, 0.12f), new Color(1f, 0.85f, 0.3f), BuildRing, true);
@@ -40,9 +43,9 @@ namespace SolarEclipse
 
         // ------------------------------------------------------------------ maps
 
-        static void BuildRuins(MapBuilder m) => BuildRuinsFor(m, false);
+        static void BuildRuins(MapBuilder m) => BuildRuinsFor(m, 0);
 
-        static void BuildRuinsFor(MapBuilder m, bool ffa)
+        static void BuildRuinsFor(MapBuilder m, int kind)
         {
             m.Options.StartingNpcs = 0;
             m.Block("Floor", new Vector3(-32, -1, -32), new Vector3(32, 0, 32), T(TextureFactory.Concrete), SurfaceType.Concrete, new Color(0.35f, 0.33f, 0.32f), 0.2f);
@@ -59,7 +62,7 @@ namespace SolarEclipse
                 m.Box("Ruin", p + Vector3.up * h / 2f, Quaternion.Euler(0, Random.Range(0f, 90f), 0), new Vector3(Random.Range(2f, 5f), h, 0.6f), brick, SurfaceType.Concrete, b * Random.Range(0.8f, 1.1f));
             }
             for (int i = 0; i < 4; i++) m.StreetLamp(new Vector3(i < 2 ? -20 : 20, 0, i % 2 == 0 ? -20 : 20), 45f + i * 90f, new Color(1f, 0.6f, 0.35f), 6f, 26f, 2f);
-            if (ffa) m.Root.gameObject.AddComponent<FreeForAll>(); else m.Root.gameObject.AddComponent<LastManStanding>();
+            if (kind == 1) m.Root.gameObject.AddComponent<FreeForAll>(); else if (kind == 2) m.Root.gameObject.AddComponent<OneInTheChamber>(); else m.Root.gameObject.AddComponent<LastManStanding>();
             m.PlayerSpawn = new Vector3(0, 0.1f, 0);
             for (int i = 0; i < 8; i++) m.NpcSpawns.Add(Quaternion.Euler(0, i * 45f, 0) * new Vector3(0, 0.1f, 28f));
             m.Playable = new Bounds(new Vector3(0, 4, 0), new Vector3(64, 10, 64));
@@ -538,6 +541,56 @@ namespace SolarEclipse
         protected override void DrawMode(float W, float H)
         {
             Panel(new Rect(W / 2 - 220, 20, 440, 50), "ROUND " + Mathf.Clamp(round + 1, 1, Opponents.Length) + "/" + Opponents.Length + "    BEST " + best + " wins");
+        }
+    }
+
+    // ====================================================================== One in the Chamber
+
+    public sealed class OneInTheChamber : ModeBase
+    {
+        int bullets = 1, kills, best, lastAmmo = -1; bool given, over; float nextSpawn;
+
+        void Start() { Banner("ONE IN THE CHAMBER", "One bullet. Every kill gives you one back.", 5f); best = PlayerPrefs.GetInt("oitc_best", 0); nextSpawn = Time.time + 3f; }
+
+        void Update()
+        {
+            var p = PlayerController.Instance;
+            if (p == null || over) return;
+            if (!given) { given = true; p.Inventory.Strip(); Give("glock", "cknife"); Rules.InfiniteAmmo = false; }
+            // Keep the pistol's magazine to the bullets you've earned (reloading can't conjure more).
+            foreach (var w in p.Inventory.Slots)
+                if (w is Firearm f && f.Def.Id == "glock")
+                {
+                    if (lastAmmo >= 0 && f.Ammo < lastAmmo) bullets = Mathf.Max(0, bullets - (lastAmmo - f.Ammo));
+                    f.Ammo = Mathf.Min(f.Ammo, bullets);
+                    if (f.Ammo < bullets) f.Ammo = bullets;
+                    lastAmmo = f.Ammo;
+                }
+            if (p.IsDead)
+            {
+                over = true;
+                if (kills > best) { best = kills; PlayerPrefs.SetInt("oitc_best", best); }
+                Banner("DEAD", kills + " kills. Restart the map to try again.", 10f);
+                return;
+            }
+            if (!Host || Time.time < nextSpawn) return;
+            nextSpawn = Time.time + Mathf.Max(2f, 6f - kills * 0.15f);
+            int alive = 0; foreach (var d in Goredoll.All) if (d != null && !d.IsDead) alive++;
+            if (alive >= 6) return;
+            var at = GameModes2.SpawnPoint(Quaternion.Euler(0, Random.Range(0f, 360f), 0) * new Vector3(0, 0.1f, 27f));
+            GoredollFactory.Spawn(at, Random.Range(0f, 360f), kills > 8 && Random.value < 0.3f ? NpcTypes.Preset("samurai") : "Aggressive");
+        }
+
+        protected override void OnDollDied(Goredoll d, object attacker)
+        {
+            if (over || !GameModes2.ByMe(attacker)) return;
+            kills++;
+            if (bullets < 3) { bullets++; Banner("+1 BULLET", bullets + " in the gun", 1.2f); AudioManager.Ui("ui_tab"); }
+        }
+
+        protected override void DrawMode(float W, float H)
+        {
+            Panel(new Rect(W / 2 - 220, 20, 440, 50), "BULLETS " + bullets + "    KILLS " + kills + "    BEST " + best);
         }
     }
 }
