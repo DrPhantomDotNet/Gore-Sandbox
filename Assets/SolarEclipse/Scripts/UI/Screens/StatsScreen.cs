@@ -85,6 +85,11 @@ namespace SolarEclipse
             }
             if (UI.Button(new Rect(r.x + 24, r.yMax - 82, 240, 60), "RESET", ButtonKind.Danger, IconFactory.Get("trash"), 20))
                 UIRoot.Push(new ConfirmDialog("Reset all progress?", "Statistics and achievements will be wiped.", Stats.ResetAll, "WIPE", ButtonKind.Danger));
+            // GS2: cloud-free backup (Core/ProfileCode.cs)
+            if (UI.Button(new Rect(r.x + 280, r.yMax - 82, 220, 60), "COPY CODE", ButtonKind.Ghost, IconFactory.Get("copy"), 18, true, "Copies your stats and achievements as a code: keep it as a backup or paste it on another device."))
+            { try { GUIUtility.systemCopyBuffer = ProfileCode.Export(); GameEvents.ShowToast("Profile code copied."); AudioManager.Ui("ui_success"); } catch { GameEvents.ShowToast("Couldn't copy the code."); } }
+            if (UI.Button(new Rect(r.x + 512, r.yMax - 82, 220, 60), "PASTE CODE", ButtonKind.Ghost, IconFactory.Get("folder"), 18, true, "Imports a copied profile code (keeps the higher value of every stat)."))
+            { string c; try { c = GUIUtility.systemCopyBuffer; } catch { c = ""; } GameEvents.ShowToast(ProfileCode.Import(c)); AudioManager.Ui("ui_click"); }
             if (UI.Button(new Rect(r.xMax - 264, r.yMax - 82, 240, 60), "CLOSE", ButtonKind.Primary)) OnBack();
         }
 

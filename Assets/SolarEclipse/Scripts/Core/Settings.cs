@@ -56,6 +56,7 @@ namespace SolarEclipse
         public bool hideOrgans = false, noGibs = false, noFlies = false; // GS2 gore filter per element
         public int gibLifetime = 1;           // 0 short, 1 normal, 2 long, 3 until the gib limit
         public bool batterySaver = false;      // phones: cap at 30 FPS
+        public bool unlockAll = false;          // GS2: every locked map available (Settings > Gameplay)
         public float hudScale = 1f, hudOpacity = 1f; // GS2: HUD size and transparency (UI/Hud.cs)
         public bool soundIndicators = false;   // accessibility: show where loud sounds come from (UI/SoundIndicators.cs)
         public bool monoAudio = false;         // accessibility: everything mixed to mono

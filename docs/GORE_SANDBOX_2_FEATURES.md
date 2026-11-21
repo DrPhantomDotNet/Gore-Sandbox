@@ -1183,10 +1183,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1120. Profile sharing as an image
 1121. [x] No pay-to-win, no real-money purchases
 1122. [x] Cosmetic-only unlocks
-1123. Unlock everything option (sandbox)
-1124. Save backup and restore
-1125. Cloud-free save export/import code
-1126. Profile reset option
+1123. [x] Unlock everything option (sandbox)
+1124. [x] Save backup and restore
+1125. [x] Cloud-free save export/import code
+1126. [x] Profile reset option
 1127. Multiple save profiles
 1128. Achievements in multiplayer
 1129. Achievement toasts redesigned

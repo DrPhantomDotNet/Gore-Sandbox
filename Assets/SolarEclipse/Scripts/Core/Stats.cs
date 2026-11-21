@@ -61,6 +61,9 @@ namespace SolarEclipse
         static readonly HashSet<string> sessionEggs = new HashSet<string>();
         public static event Action<Achievement> Unlocked;
 
+        /// <summary>Forget cached values (after a profile import wrote PlayerPrefs directly).</summary>
+        public static void ClearCache() => cache.Clear();
+
         public static float Get(string stat)
         {
             if (!cache.TryGetValue(stat, out var v)) { v = PlayerPrefs.GetFloat("stat_" + stat, 0f); cache[stat] = v; }

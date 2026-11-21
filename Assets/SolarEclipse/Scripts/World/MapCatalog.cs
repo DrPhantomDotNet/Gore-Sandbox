@@ -57,6 +57,13 @@ namespace SolarEclipse
                     PortEclipseMap.CreateDef(), // Open World city: heists, cars, shops, saved cash (OpenWorld/)
                     BossRealm.CreateDef(), // "????" boss fight (singleplayer only, gated by Orbie in MapSelectScreen)
                 });
+                // GS2: Settings > Gameplay > "Unlock everything" opens every locked map (the boss realm keeps its own gate).
+                foreach (var def in all)
+                {
+                    if (def.Id == BossRealm.MapId) continue;
+                    var orig = def.IsUnlocked;
+                    def.IsUnlocked = () => Settings.Data.unlockAll || (orig == null || orig());
+                }
                 return all;
             }
         }
