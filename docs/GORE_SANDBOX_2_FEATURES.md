@@ -58,7 +58,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 43. Icon set redrawn at higher resolution
 44. [x] Film grain overlay on menus (toggle)
 45. [x] Vignette and subtle scanlines on menus (toggle)
-46. Animated background blood drips on menu panels
+46. [x] Animated background blood drips on menu panels
 47. [x] "Continue" card: jump back into your last map
 48. Recent maps row on the main menu
 49. News panel fed by the latest changelog entry

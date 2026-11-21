@@ -73,6 +73,25 @@ namespace SolarEclipse
             titleBleed = Mathf.MoveTowards(titleBleed, 0f, Time.unscaledDeltaTime * 0.05f);
         }
 
+        struct Drip { public float X, Speed, Born, Len, Width; }
+        static readonly System.Collections.Generic.List<Drip> drips = new System.Collections.Generic.List<Drip>();
+        static float nextDrip;
+        static void DrawDrips(float W, float H)
+        {
+            float now = Time.unscaledTime;
+            if (now > nextDrip && drips.Count < 9) { nextDrip = now + Random.Range(1.5f, 4.5f); drips.Add(new Drip { X = Random.Range(20f, W - 20f), Speed = Random.Range(18f, 45f), Born = now, Len = Random.Range(60f, 260f), Width = Random.Range(2.5f, 6f) }); }
+            var col = Settings.BloodColor;
+            for (int i = drips.Count - 1; i >= 0; i--)
+            {
+                var d = drips[i]; float age = now - d.Born, len = Mathf.Min(d.Len, age * d.Speed), fall = Mathf.Max(0f, age * d.Speed - d.Len) * 3f;
+                float a = Mathf.Clamp01(1f - fall / H);
+                if (a <= 0f) { drips.RemoveAt(i); continue; }
+                UI.Fill(new Rect(d.X, 0, d.Width, len), new Color(col.r * 0.6f, col.g * 0.5f, col.b * 0.5f, 0.55f * a));
+                UI.Fill(new Rect(d.X - d.Width * 0.3f, len - d.Width, d.Width * 1.6f, d.Width * 1.6f), new Color(col.r * 0.7f, col.g * 0.5f, col.b * 0.5f, 0.6f * a));
+                if (fall > 0f) UI.Fill(new Rect(d.X, len + fall, d.Width * 0.9f, d.Width * 1.4f), new Color(col.r * 0.7f, col.g * 0.5f, col.b * 0.5f, 0.6f * a));
+            }
+        }
+
         public override void Draw()
         {
             float W = UI.VW, H = UI.VH;
@@ -80,6 +99,7 @@ namespace SolarEclipse
             UI.Tex(new Rect(0, 0, W * 0.62f, H), HorizontalFade, new Color(0.02f, 0.0f, 0.0f, 0.82f));
             UI.Tex(new Rect(0, 0, W, H), TextureFactory.Vignette, new Color(0, 0, 0, 0.85f));
             UI.Tex(new Rect(0, 0, W, H), TextureFactory.Grain, Color.white);
+            if (Settings.GoreEnabled && Event.current.type == EventType.Repaint) DrawDrips(W, H); // GS2: blood running down from the top edge
 
             DrawTitle(90, 70);
 
