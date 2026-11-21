@@ -21,7 +21,7 @@ namespace SolarEclipse
 
         public static void Punch(float pitch, float yaw) { Kick.x += pitch; Kick.y += yaw; }
 
-        public static void Flash(Color c, float alpha) { FlashColor = c; FlashAlpha = Mathf.Max(FlashAlpha, alpha); }
+        public static void Flash(Color c, float alpha) { if (Settings.Data.flashReduction) alpha *= 0.25f; FlashColor = c; FlashAlpha = Mathf.Max(FlashAlpha, alpha); }
     }
 
     /// <summary>Something the player can use with E.</summary>

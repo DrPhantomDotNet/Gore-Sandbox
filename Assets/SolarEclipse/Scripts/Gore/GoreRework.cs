@@ -317,7 +317,7 @@ namespace SolarEclipse
                 foreach (var p in doll.Parts.Values) if (p != null && p.Body != null && !p.Severed) RB.SetDamping(p.Body, 0.4f, 8f);
             }
             // Flies after two minutes.
-            if (dead > 120f && head != null)
+            if (dead > 120f && head != null && !Settings.Data.noFlies)
             {
                 if (buzz == null) buzz = AudioManager.CreateLoop("intro_buzz", doll.transform, 0.08f, AudioBus.Sfx, 6f);
                 if (buzz != null) buzz.transform.position = doll.Position;

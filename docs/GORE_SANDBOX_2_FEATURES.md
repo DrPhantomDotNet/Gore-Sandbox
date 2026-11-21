@@ -1204,7 +1204,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1139. Auto-fire option
 1140. Aim assist on phones
 1141. [x] Haptic vibration on hits
-1142. Battery saver mode
+1142. [x] Battery saver mode
 1143. Thermal throttle protection
 1144. [x] 30/60/90/120 FPS options on phones
 1145. Resolution scale on phones
@@ -1232,19 +1232,19 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1165. Sound indicators for deaf players
 1166. [x] Reduce motion option
 1167. [x] Screen shake slider (improved)
-1168. Flash reduction option
+1168. [x] Flash reduction option
 1169. [x] Hold vs toggle for every action
 1170. Full key rebinding
 1171. Controller rebinding
 1172. One-handed control preset
-1173. Gore filter per element (no organs, no gibs)
+1173. [x] Gore filter per element (no organs, no gibs)
 1174. Blood colour for sensitive players
-1175. Arachnophobia-style toggle for flies/insects
+1175. [x] Arachnophobia-style toggle for flies/insects
 1176. Content warnings before story chapters
 1177. [x] Pause on focus loss
 1178. [x] Performance overlay (FPS, ms, memory)
 1179. Benchmark mode
-1180. Crash reporter (local log)
+1180. [x] Crash reporter (local log)
 1181. Faster startup
 1182. Lower memory use
 1183. Fewer garbage spikes

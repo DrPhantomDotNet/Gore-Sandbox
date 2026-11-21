@@ -220,6 +220,11 @@ namespace SolarEclipse
 
         public void Gib(BodyPart part, Vector3 dir)
         {
+            if (Settings.Data.noGibs) // gore filter (Settings > Gore): no chunks, but the hit still kills
+            {
+                if (!NetState.IsClient && part != null && !part.Gibbed) part.TakeDamage(new DamageInfo { Amount = 400f, Type = DamageType.Crush, Point = part.transform.position, Direction = dir, Normal = -dir, Weapon = "Crush" });
+                return;
+            }
             if (part == null || part.Gibbed || !part.Gibbable || !Settings.Dismemberment || StoryHooks.NoDismember(part)) return;
             if (Forward(2, part, part.transform.position, dir, false)) return;
             var pos = part.Col != null ? part.Col.bounds.center : part.transform.position;

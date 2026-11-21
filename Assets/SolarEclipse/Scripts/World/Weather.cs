@@ -235,7 +235,7 @@ namespace SolarEclipse
                 else if (flashT < 0.24f) f = 0.85f;
                 else if (flashT < 0.6f) f = 1f - (flashT - 0.24f) / 0.36f;
                 else { f = 0f; flashT = -1f; if (bolt != null) bolt.enabled = false; }
-                f = Mathf.Max(0f, f) * flashPower;
+                f = Mathf.Max(0f, f) * flashPower * (Settings.Data.flashReduction ? 0.3f : 1f);
                 var flashCol = new Color(0.55f, 0.6f, 0.75f) * f;
                 RenderSettings.ambientSkyColor = baseSky + flashCol;
                 RenderSettings.ambientEquatorColor = baseEq + flashCol * 0.7f;

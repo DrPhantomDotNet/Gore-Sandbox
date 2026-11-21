@@ -52,6 +52,9 @@ namespace SolarEclipse
         public string lastMapId = "";
         public bool pauseOnFocusLoss = true;  // Game/FocusPause.cs
         public bool vibration = true;         // phones: vibrate when you get hurt (Player/PlayerHealth.cs)         // CONTINUE card on the main menu      // 0 operating room (GS2), 1 classic stage (Game/MenuBackdrop.cs)
+        public bool flashReduction = false;    // GS2 accessibility: dim screen flashes (explosions, lightning)
+        public bool hideOrgans = false, noGibs = false, noFlies = false; // GS2 gore filter per element
+        public bool batterySaver = false;      // phones: cap at 30 FPS
         public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)
         // VR (Scripts/VR): Windows + SteamVR / OpenXR
         public int vrMode = 0;                  // 0 auto (when SteamVR is running), 1 always try, 2 never
@@ -116,7 +119,7 @@ namespace SolarEclipse
 
         public static bool GoreEnabled => Data.goreLevel > 0;
         public static bool Dismemberment => Data.goreLevel >= 3;
-        public static bool Organs => Data.goreLevel >= 4;
+        public static bool Organs => Data.goreLevel >= 4 && !Data.hideOrgans;
         public static bool Unreal => Data.goreLevel >= 5;
         public static bool SuperUltra => Data.goreLevel >= 6; // Gore/GoreKit.cs
         static readonly float[] bloodByLevel = { 0f, 0.2f, 0.45f, 0.75f, 1f, 1.8f, 3f };
@@ -193,7 +196,7 @@ namespace SolarEclipse
             {
                 // Phones ignore vSyncCount, and targetFrameRate -1 means 30 FPS there. Ask for a real frame rate.
                 QualitySettings.vSyncCount = 0;
-                Application.targetFrameRate = Mathf.Clamp(d.targetFps, 30, 120);
+                Application.targetFrameRate = d.batterySaver ? 30 : Mathf.Clamp(d.targetFps, 30, 120);
                 Screen.sleepTimeout = SleepTimeout.NeverSleep; // don't dim/lock the screen mid-game
             }
             QualitySettings.shadows = d.shadowQuality == 0 ? ShadowQuality.Disable : d.shadowQuality == 1 ? ShadowQuality.HardOnly : ShadowQuality.All;

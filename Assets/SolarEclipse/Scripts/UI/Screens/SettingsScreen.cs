@@ -113,6 +113,10 @@ namespace SolarEclipse
                     changed |= UI.Selector(Next(), "Blood colour", ref d.bloodColor, Settings.BloodColorNames);
                     changed |= UI.Slider(Next(), "Blood amount", ref d.bloodAmount, 0.1f, 3f, "0.00", null, "x");
                     changed |= UI.Toggle(Next(), "Blood on screen", ref d.bloodOnScreen, "Close kills splash blood on your screen.");
+                    changed |= UI.Toggle(Next(), "Hide organs", ref d.hideOrgans, "No organs fall out of wounds, whatever the gore level.");
+                    changed |= UI.Toggle(Next(), "No gibs", ref d.noGibs, "Bodies never burst into chunks.");
+                    changed |= UI.Toggle(Next(), "No flies", ref d.noFlies, "No buzzing flies around old corpses.");
+                    changed |= UI.Toggle(Next(), "Reduce flashes", ref d.flashReduction, "Much dimmer flashes from explosions, muzzle flashes and lightning.");
                     float fd = d.maxDecals;
                     if (UI.Slider(Next(), "Max blood decals", ref fd, 50, 2000, "0")) { d.maxDecals = Mathf.RoundToInt(fd); changed = true; }
                     float fg = d.maxGibs;
@@ -135,6 +139,7 @@ namespace SolarEclipse
                     changed |= UI.Toggle(Next(), "Play intro on startup", ref d.playIntro, "The cinematic after the studio logo. Tap twice to skip it any time.");
                     changed |= UI.Toggle(Next(), "Pause when unfocused", ref d.pauseOnFocusLoss, "Alt-tab or leaving the app opens the pause menu (singleplayer) and mutes the sound until you come back.");
                     changed |= UI.Toggle(Next(), "Vibration (phones)", ref d.vibration, "The phone vibrates when you get hurt.");
+                    if (UI.Toggle(Next(), "Battery saver (phones)", ref d.batterySaver, "Caps the game at 30 FPS to save battery and keep the phone cooler.")) { changed = true; Settings.Apply(); }
                     changed |= UI.Toggle(Next(), "Film look", ref d.filmLook, "Film grain and a soft vignette over the game, for a more cinematic, realistic feel.");
                     changed |= UI.Selector(Next(), "Main menu scene", ref d.menuScene, new[] { "Operating room", "Classic stage" }, "The live 3D scene behind the main menu. Applies next time the menu opens.");
                     changed |= UI.Toggle(Next(), "Show chat", ref d.showChat, "Chat messages in the corner (T or Enter to type, also in singleplayer).");
@@ -172,10 +177,10 @@ namespace SolarEclipse
                 case 1: return 7;
                 case 2: return 14;
                 case 3: return 9;
-                case 4: return 9;
+                case 4: return 13;
                 case 6: return 12;
                 case 7: return 13;
-                default: return 11;
+                default: return 17;
             }
         }
 
