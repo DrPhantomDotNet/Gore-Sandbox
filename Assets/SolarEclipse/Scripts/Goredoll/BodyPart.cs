@@ -22,6 +22,7 @@ namespace SolarEclipse
         public Quaternion StartLocalRotation;
         public float Health, MaxHealth;
         bool gutsOut;
+        public bool TendonCut, NerveDamaged; // GS2 anatomy (set by wounds to the limb above)
         public bool Fractured, Destroyed, Severed, Gibbed, Sliced;
         public readonly List<Wound> Wounds = new List<Wound>();
         public GameObject OrgansVisual;
@@ -40,6 +41,8 @@ namespace SolarEclipse
                 if (Destroyed || Severed || Gibbed) return 0f;
                 float f = Mathf.Clamp(Health / MaxHealth * 1.3f, 0.25f, 1f);
                 if (Fractured) f *= 0.15f;
+                if (TendonCut) f *= 0.05f;      // GS2: the hand/foot just hangs
+                if (NerveDamaged) f *= 0.1f;    // GS2: limb paralysed below the injury
                 return f;
             }
         }
@@ -172,6 +175,15 @@ namespace SolarEclipse
             if (Type == PartType.Neck && info.IsBallistic) Stats.Add(Stats.NeckShots);
             if (v.Paralysis == Paralysis.Total && info.Amount > 0) v.HitsWhileParalyzed++;
             if (IsHead && info.Type == DamageType.Blunt) { v.HeadTrauma = Mathf.Clamp01(v.HeadTrauma + info.Amount / 90f); if (Random.value < 0.4f) BodyDetails.NoseHit(Doll); }
+            // GS2: a deep cut near the wrist/ankle severs the tendons (hand or foot drops); a deep wound high on a limb can hit the nerve.
+            if (!NetState.IsClient && info.Amount > 15f && (info.Type == DamageType.Slash || info.Type == DamageType.Stab))
+            {
+                PartType? distal = Type == PartType.ForearmL ? PartType.HandL : Type == PartType.ForearmR ? PartType.HandR : Type == PartType.ShinL ? PartType.FootL : Type == PartType.ShinR ? PartType.FootR : (PartType?)null;
+                if (distal.HasValue && Doll.Parts.TryGetValue(distal.Value, out var dp) && dp != null && !dp.TendonCut && transform.InverseTransformPoint(info.Point).y < -0.12f) dp.TendonCut = true;
+            }
+            if (!NetState.IsClient && info.Amount > 20f && (info.Type == DamageType.Stab || info.IsBallistic) && Random.value < 0.15f
+                && (Type == PartType.UpperArmL || Type == PartType.UpperArmR || Type == PartType.ThighL || Type == PartType.ThighR))
+                foreach (var bp in Doll.Parts.Values) if (bp != null && (bp == this || IsBelow(bp))) bp.NerveDamaged = true;
             // GS2: heavy blunt force to the trunk ruptures something inside: hidden bleeding with no wound to show for it.
             if ((info.Type == DamageType.Blunt || info.Type == DamageType.Crush || info.Type == DamageType.Fall) && info.Amount > 28f && (Type == PartType.Chest || Type == PartType.Abdomen || Type == PartType.Pelvis))
                 v.InternalBleed = Mathf.Min(25f, v.InternalBleed + (info.Amount - 20f) * 0.12f);
@@ -295,6 +307,12 @@ namespace SolarEclipse
                 });
                 if (dv > 12f && Settings.GoreEnabled) Decals.Blood(contact.point, contact.normal, 0.5f, 0, c.collider);
             }
+        }
+            /// <summary>Is the other part further down this limb (child, grandchild...)?</summary>
+        bool IsBelow(BodyPart other)
+        {
+            for (var p = other.Parent; p != null; p = p.Parent) if (p == this) return true;
+            return false;
         }
     }
 }

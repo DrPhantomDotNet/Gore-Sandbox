@@ -335,9 +335,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 ## 7. Anatomy & Medical Simulation (50)
 311. Full skeleton with 50+ named bones
 312. Muscles per limb that can be damaged
-313. Damaged muscles weaken that limb
-314. Tendon cuts drop the hand or foot
-315. Nerve damage causes paralysis of a limb
+313. [x] Damaged muscles weaken that limb
+314. [x] Tendon cuts drop the hand or foot
+315. [x] Nerve damage causes paralysis of a limb
 316. Spinal cord levels: neck, upper back, lower back
 317. Brain regions: speech, movement, consciousness
 318. [x] Concussion with stumbling and confusion
