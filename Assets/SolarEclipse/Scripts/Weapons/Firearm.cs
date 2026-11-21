@@ -206,7 +206,7 @@ namespace SolarEclipse
             }
             if (Reloading && Def.ShellReload && f.Fire && Ammo > 0) { reloadT = -1f; if (handMag != null) handMag.gameObject.SetActive(false); }
             // GS2 jamming (Rules.GunJams): a jammed gun only clicks until you clear it with R.
-            if (jammed && f.Reload && !Reloading) { jammed = false; AudioManager.Play(Def.Charge ?? "slide_back", Eye, 0.8f, 1f, 0f); GameEvents.ShowToast("Jam cleared"); f.Reload = false; nextFire = Time.time + 0.4f; }
+            if (jammed && f.Reload && !Reloading) { jammed = false; AudioManager.Play(Def.Charge ?? "slide_back", Eye, 0.8f, 1f, 0f); GameEvents.ShowToast("Jam cleared"); Stats.Add("jams"); f.Reload = false; nextFire = Time.time + 0.4f; }
             if (jammed && f.Fire) { AudioManager.Play("dry_fire", Eye, 0.6f, 0.85f, 0f); nextFire = Time.time + 0.25f; wantsFire = false; }
             if (wantsFire && !Reloading && Time.time >= nextFire && !Player.Sprinting && CanShoot && !jammed)
             {

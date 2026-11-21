@@ -70,6 +70,7 @@ namespace SolarEclipse
                     var ach = Stats.Achievements[i];
                     bool un = Stats.IsUnlocked(ach);
                     var rr = new Rect(0, i * (rowH + 8) - s, view.width - 16, rowH);
+                    if (rr.yMax < 0f || rr.y > view.height) continue; // GS2: 200+ achievements, draw only the visible rows
                     UI.Rounded(rr, un ? new Color(0.35f, 0.25f, 0.05f, 0.5f) : new Color(1, 1, 1, 0.04f));
                     UI.Tex(new Rect(rr.x + 14, rr.y + 14, 56, 56), IconFactory.Get(un ? "trophy" : "lock"), un ? UI.Warn : UI.Muted);
                     bool hidden = ach.Secret && !un;

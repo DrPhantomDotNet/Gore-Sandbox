@@ -1160,10 +1160,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1097. [x] XP from kills, survival, building and story
 1098. Level rewards: skins, hats, gloves, titles
 1099. Prestige levels
-1100. 200 new achievements
-1101. Achievement progress bars
+1100. [x] 200 new achievements
+1101. [x] Achievement progress bars
 1102. Achievement rarity display
-1103. Hidden achievements
+1103. [x] Hidden achievements
 1104. Badges reworked
 1105. [x] Player titles
 1106. Player card backgrounds

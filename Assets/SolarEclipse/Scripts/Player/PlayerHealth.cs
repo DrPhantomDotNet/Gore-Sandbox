@@ -56,6 +56,7 @@ namespace SolarEclipse
         {
             if (Dead || Bleed <= 0f) return;
             Bleed = 0f;
+            Stats.Add("bandages");
             AudioManager.Play2D("whoosh_small", 0.6f, 0.6f, AudioBus.Sfx);
             GameEvents.ShowToast("Bandaged. The bleeding stopped.");
         }

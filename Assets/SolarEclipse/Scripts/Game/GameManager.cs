@@ -89,6 +89,7 @@ namespace SolarEclipse
             if (!networkClient && !NetState.IsHost && NetState.Active) NetManager.I.Shutdown("left");
             // Maps may adjust their options (Arena turns off starting NPCs): give them a copy, not the menu's object.
             options = options == null ? new MapOptions() : new MapOptions { Time = options.Time, StartingNpcs = options.StartingNpcs, Loadout = options.Loadout, Nextbots = options.Nextbots, AiIgnore = options.AiIgnore, Weather = options.Weather };
+            if (map != null) Stats.Add("map_" + map.Id); // per-map visit achievements (Core/AchievementsGS2.cs)
             if (!networkClient && map != null && !map.Secret) { Settings.Data.lastMapId = map.Id; Settings.Save(); } // main menu CONTINUE card
             loading = StartCoroutine(LoadMap(map, options, seed == 0 ? Random.Range(1, int.MaxValue) : seed, networkClient));
         }

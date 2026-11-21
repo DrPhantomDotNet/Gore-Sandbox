@@ -80,7 +80,7 @@ namespace SolarEclipse
 
         public override void Tick(InputFrame f, float dt)
         {
-            if (f.Reload && bloodied > 0.01f) { bloodied = 0f; ApplyBlood(); AudioManager.Play("whoosh_small", Model != null ? Model.transform.position : Vector3.zero, 0.5f, 0.7f); GameEvents.ShowToast("Wiped the blood off"); }
+            if (f.Reload && bloodied > 0.01f) { bloodied = 0f; ApplyBlood(); AudioManager.Play("whoosh_small", Model != null ? Model.transform.position : Vector3.zero, 0.5f, 0.7f); GameEvents.ShowToast("Wiped the blood off"); Stats.Add("wipes"); }
             idle += dt;
             var rest = IdlePos + new Vector3(0, Mathf.Sin(idle * 1.6f) * 0.003f, 0);
             var restRot = IdleRot;

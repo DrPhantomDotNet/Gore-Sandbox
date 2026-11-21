@@ -248,7 +248,7 @@ namespace SolarEclipse
 
         bool disarmed;
         /// <summary>GS2: a hard hit to the gun hand knocks the weapon out of it.</summary>
-        public void Disarm() { if (!dropped) disarmed = true; }
+        public void Disarm() { if (!dropped && !disarmed) { disarmed = true; Stats.Add("disarms"); } }
 
         bool ShouldDrop()
         {

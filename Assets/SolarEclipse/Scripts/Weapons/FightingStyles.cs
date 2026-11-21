@@ -820,6 +820,8 @@ namespace SolarEclipse
                 AudioManager.Play(spec.Kick ? "kick_hit" : "punch_hit", point, 1f, Random.Range(0.9f, 1.1f));
                 if (head && spec.Dmg >= 20f) AudioManager.Play("bone_crack", point, 0.45f, Random.Range(0.9f, 1.1f));
                 Flash(finisher ? "FINISHER! " + spec.Name : spec.Name);
+                if (finisher) Stats.Add("finishers");
+                Stats.Add("fight_landed");
                 if (finisher && !NetState.Active && GameManager.I != null) GameManager.I.SlowMo(0.25f, 0.8f);
                 // A blow that drops them: a moment of slow motion (singleplayer only).
                 if (!NetState.Active && spec.Knock > 4f && GameManager.I != null) GameManager.I.SlowMo(0.35f, 0.45f);

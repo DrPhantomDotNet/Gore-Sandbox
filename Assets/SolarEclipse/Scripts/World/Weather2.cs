@@ -141,6 +141,7 @@ namespace SolarEclipse
                 if (bp.Body != null) bp.Body.AddForce(Random.insideUnitSphere * 4f + Vector3.up * 3f, ForceMode.VelocityChange);
             }
             Burning.Apply(best, 6f, null);
+            Stats.Add("lightning");
             Decals.Scorch(at, Vector3.up, 1.6f, null);
             CameraFX.Shake(0.25f);
             return at;

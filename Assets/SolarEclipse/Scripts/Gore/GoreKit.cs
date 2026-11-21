@@ -26,6 +26,7 @@ namespace SolarEclipse
             {
                 if (!Stats.Achievements.Exists(a => a.Id == id)) Stats.Achievements.Add(new Achievement(id, name, desc, stat, target));
             }
+            AchievementsGS2.Register(); // Core/AchievementsGS2.cs
             Add("gore_teeth", "Dentist", "Knock out 50 teeth.", StatTeeth, 50);
             Add("gore_heads", "Pop Goes the Head", "Pop 25 heads.", StatHeads, 25);
             Add("gore_pools", "Blood Bath", "Leave 50 pools of blood.", StatPools, 50);

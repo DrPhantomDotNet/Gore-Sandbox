@@ -179,7 +179,7 @@ namespace SolarEclipse
             if (!NetState.IsClient && info.Amount > 15f && (info.Type == DamageType.Slash || info.Type == DamageType.Stab))
             {
                 PartType? distal = Type == PartType.ForearmL ? PartType.HandL : Type == PartType.ForearmR ? PartType.HandR : Type == PartType.ShinL ? PartType.FootL : Type == PartType.ShinR ? PartType.FootR : (PartType?)null;
-                if (distal.HasValue && Doll.Parts.TryGetValue(distal.Value, out var dp) && dp != null && !dp.TendonCut && transform.InverseTransformPoint(info.Point).y < -0.12f) dp.TendonCut = true;
+                if (distal.HasValue && Doll.Parts.TryGetValue(distal.Value, out var dp) && dp != null && !dp.TendonCut && transform.InverseTransformPoint(info.Point).y < -0.12f) { dp.TendonCut = true; if (info.Source is PlayerController || info.Source is Weapon) Stats.Add("tendons"); }
             }
             if (!NetState.IsClient && info.Amount > 20f && (info.Type == DamageType.Stab || info.IsBallistic) && Random.value < 0.15f
                 && (Type == PartType.UpperArmL || Type == PartType.UpperArmR || Type == PartType.ThighL || Type == PartType.ThighR))
@@ -189,7 +189,7 @@ namespace SolarEclipse
                 Doll.GetComponent<ArmedBrain>()?.Disarm();
             // GS2: heavy blunt force to the trunk ruptures something inside: hidden bleeding with no wound to show for it.
             if ((info.Type == DamageType.Blunt || info.Type == DamageType.Crush || info.Type == DamageType.Fall) && info.Amount > 28f && (Type == PartType.Chest || Type == PartType.Abdomen || Type == PartType.Pelvis))
-                v.InternalBleed = Mathf.Min(25f, v.InternalBleed + (info.Amount - 20f) * 0.12f);
+            { if (v.InternalBleed <= 0f && (info.Source is PlayerController || info.Source is Weapon)) Stats.Add("internal_bleeds"); v.InternalBleed = Mathf.Min(25f, v.InternalBleed + (info.Amount - 20f) * 0.12f); }
         }
 
         void PlayHitEffects(DamageInfo info, Wound w, float dmg)
