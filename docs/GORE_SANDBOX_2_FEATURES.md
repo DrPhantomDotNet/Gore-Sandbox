@@ -204,7 +204,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 185. Falling-protect reflex (arms out)
 186. Stumble and balance recovery
 187. Idle animations (stretch, look around, phone)
-188. Cowering and covering head
+188. [x] Cowering and covering head
 189. Begging on knees
 190. Sitting, leaning and lying idles
 
