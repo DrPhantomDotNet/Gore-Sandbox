@@ -56,6 +56,8 @@ namespace SolarEclipse
         public bool hideOrgans = false, noGibs = false, noFlies = false; // GS2 gore filter per element
         public int gibLifetime = 1;           // 0 short, 1 normal, 2 long, 3 until the gib limit
         public bool batterySaver = false;      // phones: cap at 30 FPS
+        public bool soundIndicators = false;   // accessibility: show where loud sounds come from (UI/SoundIndicators.cs)
+        public bool monoAudio = false;         // accessibility: everything mixed to mono
         public bool bloodOnScreen = true;       // close kills splash the camera (Gore/GoreKit.cs)
         // VR (Scripts/VR): Windows + SteamVR / OpenXR
         public int vrMode = 0;                  // 0 auto (when SteamVR is running), 1 always try, 2 never
@@ -161,7 +163,20 @@ namespace SolarEclipse
                 Debug.LogWarning("Settings reset: " + e.Message);
                 Data = new SettingsData();
             }
+            if (Data.monoAudio) ApplyMono(); // at startup, before any sound plays (a reset stops playing audio)
             Apply();
+        }
+
+        static void ApplyMono()
+        {
+            try
+            {
+                var cfg = AudioSettings.GetConfiguration();
+                if (cfg.speakerMode == AudioSpeakerMode.Mono) return;
+                cfg.speakerMode = AudioSpeakerMode.Mono;
+                AudioSettings.Reset(cfg);
+            }
+            catch (Exception e) { Debug.LogWarning("Mono audio: " + e.Message); }
         }
 
         public static void Save()

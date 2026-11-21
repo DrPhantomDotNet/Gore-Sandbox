@@ -435,7 +435,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 406. Blood spray hiss
 407. Gun sounds with indoor/outdoor tails
 408. Distant gunshot echoes
-409. Bullet whizz-bys near your head
+409. [x] Bullet whizz-bys near your head
 410. Shell casings bouncing per surface
 411. Reload sound layers per weapon
 412. Melee swing whooshes by weight
@@ -459,9 +459,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 430. Menu music tracks
 431. Music player in settings
 432. [x] Audio mixer sliders: master, music, sfx, voice, ambience, UI
-433. Mono audio option
+433. [x] Mono audio option
 434. Dynamic range options (night mode)
-435. Audio visualiser for deaf players (sound indicators)
+435. [x] Audio visualiser for deaf players (sound indicators)
 436. Slow-motion audio pitch shift
 437. Underwater audio filter
 438. Radio prop playing music
@@ -1229,7 +1229,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1162. High-contrast UI
 1163. UI text size slider
 1164. Subtitle size and background options
-1165. Sound indicators for deaf players
+1165. [x] Sound indicators for deaf players
 1166. [x] Reduce motion option
 1167. [x] Screen shake slider (improved)
 1168. [x] Flash reduction option

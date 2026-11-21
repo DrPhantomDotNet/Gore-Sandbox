@@ -77,6 +77,7 @@ namespace SolarEclipse
                     changed |= UI.Slider(Next(), "Music", ref d.musicVolume, 0, 1);
                     changed |= UI.Slider(Next(), "Ambience", ref d.ambienceVolume, 0, 1);
                     changed |= UI.Slider(Next(), "Interface", ref d.uiVolume, 0, 1);
+                    changed |= UI.Toggle(Next(), "Mono audio", ref d.monoAudio, "Mixes everything to one channel, for one-ear listening. Applies the next time the game starts.");
                     if (UI.Button(Next(), "Test sound", ButtonKind.Ghost, IconFactory.Get("speaker"))) AudioManager.Play2D(Rng.Pick(new[] { "v_scream", "gun_glock", "headshot", "bell" }), 1f, 1f, AudioBus.Sfx);
                     break;
                 case 2:
@@ -103,6 +104,7 @@ namespace SolarEclipse
                     changed |= UI.Toggle(Next(), "Goredoll name tags", ref d.npcNames);
                     changed |= UI.Toggle(Next(), "Tutorial hints", ref d.tutorialHints);
                     changed |= UI.Toggle(Next(), "Kill streak announcer", ref d.killStreakAnnouncer, "DOUBLE KILL, KILLING SPREE, GODLIKE... banners and stingers.");
+                    changed |= UI.Toggle(Next(), "Sound indicators", ref d.soundIndicators, "Shows where gunfire, explosions and screams come from, around the crosshair. For deaf and hard of hearing players.");
                     int maxR = d.maxRagdolls; float fr = maxR;
                     if (UI.Slider(Next(), "Max ragdolls", ref fr, 5, 100, "0")) { d.maxRagdolls = Mathf.RoundToInt(fr); changed = true; }
                     float fc = d.maxCasings;
@@ -175,9 +177,9 @@ namespace SolarEclipse
             switch (tab)
             {
                 case 0: return 14;
-                case 1: return 7;
+                case 1: return 8;
                 case 2: return 14;
-                case 3: return 9;
+                case 3: return 10;
                 case 4: return 14;
                 case 6: return 12;
                 case 7: return 13;
