@@ -217,7 +217,7 @@ namespace SolarEclipse
             foreach (var part in doll.Parts.Values)
             {
                 if (part == null || part.Severed || part.Gibbed) continue;
-                part.Fractured = false;
+                part.Fractured = false; part.TendonCut = part.NerveDamaged = false;
                 part.Destroyed = false;
                 if (part.Health < part.MaxHealth * 0.6f) part.Health = part.MaxHealth * 0.6f;
             }

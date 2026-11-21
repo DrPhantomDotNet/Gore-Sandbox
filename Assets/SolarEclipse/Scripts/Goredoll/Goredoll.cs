@@ -166,7 +166,7 @@ namespace SolarEclipse
             foreach (var p in Parts.Values)
             {
                 if (p == null || p.Severed || p.Gibbed) continue;
-                p.Health = p.MaxHealth; p.Destroyed = false; p.Fractured = false;
+                p.Health = p.MaxHealth; p.Destroyed = false; p.Fractured = false; p.TendonCut = p.NerveDamaged = false;
                 foreach (var w in p.Wounds) { w.BleedRate = 0; w.Arterial = false; }
             }
             lastState = LifeState.Alive;
