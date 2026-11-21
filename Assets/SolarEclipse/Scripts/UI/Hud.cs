@@ -94,20 +94,29 @@ namespace SolarEclipse
             if (gm.HudHidden) { DrawDeath(p, W, H); return; }
 
             p.Inventory?.Current?.DrawOverlay(W, H); // e.g. sniper scope
-            DrawNameTags(p);
-            if (NetState.Active) { DrawPlayerTags(p); DrawVoice(W); }
-            if (Settings.Data.showChat || UIRoot.Contains<ChatScreen>()) DrawChat(H);
-            if (repaint) DrawNumbers(p);
-            DrawHotbar(p, W);
-            DrawCompass(p, W);
-            if (!VRManager.Active) DrawCrosshair(p, W, H); // VR: you aim down the real sights
-            DrawHealth(p, H);
-            DrawAmmo(p, W, H);
-            DrawHints(p, W, H);
-            DrawChips(p, H);
-            DrawMapTitle(W, H);
-            if (d.showFps) UI.Label(new Rect(14, 8, 300, 26), Mathf.RoundToInt(gm.Fps) + " FPS", 18, gm.Fps < 50 ? UI.Warn : UI.Good);
-            if (d.detailedStats) DrawStats(gm, 14, 36);
+            // GS2: HUD opacity and scale (Settings > Interface). Each corner block scales around its own corner.
+            var prevCol = GUI.color; var prevM = GUI.matrix;
+            GUI.color = new Color(prevCol.r, prevCol.g, prevCol.b, prevCol.a * Mathf.Clamp(d.hudOpacity, 0.2f, 1f));
+            float hs = Mathf.Clamp(d.hudScale, 0.6f, 1.5f);
+            void Scaled(float px, float py, System.Action draw) { GUI.matrix = prevM; if (Mathf.Abs(hs - 1f) > 0.01f) GUIUtility.ScaleAroundPivot(new Vector2(hs, hs), new Vector2(px * UI.Scale, py * UI.Scale)); draw(); GUI.matrix = prevM; }
+            try
+            {
+                DrawNameTags(p);
+                if (NetState.Active) { DrawPlayerTags(p); DrawVoice(W); }
+                if (Settings.Data.showChat || UIRoot.Contains<ChatScreen>()) DrawChat(H);
+                if (repaint) DrawNumbers(p);
+                Scaled(W / 2f, H, () => DrawHotbar(p, W));
+                Scaled(W / 2f, 0f, () => DrawCompass(p, W));
+                if (!VRManager.Active) DrawCrosshair(p, W, H); // VR: you aim down the real sights
+                Scaled(0f, H, () => DrawHealth(p, H));
+                Scaled(W, H, () => DrawAmmo(p, W, H));
+                DrawHints(p, W, H);
+                Scaled(0f, H, () => DrawChips(p, H));
+                DrawMapTitle(W, H);
+                if (d.showFps) UI.Label(new Rect(14, 8, 300, 26), Mathf.RoundToInt(gm.Fps) + " FPS", 18, gm.Fps < 50 ? UI.Warn : UI.Good);
+                if (d.detailedStats) DrawStats(gm, 14, 36);
+            }
+            finally { GUI.color = prevCol; GUI.matrix = prevM; }
             DrawDeath(p, W, H);
         }
 

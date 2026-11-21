@@ -78,7 +78,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 63. Pause menu redesign with live blurred background
 64. [x] Pause menu quick toggles (slow-mo, noclip, god mode)
 65. New HUD: minimal health/ammo bottom corners
-66. HUD scale and opacity sliders
+66. [x] HUD scale and opacity sliders
 67. HUD hides automatically in photo mode
 68. Kill feed with weapon icons (multiplayer)
 69. [x] Damage indicator arcs on screen edges
