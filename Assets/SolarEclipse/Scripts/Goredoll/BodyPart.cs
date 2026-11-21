@@ -277,6 +277,9 @@ namespace SolarEclipse
                     if (Gibbable && Health < -MaxHealth * (super ? 0.5f : 1.5f)) { Doll.Dismember.Gib(this, info.Direction); return; }
                 }
             }
+            // GS2: heavy blunt force tears a broken limb off (sledgehammers, cars, falls, super kicks).
+            if ((info.Type == DamageType.Blunt || info.Type == DamageType.Fall) && IsLimb && Fractured && CanSever && dmg > MaxHealth * (super ? 0.4f : extreme ? 0.6f : 0.9f) && Random.value < (super ? 0.8f : 0.45f))
+            { Doll.Dismember.Sever(this, info.Point, info.Normal, false); return; }
             // Heavy blade hits take limbs and heads off (axes, katanas, machetes, chainsaw).
             if (extreme && info.IsSharp && dmg > (super ? 30f : 55f) && CanSever && Random.value < (super ? 0.8f : 0.4f)) { Doll.Dismember.Sever(this, info.Point, info.Normal, true); return; }
             if (Rules.AlwaysDismember && CanSever) Doll.Dismember.Sever(this, info.Point, info.Normal, info.IsSharp);
