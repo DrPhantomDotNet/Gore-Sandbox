@@ -76,6 +76,11 @@ namespace SolarEclipse
             Tiers("pops", "Pop Goes the Head", "Pop {0} heads.", GoreKit.StatHeads, new[] { 50f, 200f, 1000f, 4000f, 15000f });
             Tiers("pools", "Blood Bath", "Leave {0} pools of blood.", GoreKit.StatPools, new[] { 100f, 500f, 2000f, 8000f, 25000f });
             Tiers("charred", "Well Done", "Burn {0} body parts.", GoreKit.StatCharred, new[] { 100f, 1000f, 5000f });
+            // Story (UI/Screens/StoryScreens.cs mission ranks)
+            Add("gs2_story_s1", "Flawless", "Finish a story mission with an S rank.", "missions_rank_S", 1f);
+            Add("gs2_story_s5", "Untouchable", "Finish 5 story missions with an S rank.", "missions_rank_S", 5f);
+            Add("gs2_story_a3", "Professional", "Finish 3 story missions with an A rank.", "missions_rank_A", 3f);
+            Add("gs2_story_c1", "Barely Made It", "Finish a story mission with a C rank.", "missions_rank_C", 1f);
             // Visit every Gore Sandbox 2 map.
             foreach (var m in new[] { ("morgue", "The Morgue"), ("skyline", "Skyline"), ("sewers", "The Sewers"), ("junkyard", "Junkyard"), ("lab", "Laboratory"), ("colosseum", "Colosseum"),
                 ("village", "Medieval Village"), ("containerport", "Container Port"), ("flatgrass2", "Flatgrass 2"), ("farm", "Farm"), ("gasstation", "Desert Gas Station"), ("cabin", "Forest Cabin") })

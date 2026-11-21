@@ -1019,7 +1019,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 964. Chase sections
 965. Boss fights with phases
 966. Puzzle sections
-967. Story achievements
+967. [x] Story achievements
 968. Story codex (characters, places)
 969. Story map with locations
 970. Flashback missions
