@@ -24,6 +24,16 @@ namespace SolarEclipse
         public static bool TouchFire, TouchAim, TouchJump, TouchCrouch, TouchSprint, TouchReload, TouchUse, TouchKick, TouchMiddle, TouchRotate, TouchMode, TouchInspect;
         public static float TouchScroll;
         public static int TouchSlot = -1;
+        static bool autoWas;
+        static bool AutoFireTarget()
+        {
+            var p = PlayerController.Instance;
+            if (p == null || p.Cam == null || p.IsDead || p.Inventory == null || !(p.Inventory.Current is Firearm)) return false;
+            var cam = p.Cam.transform;
+            if (!Physics.SphereCast(cam.position, 0.05f, cam.forward, out var hit, 80f, Layers.ShootMask, QueryTriggerInteraction.Ignore)) return false;
+            var bp = hit.collider.GetComponent<BodyPart>();
+            return bp != null && bp.Doll != null && !bp.Doll.IsDead;
+        }
         static bool prevTouchFire, prevTouchJump, prevTouchAim, crouchToggled, sprintToggled, aimToggled;
 
         public static void Update()
@@ -85,6 +95,8 @@ namespace SolarEclipse
             for (int i = 0; i < 9; i++) if (Input.GetKeyDown(KeyCode.Alpha1 + i)) f.Slot = i;
             if (TouchSlot >= 0) f.Slot = TouchSlot;
             f.Scroll = (useMouse ? Input.mouseScrollDelta.y : 0f) + TouchScroll;
+            // GS2 auto-fire (phones, Settings > Controls): guns fire on their own while the crosshair is on a living Goredoll.
+            if (d.autoFire && Settings.TouchControlsActive && AutoFireTarget()) { f.FireHeld = true; if (!autoWas) f.Fire = true; autoWas = true; } else autoWas = false;
             Frame = f;
             ResetTouchEdges();
         }

@@ -1201,7 +1201,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1136. Swipe to switch weapons
 1137. Weapon wheel for touch
 1138. [x] Gyro aiming
-1139. Auto-fire option
+1139. [x] Auto-fire option
 1140. Aim assist on phones
 1141. [x] Haptic vibration on hits
 1142. [x] Battery saver mode

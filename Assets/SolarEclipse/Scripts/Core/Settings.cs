@@ -20,7 +20,8 @@ namespace SolarEclipse
         public bool invertY = false, aimToggle = false, sprintToggle = false, crouchToggle = false, autoReload = true;
         public int touchMode = 0; // 0 auto, 1 always, 2 never
         public bool touchAimHold = false;   // touch AIM button: false = tap to toggle (default), true = hold
-        public bool touchLeftFire = true;   // second FIRE button on the left, above the move stick
+        public bool touchLeftFire = true;
+        public bool autoFire = false;        // GS2 phones: guns fire while the crosshair is on a Goredoll   // second FIRE button on the left, above the move stick
         // Mobile dev toys (Dev/MobileDev.cs)
         public bool gyroAim = false, gyroInvertX = false, gyroInvertY = false, shakeToRagdoll = false;
         public float gyroSensitivity = 1f;

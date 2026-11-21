@@ -95,6 +95,7 @@ namespace SolarEclipse
                     changed |= UI.Slider(Next(), "Touch button opacity", ref d.touchOpacity, 0.15f, 1f, "0.00");
                     changed |= UI.Toggle(Next(), "Touch: hold AIM (instead of tap to toggle)", ref d.touchAimHold, "Off: tap AIM once to aim, tap again to stop, so your thumb is free to shoot.");
                     changed |= UI.Toggle(Next(), "Touch: second FIRE button on the left", ref d.touchLeftFire, "Shoot with either thumb. Dragging on a FIRE button also aims.");
+                    changed |= UI.Toggle(Next(), "Touch: auto-fire", ref d.autoFire, "Guns shoot on their own while the crosshair is on a living Goredoll.");
                     if (UI.Button(Next(), "Show key bindings", ButtonKind.Ghost, IconFactory.Get("keyboard"))) UIRoot.Push(new HelpScreen());
                     break;
                 case 3:
@@ -184,7 +185,7 @@ namespace SolarEclipse
         {
             new[] { "qualityLevel", "fullscreen", "vsync", "targetFps", "shadowQuality", "shadowDistance", "antiAliasing", "fov", "viewmodelFov", "renderDistance", "brightness", "fog", "showFps", "detailedStats" },
             new[] { "masterVolume", "sfxVolume", "voiceVolume", "musicVolume", "ambienceVolume", "uiVolume", "dynamicMusic", "monoAudio" },
-            new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
+            new[] { "mouseSensitivity", "adsSensitivity", "touchSensitivity", "touchButtonScale", "touchOpacity", "invertY", "aimToggle", "sprintToggle", "crouchToggle", "autoReload", "touchMode", "touchAimHold", "touchLeftFire", "autoFire", "gyroAim", "gyroInvertX", "gyroInvertY", "gyroSensitivity", "shakeToRagdoll" },
             new[] { "headBob", "storyDifficulty", "unlockAll", "screenShake", "viewmodel", "subtitles", "npcNames", "tutorialHints", "killStreakAnnouncer", "soundIndicators", "maxRagdolls", "maxCasings" },
             new[] { "goreLevel", "bloodColor", "bloodAmount", "bloodOnScreen", "hideOrgans", "noGibs", "noFlies", "flashReduction", "maxDecals", "maxGibs", "gibLifetime", "hitmarkers", "damageNumbers", "killFeed" },
             new[] { "uiScale", "hudScale", "hudOpacity", "autoUpdate", "playIntro", "pauseOnFocusLoss", "vibration", "batterySaver", "filmLook", "menuScene", "showChat", "crosshairStyle", "crosshairColor", "crosshairSize" },
@@ -212,7 +213,7 @@ namespace SolarEclipse
             {
                 case 0: return 14;
                 case 1: return 9;
-                case 2: return 14;
+                case 2: return 15;
                 case 3: return 12;
                 case 4: return 14;
                 case 6: return 12;
