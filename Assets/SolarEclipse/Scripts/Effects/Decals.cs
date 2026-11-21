@@ -182,6 +182,7 @@ namespace SolarEclipse
             col = new Color(col.r * Random.Range(0.85f, 1.1f), col.g, col.b, Random.Range(0.85f, 1f));
             if (kind != 1 && surface != null && surface.attachedRigidbody == null) size = FitSize(pos, normal, size);
             if (surface != null) { var st = Surface.Of(surface); if (st == SurfaceType.Dirt || st == SurfaceType.Grass) { size *= 0.8f; col = new Color(col.r * 0.6f, col.g * 0.55f, col.b * 0.55f, col.a * 0.9f); } } // GS2: soaks into soil and grass
+            if (Physiology.AmbientCold > 0.5f) col = Color.Lerp(col, new Color(0.28f, 0.04f, 0.09f, col.a), 0.4f); // GS2: freezes dark in the cold
             float rot = kind == 1 ? 0f : Random.Range(0f, 360f);
             if (kind == 1)
             {

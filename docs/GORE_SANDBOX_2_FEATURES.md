@@ -330,7 +330,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 307. Blood drips from hanging bodies onto the floor
 308. Sprinkler/fire system washing blood
 309. [x] Blood soaking into dirt and grass
-310. Blood freezing in cold maps
+310. [x] Blood freezing in cold maps
 
 ## 7. Anatomy & Medical Simulation (50)
 311. Full skeleton with 50+ named bones
