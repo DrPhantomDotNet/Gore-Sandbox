@@ -742,7 +742,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 701. Goredoll fighting styles (karate Goredolls)
 702. Fight arena with crowd
 703. [x] Training dummy with damage numbers
-704. Move list screen per style
+704. [x] Move list screen per style
 705. Combo trainer
 706. Fight camera that frames both fighters
 707. [x] Slow-motion on the final hit

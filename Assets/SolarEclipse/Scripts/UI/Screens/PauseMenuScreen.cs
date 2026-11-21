@@ -32,7 +32,9 @@ namespace SolarEclipse
             Rect B() { var r = new Rect(left.x + 28, y, left.width - 56, 58); y += 68; return r; }
             if (UI.Button(B(), "RESUME", ButtonKind.Primary, IconFactory.Get("play"))) OnBack();
             if (UI.Button(B(), "SETTINGS", ButtonKind.Normal, IconFactory.Get("gear"))) UIRoot.Push(new SettingsScreen(true));
-            if (UI.Button(B(), "CONTROLS", ButtonKind.Normal, IconFactory.Get("keyboard"))) UIRoot.Push(new HelpScreen());
+            { var cr = B(); float hw = (cr.width - 10) / 2f; // CONTROLS | MOVE LIST (GS2: fighting-style moves)
+              if (UI.Button(new Rect(cr.x, cr.y, hw, cr.height), "CONTROLS", ButtonKind.Normal, IconFactory.Get("keyboard"), 20)) UIRoot.Push(new HelpScreen());
+              if (UI.Button(new Rect(cr.x + hw + 10, cr.y, hw, cr.height), "MOVE LIST", ButtonKind.Normal, IconFactory.Get("fist"), 20)) UIRoot.Push(new MoveListScreen()); }
             if (UI.Button(B(), "SESSION STATS", ButtonKind.Normal, IconFactory.Get("chart"))) UIRoot.Push(new ScoreboardScreen());
             if (UI.Button(B(), "CUSTOMIZE WEAPONS", ButtonKind.Normal, IconFactory.Get("wrench"))) UIRoot.Push(new WeaponCustomizeScreen());
             if (UI.Button(B(), "CREATIONS + PROP EDITOR", ButtonKind.Normal, IconFactory.Get("box"), 20)) UIRoot.Push(new CreationsScreen());
