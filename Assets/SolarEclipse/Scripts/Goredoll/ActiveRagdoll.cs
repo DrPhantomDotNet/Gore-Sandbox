@@ -271,6 +271,14 @@ namespace SolarEclipse
                 var e = targets[(int)p.Type];
                 if (spasm)
                     e += new Vector3(Mathf.PerlinNoise(Time.time * 6f, spasmSeed + (int)p.Type) - 0.5f, 0, Mathf.PerlinNoise(spasmSeed, Time.time * 6f + (int)p.Type) - 0.5f) * 60f;
+                // GS2: visible breathing (chest and shoulders rise with each breath) and trembling when in shock.
+                var vit = doll.Vitals;
+                if (vit.State != LifeState.Dead && !vit.Undead)
+                {
+                    if (p.Type == PartType.Chest) e.x += Mathf.Sin(Time.time * Mathf.Max(6f, vit.RespRate) / 60f * Mathf.PI * 2f) * (1.2f + Mathf.Clamp01((vit.RespRate - 14f) / 20f) * 2.5f);
+                    if (vit.Shock > 0.45f && (p.Spec.IsArm || p.Type == PartType.Head))
+                        e += new Vector3(Mathf.PerlinNoise(Time.time * 14f, (int)p.Type) - 0.5f, 0, Mathf.PerlinNoise((int)p.Type, Time.time * 14f) - 0.5f) * (vit.Shock - 0.45f) * 14f;
+                }
                 j.targetRotation = Quaternion.Inverse(Quaternion.Euler(e));
                 float spring = p.Spec.Muscle * s * StrengthMul;
                 // Damping near critical for the limb's own inertia keeps limbs from oscillating.

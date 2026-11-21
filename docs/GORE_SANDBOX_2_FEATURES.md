@@ -161,10 +161,10 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 142. Separate fingers on hands
 143. Toes and proper foot shape
 144. Visible collarbones and shoulder blades
-145. Muscle definition by build slider
+145. [x] Muscle definition by build slider
 146. Body fat slider
 147. Age slider (young to old)
-148. Height slider with proportional limbs
+148. [x] Height slider with proportional limbs
 149. Skin texture with pores and freckles
 150. Veins visible on arms and neck
 151. Skin tone palette expanded (40 tones)
@@ -176,7 +176,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 157. Eye colours with iris detail
 158. Eyebrows and lashes
 159. 20 hair styles
-160. Beards and moustaches
+160. [x] Beards and moustaches
 161. Hair colour gradients and greying
 162. Clothing layers: undershirt, shirt, jacket
 163. Jeans, cargo pants, shorts, skirts
@@ -193,8 +193,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 174. Pupils reacting to light and death
 175. [x] Jaw going slack on death
 176. [x] Eyes rolling back when unconscious
-177. Breathing chest motion
-178. Shivering when in shock
+177. [x] Breathing chest motion
+178. [x] Shivering when in shock
 179. Better walk cycle with arm swing
 180. Run, sprint and panic-run cycles
 181. Limping with leg injuries
