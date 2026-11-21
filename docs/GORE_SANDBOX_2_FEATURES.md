@@ -1267,14 +1267,14 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1198. VR grabbing Goredolls by limbs
 1199. VR headlocks
 1200. VR comfort vignette
-1201. VR snap/smooth turning options
+1201. [x] VR snap/smooth turning options
 1202. VR seated mode
-1203. VR height calibration
+1203. [x] VR height calibration
 1204. VR teleport movement option
 1205. VR wrist menu
 1206. VR spawn menu as a tablet
 1207. VR photo camera you hold
-1208. VR haptics on hits
+1208. [x] VR haptics on hits
 1209. VR performance preset
 1210. VR multiplayer avatars with hands
 

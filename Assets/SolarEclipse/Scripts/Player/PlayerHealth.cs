@@ -31,6 +31,7 @@ namespace SolarEclipse
             LastDamageDir = info.Direction;
             LastDamageTime = Time.time;
             CameraFX.Shake(Mathf.Clamp(info.Amount / 40f, 0.1f, 0.7f));
+            if (VRManager.Active) { float hk = Mathf.Clamp(info.Amount / 40f, 0.3f, 1f); VRManager.Haptic(true, hk, 0.12f); VRManager.Haptic(false, hk, 0.12f); } // GS2 VR: getting hurt
 #if (UNITY_ANDROID || UNITY_IOS) && !GS_REFCHECK // GS_REFCHECK: the offline compile check has no phone-only APIs
             if (Settings.Data.vibration && info.Amount >= 8f) Handheld.Vibrate(); // Gore Sandbox 2
 #endif

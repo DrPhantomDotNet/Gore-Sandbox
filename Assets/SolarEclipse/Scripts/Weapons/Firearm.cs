@@ -328,6 +328,7 @@ namespace SolarEclipse
             CameraFX.Punch(0.55f * R * a, Random.Range(-0.35f, 0.35f) * R);
             CameraFX.Shake(0.03f * R);
             OnShot();
+            if (VRManager.Active) VRManager.Haptic(true, Mathf.Clamp(0.25f + Def.Recoil * 0.08f, 0.25f, 0.9f), 0.04f); // GS2 VR: feel every shot
             if (Rules.GunJams && !InfAmmo && Def.Kind == WeaponKind.Firearm && Random.value < 0.006f) { jammed = true; burstLeft = 0; GameEvents.ShowToast(Def.Name + " jammed! Press R to clear it."); }
         }
 

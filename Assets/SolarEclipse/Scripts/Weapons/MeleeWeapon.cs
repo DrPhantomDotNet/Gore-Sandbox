@@ -271,6 +271,7 @@ namespace SolarEclipse
         void FleshHit(BodyPart part, RaycastHit hit, Vector3 dir, Vector3 sweep)
         {
             if (Settings.GoreEnabled) { bloodied = Mathf.Min(1f, bloodied + (Spec.Blade ? 0.18f : 0.12f)); ApplyBlood(); }
+            if (VRManager.Active) VRManager.Haptic(true, Spec.TwoHanded ? 0.8f : 0.55f, 0.07f); // GS2 VR: feel the hit
             bool heavy = act == Act.Heavy;
             float pw = heavy ? power : 0.45f;
             float dmg = Def.Damage * DamageMul;
