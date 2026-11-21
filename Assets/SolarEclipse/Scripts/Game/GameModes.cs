@@ -703,6 +703,15 @@ namespace SolarEclipse
             new Challenge { Id = "golf", Text = "Take {0} Gore Golf shots", Stat = "golf_shots", Target = 5, Reward = 5000 },
             new Challenge { Id = "duels", Text = "Win {0} Tournament duels", Stat = "duel_wins", Target = 3, Reward = 9000 },
             new Challenge { Id = "heists", Text = "Finish {0} Open World heist", Stat = OWDirector.StatHeists, Target = 1, Reward = 10000 },
+            // Gore Sandbox 2
+            new Challenge { Id = "punches", Text = "Throw {0} punches", Stat = Stats.Punches, Target = 150, Reward = 4000 },
+            new Challenge { Id = "kicks", Text = "Kick {0} things", Stat = Stats.Kicks, Target = 40, Reward = 4000 },
+            new Challenge { Id = "finishers", Text = "Land {0} finishers in a fight", Stat = "finishers", Target = 3, Reward = 8000 },
+            new Challenge { Id = "disarms", Text = "Disarm {0} armed Goredolls", Stat = "disarms", Target = 2, Reward = 8000 },
+            new Challenge { Id = "bandages", Text = "Bandage yourself {0} times", Stat = "bandages", Target = 3, Reward = 4000 },
+            new Challenge { Id = "boom", Text = "Cause {0} explosions", Stat = Stats.Explosions, Target = 15, Reward = 5000 },
+            new Challenge { Id = "internal", Text = "Cause {0} internal bleeds", Stat = "internal_bleeds", Target = 5, Reward = 6000 },
+            new Challenge { Id = "tendons", Text = "Cut {0} tendons", Stat = "tendons", Target = 3, Reward = 6000 },
         };
 
         static string Day => DateTime.UtcNow.ToString("yyyyMMdd");
@@ -717,21 +726,41 @@ namespace SolarEclipse
             return list;
         }
 
-        static string Key(Challenge c, string what) => "daily_" + Day + "_" + c.Id + "_" + what;
+        // GS2 weekly challenges: two per week (Monday to Sunday, UTC), five times the daily target, four times the reward.
+        static string Week { get { var d = DateTime.UtcNow; int dow = ((int)d.DayOfWeek + 6) % 7; return "w" + d.AddDays(-dow).ToString("yyyyMMdd"); } }
+        static readonly Dictionary<string, Challenge> weekly = new Dictionary<string, Challenge>();
+        public static List<Challenge> ThisWeek()
+        {
+            var list = new List<Challenge>();
+            var rng = new System.Random(Week.GetHashCode());
+            var pool = new List<Challenge>(Pool);
+            for (int i = 0; i < 2; i++)
+            {
+                int k = rng.Next(pool.Count); var b = pool[k]; pool.RemoveAt(k);
+                string id = "wk_" + b.Id;
+                if (!weekly.TryGetValue(id, out var c)) weekly[id] = c = new Challenge { Id = id, Text = b.Text + " this week", Stat = b.Stat, Target = Mathf.Max(2f, b.Target * 5f), Reward = b.Reward * 4 };
+                list.Add(c);
+            }
+            foreach (var c in list) if (!PlayerPrefs.HasKey(Key(c, "base"))) PlayerPrefs.SetFloat(Key(c, "base"), Stats.Get(c.Stat));
+            return list;
+        }
+
+        static string Key(Challenge c, string what) => (c.Id.StartsWith("wk_") ? "weekly_" + Week : "daily_" + Day) + "_" + c.Id + "_" + what;
         public static float Progress(Challenge c) => Mathf.Clamp(Stats.Get(c.Stat) - PlayerPrefs.GetFloat(Key(c, "base"), Stats.Get(c.Stat)), 0f, c.Target);
         public static bool Done(Challenge c) => PlayerPrefs.GetInt(Key(c, "done"), 0) == 1;
         public static string Text(Challenge c) => string.Format(c.Text, c.Target.ToString("N0"));
 
         public static void Check()
         {
-            foreach (var c in Today())
+            var all = Today(); all.AddRange(ThisWeek());
+            foreach (var c in all)
             {
                 if (Done(c) || Progress(c) < c.Target) continue;
                 PlayerPrefs.SetInt(Key(c, "done"), 1);
                 PlayerPrefs.Save();
                 Stats.Add("daily_done");
                 OWSave.Earn(c.Reward, "Daily challenge");
-                Toasts.Show("DAILY CHALLENGE COMPLETE", Text(c) + "  ·  +$" + c.Reward.ToString("N0") + " Open World cash", UI.Good);
+                Toasts.Show(c.Id.StartsWith("wk_") ? "WEEKLY CHALLENGE COMPLETE" : "DAILY CHALLENGE COMPLETE", Text(c) + "  ·  +$" + c.Reward.ToString("N0") + " Open World cash", UI.Good);
             }
         }
 
@@ -757,14 +786,17 @@ namespace SolarEclipse
         public override void Draw()
         {
             UI.Dim(0.7f);
-            var r = UI.Centered(Mathf.Min(1000, UI.VW - 60), 640);
+            var r = UI.Centered(Mathf.Min(1000, UI.VW - 60), Mathf.Min(980, UI.VH - 40));
             UI.Panel(r, "Daily Challenges");
-            UI.Label(new Rect(r.x + 300, r.y + 20, r.width - 330, 40), "New challenges every day (UTC). Rewards are Open World cash.", 16, UI.Muted, TextAnchor.MiddleRight);
+            UI.Label(new Rect(r.x + 300, r.y + 20, r.width - 330, 40), "New challenges every day, weekly ones every Monday (UTC). Rewards are Open World cash.", 16, UI.Muted, TextAnchor.MiddleRight);
             var list = DailyChallenges.Today();
+            list.AddRange(DailyChallenges.ThisWeek());
+            float rowH = Mathf.Min(140f, (r.height - 200f) / list.Count);
             for (int i = 0; i < list.Count; i++)
             {
                 var c = list[i];
-                var cr = new Rect(r.x + 30, r.y + 90 + i * 140, r.width - 60, 124);
+                var cr = new Rect(r.x + 30, r.y + 90 + i * rowH, r.width - 60, rowH - 16);
+                if (c.Id.StartsWith("wk_")) UI.Label(new Rect(cr.xMax - 240, cr.yMax - 30, 220, 26), "WEEKLY", 14, UI.Accent2, TextAnchor.MiddleRight, FontStyle.Bold);
                 bool done = DailyChallenges.Done(c);
                 UI.Rounded(cr, done ? new Color(0.1f, 0.35f, 0.15f, 0.9f) : UI.PanelLight, true);
                 UI.Label(new Rect(cr.x + 20, cr.y + 10, cr.width - 260, 44), DailyChallenges.Text(c), 26, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
@@ -789,11 +821,17 @@ namespace SolarEclipse
             UI.Dim(0.75f);
             var r = UI.Centered(Mathf.Min(1300, UI.VW - 40), Mathf.Min(860, UI.VH - 30));
             UI.Panel(r, "Game Modes");
+            // GS2: there are now ~20 modes, so the list scrolls.
+            var defs = new List<MapDef>(GameModes.Defs());
+            var view = new Rect(r.x + 24, r.y + 80, r.width - 48, r.height - 176);
+            float content = defs.Count * 168f;
+            float sc = UI.BeginScroll("modes", view, content);
             int i = 0;
-            foreach (var def in GameModes.Defs())
+            foreach (var def in defs)
             {
                 var d = MapCatalog.All.Find(x => x.Id == def.Id) ?? def;
-                var cr = new Rect(r.x + 30, r.y + 86 + i * 168, r.width - 60, 154);
+                var cr = new Rect(6, i * 168 - sc, view.width - 28, 154);
+                if (cr.yMax < 0f || cr.y > view.height) { i++; continue; }
                 UI.Gradient(cr, d.ThemeTop, d.ThemeBottom);
                 UI.Label(new Rect(cr.x + 24, cr.y + 12, cr.width - 520, 50), d.Name.ToUpperInvariant(), 34, Color.white, TextAnchor.MiddleLeft, FontStyle.Normal, true, false, UI.HeavyFont);
                 UI.Label(new Rect(cr.x + 24, cr.y + 62, cr.width - 520, 84), d.Description, 17, Color.white, TextAnchor.UpperLeft, FontStyle.Normal, true, true);
@@ -807,6 +845,7 @@ namespace SolarEclipse
                 }
                 i++;
             }
+            UI.EndScroll("modes", view, content);
             if (UI.Button(new Rect(r.x + 30, r.yMax - 80, 220, 58), "BACK", ButtonKind.Normal, IconFactory.Get("arrow_left"))) OnBack();
         }
     }

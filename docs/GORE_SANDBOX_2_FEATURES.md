@@ -987,8 +987,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 934. Nextbot chase (improved)
 935. [x] Boss rush
 936. [x] Wave survival with shop (improved)
-937. Daily challenges (more types)
-938. Weekly challenges
+937. [x] Daily challenges (more types)
+938. [x] Weekly challenges
 939. Custom game rules editor
 940. Mode voting in multiplayer
 941. Bots for every mode
