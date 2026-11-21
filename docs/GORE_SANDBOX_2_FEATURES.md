@@ -76,7 +76,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 61. [x] Reset-to-default per tab
 62. Settings search
 63. Pause menu redesign with live blurred background
-64. Pause menu quick toggles (slow-mo, noclip, god mode)
+64. [x] Pause menu quick toggles (slow-mo, noclip, god mode)
 65. New HUD: minimal health/ammo bottom corners
 66. HUD scale and opacity sliders
 67. HUD hides automatically in photo mode
@@ -115,14 +115,14 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 98. Procedural clouds that move
 99. [x] Stars and moon at night
 100. [x] Lightning flashes lighting the map
-101. Higher-resolution procedural textures
-102. Concrete with cracks and stains
-103. Tiles with grout and dirt
-104. Wood with grain and knots
-105. Metal with scratches and rust
-106. Brick walls with mortar detail
-107. Asphalt with tar lines and paint wear
-108. Grass with colour variation
+101. [x] Higher-resolution procedural textures
+102. [x] Concrete with cracks and stains
+103. [x] Tiles with grout and dirt
+104. [x] Wood with grain and knots
+105. [x] Metal with scratches and rust
+106. [x] Brick walls with mortar detail
+107. [x] Asphalt with tar lines and paint wear
+108. [x] Grass with colour variation
 109. Detail normal-style shading on walls
 110. Decal grime on walls and corners
 111. Distance-based texture blending to hide tiling

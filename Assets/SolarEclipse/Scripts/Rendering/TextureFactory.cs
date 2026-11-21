@@ -390,7 +390,12 @@ namespace SolarEclipse
         {
             float n = Noise.FbmTile(x * 8, y * 8, 8, 5, 1);
             float blades = Noise.FbmTile(x * 64, y * 64, 64, 2, 2);
-            return Color.Lerp(new Color(0.24f, 0.42f, 0.16f), new Color(0.42f, 0.62f, 0.24f), n * 0.7f + blades * 0.3f);
+            float patch = Noise.FbmTile(x * 3, y * 3, 3, 3, 41);   // GS2: drier and lusher patches
+            float fine = Noise.ValueTile(x * 256, y * 256, 256, 42);
+            var c = Color.Lerp(new Color(0.24f, 0.42f, 0.16f), new Color(0.42f, 0.62f, 0.24f), n * 0.7f + blades * 0.3f);
+            c = Color.Lerp(c, new Color(0.5f, 0.52f, 0.25f), Mathf.Clamp01((patch - 0.55f) * 2.5f) * 0.6f);
+            c = Color.Lerp(c, new Color(0.16f, 0.32f, 0.12f), Mathf.Clamp01((0.4f - patch) * 2.5f) * 0.5f);
+            return c * (0.92f + fine * 0.16f);
         });
 
         public static Texture2D Concrete => concrete ??= Tile("Concrete", (x, y) =>
@@ -399,6 +404,11 @@ namespace SolarEclipse
             float speck = Noise.ValueTile(x * 128, y * 128, 128, 4);
             float seam = (Frac(x * 2f) < 0.008f || Frac(y * 2f) < 0.008f) ? 0.8f : 1f;
             float l = (0.55f + n * 0.25f + (speck > 0.9f ? -0.1f : 0f)) * seam;
+            // GS2: hairline cracks (ridged noise) and darker water stains.
+            float crack = 1f - Mathf.Abs(Noise.FbmTile(x * 6, y * 6, 6, 4, 43) * 2f - 1f);
+            if (crack > 0.965f) l *= Mathf.Lerp(1f, 0.55f, (crack - 0.965f) / 0.035f);
+            float stain = Noise.FbmTile(x * 2, y * 2, 2, 4, 44);
+            l *= 1f - Mathf.Clamp01((stain - 0.58f) * 3f) * 0.25f;
             return new Color(l, l * 0.99f, l * 0.96f);
         });
 
@@ -407,6 +417,11 @@ namespace SolarEclipse
             float n = Noise.FbmTile(x * 16, y * 16, 16, 4, 5);
             float speck = Noise.ValueTile(x * 200, y * 200, 200, 6);
             float l = 0.16f + n * 0.12f + (speck > 0.85f ? 0.08f : 0f);
+            // GS2: black tar-sealed cracks and worn, lighter patches.
+            float tar = 1f - Mathf.Abs(Noise.FbmTile(x * 4, y * 4, 4, 4, 45) * 2f - 1f);
+            if (tar > 0.975f) l = Mathf.Lerp(l, 0.06f, (tar - 0.975f) / 0.025f);
+            float wear = Noise.FbmTile(x * 2, y * 2, 2, 3, 46);
+            l += Mathf.Clamp01((wear - 0.6f) * 2.5f) * 0.05f;
             return new Color(l, l, l * 1.05f);
         });
 
@@ -415,7 +430,11 @@ namespace SolarEclipse
             float fx = Frac(x * 4f), fy = Frac(y * 4f);
             bool grout = fx < 0.03f || fy < 0.03f;
             float n = Noise.FbmTile(x * 4, y * 4, 4, 3, 7);
-            float l = grout ? 0.45f : 0.82f + n * 0.1f;
+            float dirt = Noise.FbmTile(x * 32, y * 32, 32, 3, 47);
+            // GS2: dirty grout, tile edges collecting grime, slight per-tile shade.
+            float edge = Mathf.Min(Mathf.Min(fx, 1f - fx), Mathf.Min(fy, 1f - fy));
+            float tileShade = Noise.Hash(Mathf.FloorToInt(x * 4f), Mathf.FloorToInt(y * 4f), 48) * 0.05f;
+            float l = grout ? 0.32f + dirt * 0.15f : 0.82f + n * 0.1f + tileShade - Mathf.Clamp01((0.07f - edge) * 14f) * 0.08f;
             return new Color(l, l, l * 0.98f);
         });
 
@@ -426,6 +445,14 @@ namespace SolarEclipse
             float grain = Noise.FbmTile(x * 4 + plank * 0.37f, y * 48, 4, 4, 8);
             float rings = Mathf.Sin((x * 40f + grain * 6f + plank * 3f)) * 0.5f + 0.5f;
             float l = 0.5f + grain * 0.25f + rings * 0.08f + Noise.Hash((int)plank, 0, 9) * 0.1f;
+            // GS2: a knot or two per plank (dark ellipse with rings bending around it).
+            for (int k = 0; k < 2; k++)
+            {
+                float kx = Noise.Hash((int)plank, k, 49), ky = 0.3f + Noise.Hash((int)plank, k, 50) * 0.4f;
+                float dx = Mathf.Abs(x - kx); dx = Mathf.Min(dx, 1f - dx);
+                float d = Mathf.Sqrt(dx * dx * 900f + (fy - ky) * (fy - ky) * 40f);
+                if (d < 1f) l *= Mathf.Lerp(0.45f, 1f, d) * (0.92f + 0.08f * Mathf.Sin(d * 30f));
+            }
             if (fy < 0.03f) l *= 0.5f;
             return new Color(0.62f * l + 0.1f, 0.42f * l + 0.05f, 0.25f * l);
         });
@@ -436,7 +463,12 @@ namespace SolarEclipse
             float diamond = (fx > 0.45f && fx < 0.55f) || (fy > 0.45f && fy < 0.55f) ? 0.12f : 0f;
             float n = Noise.FbmTile(x * 8, y * 8, 8, 3, 10);
             float l = 0.45f + n * 0.15f + diamond;
-            return new Color(l, l * 1.02f, l * 1.06f);
+            // GS2: fine scratches (stretched noise) and rust blooming in patches.
+            float scratch = Noise.Hash(Mathf.FloorToInt(y * 256f), Mathf.FloorToInt(x * 4f), 51); // short horizontal scratch segments (tiles)
+            if (scratch > 0.96f) l += 0.08f;
+            var c = new Color(l, l * 1.02f, l * 1.06f);
+            float rust = Noise.FbmTile(x * 4, y * 4, 4, 5, 52);
+            return Color.Lerp(c, new Color(0.45f, 0.22f, 0.1f) * (0.8f + n * 0.4f), Mathf.Clamp01((rust - 0.62f) * 4f) * 0.8f);
         });
 
         public static Texture2D Brick => brick ??= Tile("Brick", (x, y) =>
@@ -446,7 +478,14 @@ namespace SolarEclipse
             bool mortar = bx < 0.04f || by < 0.08f;
             float n = Noise.FbmTile(x * 16, y * 16, 16, 3, 11);
             float v = Noise.Hash(Mathf.FloorToInt(x * 4f + (row % 2f) * 0.5f), (int)row, 12) * 0.15f;
-            return mortar ? new Color(0.62f, 0.6f, 0.56f) : new Color(0.55f + n * 0.15f + v, 0.24f + n * 0.08f, 0.18f + n * 0.05f);
+            // GS2: gritty recessed mortar, darker brick edges, a few chipped corners.
+            float grit = Noise.ValueTile(x * 256, y * 256, 256, 53);
+            if (mortar) { float m = 0.5f + grit * 0.15f; return new Color(m, m * 0.97f, m * 0.92f); }
+            float edge = Mathf.Min(Mathf.Min(bx - 0.04f, 1f - bx), Mathf.Min(by - 0.08f, 1f - by) * 0.5f);
+            float shade = 1f - Mathf.Clamp01((0.05f - edge) * 20f) * 0.25f;
+            float chip = Noise.FbmTile(x * 32, y * 32, 32, 2, 54);
+            if (edge < 0.04f && chip > 0.7f) { float m = 0.45f + grit * 0.1f; return new Color(m, m * 0.95f, m * 0.9f); }
+            return new Color((0.55f + n * 0.15f + v) * shade, (0.24f + n * 0.08f) * shade, (0.18f + n * 0.05f) * shade);
         });
 
         public static Texture2D Carpet => carpet ??= Tile("Carpet", (x, y) =>
@@ -501,7 +540,7 @@ namespace SolarEclipse
 
         static Texture2D Tile(string name, System.Func<float, float, Color> f)
         {
-            const int size = 256;
+            int size = Application.isMobilePlatform ? 256 : 512; // GS2: sharper surfaces on PC
             var c = new PixelCanvas(size, size, Color.white);
             for (int y = 0; y < size; y++)
                 for (int x = 0; x < size; x++)
