@@ -29,8 +29,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 16. [x] Gore level picker on the very first launch
 17. First-launch language/graphics quick setup
 18. Animated studio "SolarEclipse Productions" card
-19. Version + build number on the title card
-20. Seasonal intro variants (Halloween, Christmas)
+19. [x] Version + build number on the title card
+20. [x] Seasonal intro variants (Halloween, Christmas)
 21. Random intro scene each launch (morgue, alley, hospital)
 22. [x] Film grain + chromatic aberration in cinematics
 23. [x] Letterbox bars for cinematic moments

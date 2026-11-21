@@ -142,7 +142,7 @@ namespace SolarEclipse
             for (int g = 0; g < 4; g++)
             {
                 var o = new Vector2(Mathf.Cos(g * 1.57f), Mathf.Sin(g * 1.57f)) * 5f;
-                UI.Label(new Rect(r.x + o.x, r.y + o.y, r.width, r.height), title, 140, new Color(0.9f, 0.05f, 0.05f, 0.25f * alpha), TextAnchor.MiddleCenter, FontStyle.Normal, false, false, UI.HeavyFont);
+                UI.Label(new Rect(r.x + o.x, r.y + o.y, r.width, r.height), title, 140, (Season()?.col ?? new Color(0.9f, 0.05f, 0.05f)).WithAlpha(0.25f * alpha), TextAnchor.MiddleCenter, FontStyle.Normal, false, false, UI.HeavyFont);
             }
             UI.Label(r, title, 140, new Color(0.95f, 0.93f, 0.9f, alpha), TextAnchor.MiddleCenter, FontStyle.Normal, true, false, UI.HeavyFont);
             // Blood running down from the letters.
@@ -169,7 +169,19 @@ namespace SolarEclipse
             {
                 UI.Fill(new Rect(W / 2 - 330 * sub, c.y + 160, 660 * sub, 3), UI.Accent.WithAlpha(0.9f * sub));
                 UI.Label(new Rect(0, c.y + 170, W, 50), "v" + GameInfo.Version, 26, UI.Accent2.WithAlpha(sub), TextAnchor.MiddleCenter, FontStyle.Bold);
+                var season = Season();
+                if (season != null) UI.Label(new Rect(0, c.y + 214, W, 44), season.Value.text, 24, season.Value.col.WithAlpha(sub), TextAnchor.MiddleCenter, FontStyle.Bold);
             }
+        }
+    
+        /// <summary>Seasonal variant of the title card: Halloween, Christmas and New Year (by the device date).</summary>
+        static (string text, Color col)? Season()
+        {
+            var d = System.DateTime.Now;
+            if (d.Month == 10 && d.Day >= 20) return ("HAPPY HALLOWEEN", new Color(1f, 0.5f, 0.05f));
+            if (d.Month == 12 && d.Day >= 18 && d.Day <= 27) return ("MERRY CHRISTMAS", new Color(0.3f, 0.85f, 0.35f));
+            if ((d.Month == 12 && d.Day == 31) || (d.Month == 1 && d.Day == 1)) return ("HAPPY NEW YEAR", new Color(1f, 0.85f, 0.3f));
+            return null;
         }
     }
 }
