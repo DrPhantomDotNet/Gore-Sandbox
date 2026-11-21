@@ -246,9 +246,13 @@ namespace SolarEclipse
             UpdateFace();
         }
 
+        bool disarmed;
+        /// <summary>GS2: a hard hit to the gun hand knocks the weapon out of it.</summary>
+        public void Disarm() { if (!dropped) disarmed = true; }
+
         bool ShouldDrop()
         {
-            if (gun == null) return true;
+            if (gun == null || disarmed) return true;
             if (doll.IsDead) return true;
             foreach (var t in new[] { PartType.UpperArmR, PartType.ForearmR, PartType.HandR })
                 if (!doll.Parts.TryGetValue(t, out var p) || p == null || p.Severed || p.Gibbed) return true;

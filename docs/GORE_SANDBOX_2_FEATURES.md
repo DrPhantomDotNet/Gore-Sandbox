@@ -736,9 +736,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 695. Throwing Goredolls through glass
 696. Wall slams
 697. Table slams
-698. Weapon disarms (take their weapon)
+698. [x] Weapon disarms (take their weapon)
 699. Grab weapons mid-fight
-700. Goredolls that box back
+700. [x] Goredolls that box back
 701. Goredoll fighting styles (karate Goredolls)
 702. Fight arena with crowd
 703. [x] Training dummy with damage numbers

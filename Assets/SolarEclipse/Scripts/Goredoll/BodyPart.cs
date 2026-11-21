@@ -184,6 +184,9 @@ namespace SolarEclipse
             if (!NetState.IsClient && info.Amount > 20f && (info.Type == DamageType.Stab || info.IsBallistic) && Random.value < 0.15f
                 && (Type == PartType.UpperArmL || Type == PartType.UpperArmR || Type == PartType.ThighL || Type == PartType.ThighR))
                 foreach (var bp in Doll.Parts.Values) if (bp != null && (bp == this || IsBelow(bp))) bp.NerveDamaged = true;
+            // GS2 disarm: hits to the gun hand / forearm can make armed Goredolls drop their weapon.
+            if (!NetState.IsClient && (Type == PartType.HandR || Type == PartType.ForearmR) && info.Amount > 10f && Random.value < (info.Type == DamageType.Blunt ? 0.55f : 0.35f))
+                Doll.GetComponent<ArmedBrain>()?.Disarm();
             // GS2: heavy blunt force to the trunk ruptures something inside: hidden bleeding with no wound to show for it.
             if ((info.Type == DamageType.Blunt || info.Type == DamageType.Crush || info.Type == DamageType.Fall) && info.Amount > 28f && (Type == PartType.Chest || Type == PartType.Abdomen || Type == PartType.Pelvis))
                 v.InternalBleed = Mathf.Min(25f, v.InternalBleed + (info.Amount - 20f) * 0.12f);
