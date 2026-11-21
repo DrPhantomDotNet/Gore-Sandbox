@@ -48,6 +48,23 @@ namespace SolarEclipse
             if (Cold && !def.Indoor) Breath(cam);
             if (Cold && !NetState.IsClient && Time.time >= nextShiver) { nextShiver = Time.time + 0.15f; Shiver(); }
             if (eclipseAt > 0f) Eclipse();
+            if (def.Indoor) Dust(cp);
+        }
+
+        // ------------------------------------------------------------------ indoor dust
+
+        ParticleSystem dust; float dustAcc;
+        /// <summary>Indoor maps: tiny dust motes drifting in the air around you, catching the light.</summary>
+        void Dust(Vector3 cp)
+        {
+            if (dust == null) dust = ParticleKit.Create("Dust Motes", transform, Mats.Particle, 300, 0f);
+            dustAcc += Time.deltaTime * 14f;
+            while (dustAcc >= 1f)
+            {
+                dustAcc -= 1f;
+                var pos = cp + new Vector3(Random.Range(-5f, 5f), Random.Range(-1.2f, 2.2f), Random.Range(-5f, 5f));
+                ParticleKit.Emit(dust, pos, Random.insideUnitSphere * 0.04f + Vector3.up * 0.01f, Random.Range(0.006f, 0.014f), Random.Range(6f, 10f), new Color(1f, 0.97f, 0.9f, 0.35f));
+            }
         }
 
         // ------------------------------------------------------------------ wind

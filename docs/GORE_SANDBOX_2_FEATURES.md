@@ -108,7 +108,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 91. Depth of field in photo mode
 92. Motion blur option
 93. Volumetric-looking light shafts (cards)
-94. Dust particles floating in light beams
+94. [x] Dust particles floating in light beams
 95. Wet-surface shine on floors after rain
 96. Puddle reflections (fake)
 97. Better skybox gradients per time of day
