@@ -1065,7 +1065,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 1008. Territories (more)
 1009. Wanted system improved (helicopters)
 1010. Bounty hunters
-1011. Random events (car crash, robbery, fire)
+1011. [x] Random events (car crash, robbery, fire)
 1012. Day jobs with schedules
 1013. Weather and day/night in Open World
 1014. Open World achievements

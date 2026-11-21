@@ -48,7 +48,7 @@ namespace SolarEclipse
         static float bountyUntil;
 
         PlayerController setupFor;
-        float gHeld = -1f, nextState, nextSpawn, nextPolice, nextCleanup, nextInput;
+        float gHeld = -1f, nextState, nextSpawn, nextPolice, nextCleanup, nextInput, nextEvent;
         bool wasDead;
         Weapon skinned;
         readonly HashSet<byte> hiddenDrivers = new HashSet<byte>();
@@ -644,6 +644,8 @@ namespace SolarEclipse
             if (now > nextSpawn) { nextSpawn = now + 2.5f; ManagePeople(); }
             if (now > nextPolice) { nextPolice = now + 3.5f; ManagePolice(); }
             if (now > nextCleanup) { nextCleanup = now + 5f; Cleanup(); }
+            if (nextEvent <= 0f) nextEvent = now + Random.Range(60f, 120f);
+            if (now > nextEvent) { nextEvent = now + Random.Range(100f, 200f); RandomEvent(); } // GS2 random street events
 
             if (now > nextState || stateDirty) { nextState = now + 1f; stateDirty = false; nm.OWBroadcastState(); }
         }
@@ -662,6 +664,54 @@ namespace SolarEclipse
             var nm = NetManager.I;
             if (NetState.Active && nm != null) foreach (var id in nm.Players.Keys) if (id != MyId && nm.Players[id].Ready) list.Add(id);
             return list;
+        }
+
+        /// <summary>GS2 Open World random events near a random player: a car bursts into flames, or a street brawl breaks out.</summary>
+        void RandomEvent()
+        {
+            var nm = NetManager.I;
+            var ids = PlayerIds();
+            byte pid = ids[Random.Range(0, ids.Count)];
+            if (!nm.OWPos(pid, out var at) || IsDead(pid)) return;
+            if (Random.value < 0.5f)
+            {
+                if (!RoadSpotNear(at + new Vector3(Random.Range(-40f, 40f), 0, Random.Range(-40f, 40f)), out var spot, out var yaw)) return;
+                if ((spot - at).sqrMagnitude < 15f * 15f) return;
+                var car = SpawnParked(spot, new System.Random(Random.Range(0, 99999)));
+                if (car == null) return;
+                StartCoroutine(BurnCar(car));
+                nm.OWEvent(pid, OWEv.Toast, 255, "A car is on fire nearby!");
+            }
+            else
+            {
+                if (!SidewalkSpot(at, 18f, 45f, out var spot)) return;
+                for (int i = 0; i < 2; i++)
+                {
+                    var d = GoredollFactory.Spawn(spot + new Vector3(i * 1.2f, 0.1f, 0f), Random.Range(0f, 360f), NpcTypes.Preset(i == 0 ? "gangster" : "biker"));
+                    if (d != null && d.Brain != null) d.Brain.Anger = 1f;
+                    if (d != null) StartCoroutine(DespawnLater(d, 150f));
+                }
+                nm.OWEvent(pid, OWEv.Toast, 255, "Two thugs are looking for trouble nearby!");
+            }
+        }
+
+        static System.Collections.IEnumerator DespawnLater(Goredoll d, float after)
+        {
+            yield return new WaitForSeconds(after);
+            while (d != null && AnyPlayerWithin(d.Position, 30f)) yield return new WaitForSeconds(5f);
+            if (d != null) d.Despawn();
+        }
+
+        static System.Collections.IEnumerator BurnCar(OWCar car)
+        {
+            float until = Time.time + Random.Range(10f, 16f);
+            while (car != null && !car.Wrecked && Time.time < until)
+            {
+                FX.Fire(car.transform.position + Vector3.up * 1.1f + Random.insideUnitSphere * 0.6f, Vector3.up * 2f, 0.6f);
+                FX.MuzzleSmoke(car.transform.position + Vector3.up * 1.5f, Vector3.up, 1.2f);
+                yield return new WaitForSeconds(0.08f);
+            }
+            if (car != null && !car.Wrecked) car.Explode();
         }
 
         static bool AnyPlayerWithin(Vector3 pos, float r)
