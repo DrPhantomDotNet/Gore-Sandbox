@@ -25,6 +25,7 @@ namespace SolarEclipse
             if (Rules.Invincible) { DamageFlash = Mathf.Max(DamageFlash, 0.15f); return; }
             if (info.Type == DamageType.Fall && Rules.NoFallDamage) return;
             if (info.Type == DamageType.Blunt || info.Type == DamageType.Slash || info.Type == DamageType.Stab) info.Amount *= Boxing.GuardMul; // boxing guard (RMB)
+            if (StoryRunner.Active || StoryMode.Active) info.Amount *= Settings.Data.storyDifficulty == 0 ? 0.6f : Settings.Data.storyDifficulty == 2 ? 1.5f : 1f; // GS2 story difficulty
             Current -= info.Amount;
             DamageFlash = Mathf.Clamp01(DamageFlash + 0.25f + info.Amount / 60f);
             LastDamageDir = info.Direction;

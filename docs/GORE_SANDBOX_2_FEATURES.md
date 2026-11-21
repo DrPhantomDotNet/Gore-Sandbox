@@ -1010,7 +1010,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 955. Big Marcus side missions
 956. Collectible case files
 957. Hidden endings
-958. Hard mode
+958. [x] Hard mode
 959. Permadeath mode
 960. New Game+
 961. [x] Mission ranks (S, A, B, C)
@@ -1024,7 +1024,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 969. Story map with locations
 970. Flashback missions
 971. Co-op story (2 players)
-972. Story difficulty slider
+972. [x] Story difficulty slider
 973. Checkpoints inside missions
 974. Story soundtrack
 975. Story credits per chapter
