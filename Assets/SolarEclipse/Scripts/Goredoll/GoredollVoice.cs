@@ -87,7 +87,7 @@ namespace SolarEclipse
             voice.Play();
             doll.Face?.Talk(c.length * 0.9f);
             if (Lines.TryGetValue(clip, out var lines)) ShowSubtitle(lines[Random.Range(0, lines.Length)], Mathf.Max(1.5f, c.length + 0.5f));
-            GameEvents.EmitNoise(transform.position, clip == "v_scream" ? 30f : 12f, 0.3f, doll);
+            GameEvents.EmitNoise(transform.position, clip == "v_scream" ? 30f : 12f, clip == "v_scream" ? 0.55f : 0.3f, doll); // GS2: screams frighten other Goredolls
             return true;
         }
 

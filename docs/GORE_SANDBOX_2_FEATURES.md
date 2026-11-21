@@ -469,9 +469,9 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 440. Sound previews in the spawn menu
 
 ## 10. Goredoll AI & Behaviour (60)
-441. Personalities: brave, coward, aggressive, curious, calm
+441. [x] Personalities: brave, coward, aggressive, curious, calm
 442. [x] Memory of who hurt them
-443. Grudges: attack the player who hurt them
+443. [x] Grudges: attack the player who hurt them
 444. Friends that help each other
 445. Dragging injured friends to safety
 446. Applying bandages to friends
@@ -491,8 +491,8 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 460. [x] Panicking in crowds
 461. Stampedes that knock others over
 462. [x] Reacting to gunshots by distance
-463. Reacting to screams
-464. Reacting to seeing corpses
+463. [x] Reacting to screams
+464. [x] Reacting to seeing corpses
 465. [x] Vomiting when seeing gore
 466. [x] Fainting when seeing gore (sensitive ones)
 467. [x] Investigating sounds
@@ -504,7 +504,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 473. Climbing over low obstacles
 474. Jumping gaps
 475. Swimming in water
-476. Avoiding fire and hazards
+476. [x] Avoiding fire and hazards
 477. Avoiding traps they have seen
 478. Group formations when walking
 479. Following a leader
@@ -523,7 +523,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 492. Taking cover and peeking
 493. Reloading behind cover
 494. Throwing grenades (armed AI)
-495. Retreating when hurt
+495. [x] Retreating when hurt
 496. AI difficulty slider
 497. [x] AI aggression slider (improved)
 498. AI vision cone debug view

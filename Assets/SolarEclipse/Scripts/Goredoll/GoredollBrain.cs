@@ -20,6 +20,8 @@ namespace SolarEclipse
         public bool ForceDance;
         /// <summary>"Hostile" preset (horde mode): always angry, never scared, hunts the nearest player.</summary>
         public bool Hostile;
+        IPlayerTarget grudge; float grudgeLevel; // GS2: they remember who hurt them
+        float nextHazardCheck;
 
         Goredoll doll;
         ActiveRagdoll body;
@@ -88,6 +90,7 @@ namespace SolarEclipse
             {
                 Fear = Mathf.Clamp01(Fear + k * 0.35f * (1.15f - Bravery));
                 if (PlayerTargets.IsPlayerSource(e.Source)) { threatPos = e.Position; threatTime = Time.time; }
+                else if (e.Source is Goredoll && Fear > 0.3f) { threatPos = e.Position; threatTime = Time.time; } // someone screamed: get away from there
             }
         }
 
@@ -97,7 +100,7 @@ namespace SolarEclipse
             Fear = Mathf.Clamp01(Fear + damage / 55f * (1.25f - Bravery));
             Anger = Mathf.Clamp01(Anger + damage / 70f * (0.3f + Aggression));
             var p = info.Source as IPlayerTarget ?? (info.Source is Weapon ? PlayerController.Instance : null);
-            if (p != null) { threatPos = p.Position; threatTime = Time.time; focus = p; focusPick = Time.time + 4f; }
+            if (p != null) { threatPos = p.Position; threatTime = Time.time; focus = p; focusPick = Time.time + 4f; grudge = p; grudgeLevel = Mathf.Clamp01(grudgeLevel + damage / 60f); }
             else if (info.Source is Component c) { threatPos = c.transform.position; threatTime = Time.time; }
             if (Action == AiAction.Surrender && Random.value < 0.6f) SetAction(AiAction.Panic);
             if (Action == AiAction.PlayDead) playDeadUntil = 0;
@@ -164,6 +167,21 @@ namespace SolarEclipse
             Anger = Mathf.MoveTowards(Anger, 0f, Time.deltaTime * 0.015f);
             if (Rules.AiAggression > 0) Anger = Mathf.Max(Anger, Rules.AiAggression * 0.8f);
             if (Hostile) { Anger = 1f; Fear = Mathf.Min(Fear, 0.3f); }
+            // Grudge: seeing the player who hurt them makes them angry again (brave ones come back for revenge).
+            if (grudge != null && seesPlayer && focus == grudge && grudgeLevel > 0.2f) Anger = Mathf.Max(Anger, grudgeLevel * (0.4f + Aggression * 0.6f));
+            // Stay away from fire: burning Goredolls nearby are scary.
+            if (Time.time >= nextHazardCheck)
+            {
+                nextHazardCheck = Time.time + 0.6f;
+                foreach (var other in Goredoll.All)
+                {
+                    if (other == null || other == doll || other.GetComponent<Burning>() == null) continue;
+                    var op = other.Position;
+                    if ((op - Pelvis).sqrMagnitude > 64f) continue;
+                    Fear = Mathf.Clamp01(Fear + 0.08f); threatPos = op; threatTime = Time.time;
+                    break;
+                }
+            }
             thinkTimer -= Time.deltaTime;
             if (thinkTimer <= 0f)
             {
@@ -203,9 +221,10 @@ namespace SolarEclipse
                 case AiAction.Fight:
                     if (Hostile && focus != null && !IgnorePlayer) return 2f;
                     if (Rules.NpcInfighting && NearestOther(12f) != null && Anger > 0.2f) return 0.7f + Anger * 0.3f;
+                    if (!Hostile && doll.Vitals.BloodLossFraction > 0.22f) return 0f; // badly hurt: retreat instead of fighting
                     return canFightPlayer && Anger > 0.45f && Aggression > 0.45f && playerDist < 10f && Fear < 0.75f ? Anger + Rules.AiAggression : 0f;
                 case AiAction.Surrender: return aimedAt && playerDist < 14f && Fear > 0.25f && Bravery < 0.65f && !hurtRecent ? 0.75f + Fear * 0.2f : 0f;
-                case AiAction.Flee: return threatRecent && Fear > 0.4f ? Fear : 0f;
+                case AiAction.Flee: return threatRecent && (Fear > 0.4f || (!Hostile && doll.Vitals.BloodLossFraction > 0.22f)) ? Mathf.Max(Fear, 0.6f * (doll.Vitals.BloodLossFraction > 0.22f ? 1f : 0f)) : 0f;
                 case AiAction.Hide: return threatRecent && Fear > 0.28f ? Fear * 0.82f + (Bravery < 0.35f ? 0.12f : 0f) : 0f;
                 case AiAction.Investigate: return Time.time - noiseTime < 7f && Fear < 0.35f ? Curiosity * 0.7f * (1f - noiseThreat * 0.5f) : 0f;
                 case AiAction.Greet: return seesPlayer && !greeted && Fear < 0.15f && Anger < 0.2f && playerDist < 9f && Time.time > greetCooldown ? 0.45f + Sociability * 0.25f : 0f;
