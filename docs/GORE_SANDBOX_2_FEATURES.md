@@ -462,7 +462,7 @@ Built features are marked [x]. Nothing here can be play-tested inside this cloud
 433. [x] Mono audio option
 434. Dynamic range options (night mode)
 435. [x] Audio visualiser for deaf players (sound indicators)
-436. Slow-motion audio pitch shift
+436. [x] Slow-motion audio pitch shift
 437. Underwater audio filter
 438. Radio prop playing music
 439. Phone ringtones (Open World)
