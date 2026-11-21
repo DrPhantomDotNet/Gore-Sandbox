@@ -42,6 +42,7 @@ namespace SolarEclipse
             }
             musicA = MakeLoopSource("MusicA", AudioBus.Music);
             musicB = MakeLoopSource("MusicB", AudioBus.Music);
+            musicA.reverbZoneMix = 0f; musicB.reverbZoneMix = 0f;
             ambience = MakeLoopSource("Ambience", AudioBus.Ambience);
             Settings.Changed += RefreshVolumes;
         }
